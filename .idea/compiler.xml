@@ -2,8 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="schiedsrichter-assistent.schiedsrichter-assistent.main" target="17" />
-      <module name="schiedsrichter-assistent.schiedsrichter-assistent.test" target="17" />
+      <module name="schiedsrichter-assistent.schiedsrichter-assistent.main~1" target="17" />
+      <module name="schiedsrichter-assistent.schiedsrichter-assistent.test~1" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>
