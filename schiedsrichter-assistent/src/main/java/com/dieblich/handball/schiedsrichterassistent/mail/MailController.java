@@ -1,22 +1,20 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
-import jakarta.mail.internet.MimeMessage;
-import org.springframework.web.bind.annotation.GetMapping;
+import jakarta.mail.Folder;
+import jakarta.mail.MessagingException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.mail.*;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Properties;
 
 @RestController
 public class MailController {
 
-    private EmailServer strato;
+    private final EmailServer strato;
 
-    public MailController() throws MessagingException {
+    @SuppressWarnings("unused")
+    public MailController() {
         strato = new EmailServer(
                 "imap.strato.de",
                 993,
@@ -26,15 +24,15 @@ public class MailController {
 
     @PostMapping("/checkFolderStructure")
     public String checkFolderStructure() throws MessagingException {
-        String vorher = "";
+        StringBuilder vorher = new StringBuilder();
         for (Folder folder: strato.listFolders()) {
-            vorher += folder.getFullName() + "\n";
+            vorher.append(folder.getFullName()).append("\n");
         }
         strato.getFolder("SCHIEDSRICHTER");
         strato.getFolder("KONFIGURATION");
-        String nachher = "";
+        StringBuilder nachher = new StringBuilder();
         for (Folder folder: strato.listFolders()) {
-            nachher += folder.getFullName() + "\n";
+            nachher.append(folder.getFullName()).append("\n");
         }
         return "VORHER:\n" + vorher + "\n================\nNachher:\n" + nachher;
     }
@@ -73,34 +71,10 @@ public class MailController {
 //        }
 //    }
 
-    private Session createSession() {
-        Properties props = System.getProperties();
-        props.put("mail.imap.ssl.enable", true);
-        Session session = Session.getInstance(props, null);
-        //session.setDebug(true);
-
-        return session;
-    }
-
-    private Store connectStore() throws MessagingException {
-        Session session = createSession();
-        Store store = session.getStore("imap");
-        store.connect("imap.strato.de", 993, "schiribot@fritz.koeln", "tnMjQhgRaaTGomq-qBV*tyoA97t7Z!hB");
-        return store;
-    }
-
-    private Folder openInbox(Store store) throws MessagingException {
-        Folder defaultFolder = store.getDefaultFolder();
-        Folder inbox = defaultFolder.getFolder("INBOX");
-        inbox.open(Folder.READ_ONLY);
-        return inbox;
-    }
-
     private String returnErrorAsString(Exception ex) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         ex.printStackTrace(pw);
         return "Error: " + ex.getMessage() + "\nStacktrace:\n" + sw.toString();
     }
-
 }

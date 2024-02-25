@@ -1,9 +1,10 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
-import jakarta.mail.*;
+import jakarta.mail.Folder;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Store;
 
-import java.util.Optional;
 import java.util.Properties;
 
 public class EmailServer implements AutoCloseable{
@@ -15,7 +16,7 @@ public class EmailServer implements AutoCloseable{
     private final String user;
     private final String password;
 
-    public EmailServer(String host, int port, String user, String password) throws MessagingException {
+    public EmailServer(String host, int port, String user, String password) {
         this.host = host;
         this.port = port;
         this.user = user;
@@ -40,9 +41,6 @@ public class EmailServer implements AutoCloseable{
         return store.getDefaultFolder().list();
     }
 
-    public Folder getInbox() throws MessagingException {
-        return getFolder("INBOX");
-    }
     public Folder getFolder(String name) throws MessagingException {
         ensureConnection();
         Folder defaultFolder = store.getDefaultFolder();
