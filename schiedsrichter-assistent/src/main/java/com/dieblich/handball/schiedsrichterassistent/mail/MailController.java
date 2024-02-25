@@ -1,9 +1,14 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.mail.*;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Properties;
 
 @RestController
@@ -15,13 +20,36 @@ public class MailController {
         Session session = createSession();
         try (Folder inbox = openInbox(session)) {
             Message[] messages = inbox.getMessages();
-
-            return "Inbox: " + inbox.getMessageCount();
+            String result = "Inbox: " + inbox.getMessageCount() + "\n";
+            for (Message message: messages) {
+                result += " " + message.getSubject() + "\n";
+            }
+            return result;
         } catch (Exception ex) {
             return "Error: " + ex.getMessage();
         }
 
     }
+
+    @PostMapping("/createMail")
+    public String createMail(){
+
+        Session session = createSession();
+        try (Folder inbox = openInbox(session)) {
+            Message[] messages = new Message[1];
+            messages[0] = new MimeMessage(session);
+            messages[0].setSubject("Testnachricht " + inbox.getMessageCount());
+            messages[0].setText("Inhalt der Testnachricht " + inbox.getMessageCount());
+            inbox.appendMessages(messages);
+            return "done";
+        } catch (Exception ex) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            ex.printStackTrace(pw);
+            return "Error: " + ex.getMessage() + "\nStacktrace:\n" + sw.toString();
+        }
+    }
+
 
     private Session createSession(){
         Properties props = System.getProperties();
