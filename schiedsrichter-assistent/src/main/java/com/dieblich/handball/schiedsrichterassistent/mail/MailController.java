@@ -2,11 +2,12 @@ package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import jakarta.mail.Folder;
 import jakarta.mail.MessagingException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Map;
 
 @RestController
 public class MailController {
@@ -29,47 +30,29 @@ public class MailController {
             vorher.append(folder.getFullName()).append("\n");
         }
         strato.getFolder("SCHIEDSRICHTER");
-        strato.getFolder("KONFIGURATION");
         StringBuilder nachher = new StringBuilder();
         for (Folder folder: strato.listFolders()) {
             nachher.append(folder.getFullName()).append("\n");
         }
         return "VORHER:\n" + vorher + "\n================\nNachher:\n" + nachher;
     }
+    @GetMapping("/configuration/{email}")
+    public String getConfiguration(@PathVariable(value="email") String email) throws IOException, MessagingException {
+        UserConfiguration config = strato.loadUserConfiguration(email);
+        return config.toString();
+    }
 
+    @PatchMapping("/configuration/{email}")
+    public String updateConfiguration(@PathVariable(value="email") String email, @RequestBody Map<String, String> propertiesUpdate) throws MessagingException, IOException {
+        UserConfiguration config = strato.loadUserConfiguration(email);
+        String vorher = config.toString();
 
-//    @GetMapping("/mailtest")
-//    public String mailtest() {
-//
-//        try (Store emailStore = connectStore();
-//             Folder inbox = openInbox(emailStore)) {
-//            Message[] messages = inbox.getMessages();
-//            String result = "Inbox: " + inbox.getMessageCount() + "\n";
-//            for (Message message : messages) {
-//                result += " " + message.getSubject() + "\n";
-//            }
-//            return result;
-//        } catch (Exception ex) {
-//            return returnErrorAsString(ex);
-//        }
-//
-//    }
+        config.updateWith(propertiesUpdate);
+        strato.overwriteUserConfiguration(config);
 
-//    @PostMapping("/createMail")
-//    public String createMail() {
-//
-//        try (Store emailStore = connectStore();
-//             Folder inbox = openInbox(emailStore)) {
-//            Message[] messages = new Message[1];
-//            messages[0] = new MimeMessage(session);
-//            messages[0].setSubject("Testnachricht " + inbox.getMessageCount());
-//            messages[0].setText("Inhalt der Testnachricht " + inbox.getMessageCount());
-//            inbox.appendMessages(messages);
-//            return "done";
-//        } catch (Exception ex) {
-//            return returnErrorAsString(ex);
-//        }
-//    }
+        String nachher = config.toString();
+        return "VORHER:\n" + vorher + "\n================\nNachher:\n" + nachher;
+    }
 
     private String returnErrorAsString(Exception ex) {
         StringWriter sw = new StringWriter();
