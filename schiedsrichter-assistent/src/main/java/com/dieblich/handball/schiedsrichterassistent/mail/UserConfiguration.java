@@ -42,7 +42,7 @@ public class UserConfiguration{
 
     public Message toMessage(Session session) throws MessagingException {
         MimeMessage message = new MimeMessage(session);
-        message.setSubject("Konfiguration von " + now());
+        message.setSubject("Konfiguration vom " + now());
         message.setFrom(new InternetAddress(userEmail));
         message.setText(configToString());
         return message;
