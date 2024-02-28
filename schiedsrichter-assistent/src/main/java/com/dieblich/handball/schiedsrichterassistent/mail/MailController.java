@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -56,24 +57,39 @@ public class MailController {
     }
 
     @PostMapping("/tasks/checkInbox")
-    public String checkInbox() throws MessagingException {
+    public void checkInbox() throws MessagingException, IOException {
         EmailFolder inbox = strato.getFolder("INBOX");
-        String result = "";
-        for(Email email: inbox.getEmails()){
-            result += email.getSubject() + " von ";
-            Optional<String> optionalSender = email.getFrom();
-            if(optionalSender.isPresent()){
-                String sender = optionalSender.get();
-                result += sender;
-                if(strato.hasUserConfig(sender)){
-                    result += " - CONFIG VORHANDEN";
+        Map<String, Email> unknownSenders = new HashMap<>();
+        try {
+            for (Email email : inbox.getEmails()) {
+                Optional<String> optionalSender = email.getFrom();
+                if (optionalSender.isPresent()) {
+                    String sender = optionalSender.get();
+                    if(!unknownSenders.containsKey(sender)){
+                        Optional<UserConfiguration> optionalUserConfig = strato.findConfig(sender);
+                        if(optionalUserConfig.isPresent()){
+                            handleEmail(email);
+                        }else{
+                            unknownSenders.put(sender, email);
+                        }
+                    }
                 }
-            } else {
-                result += "[no sender]";
             }
-            result += "\n";
+            for (Email email : unknownSenders.values()) {
+                askForRegistration(email);
+            }
+        } finally {
+            inbox.deleteAll();
         }
-        return result;
+    }
+
+    private void askForRegistration(Email email) throws MessagingException, IOException {
+        // TODO
+        System.out.println("REGISTER: " + email.getFrom() + " - " + email.getContent());
+    }
+
+    private void handleEmail(Email email) throws MessagingException, IOException {
+        System.out.println("HANDLE: " + email.getFrom() + " - " + email.getContent());
     }
 
 

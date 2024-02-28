@@ -1,5 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
+import jakarta.mail.Flags;
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
@@ -23,5 +24,14 @@ public class EmailFolder {
 
     public void upload(Email email) throws MessagingException {
         folder.appendMessages(new Message[]{email.getJakartaMessage()});
+    }
+
+    public void deleteAll() throws MessagingException {
+        for (Message message:folder.getMessages()) {
+            message.setFlag(Flags.Flag.DELETED, true);
+        }
+        folder.close();
+        // Later: Really delete
+        // folder.expunge();
     }
 }

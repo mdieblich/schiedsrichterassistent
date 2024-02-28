@@ -51,16 +51,16 @@ public class EmailServer implements AutoCloseable {
         return new EmailFolder(folder);
     }
 
-    public UserConfiguration loadUserConfiguration(String email) throws IOException, MessagingException {
-        Optional<Email> message = findConfig(email);
-        if(message.isEmpty()){
-            return UserConfiguration.DEFAULT(email);
+    public UserConfiguration loadUserConfiguration(String emailAddress) throws IOException, MessagingException {
+        Optional<Email> email = findConfigEmail(emailAddress);
+        if(email.isEmpty()){
+            return UserConfiguration.DEFAULT(emailAddress);
         } else {
-            return new UserConfiguration(email, message.get().getContent());
+            return new UserConfiguration(emailAddress, email.get().getContent());
         }
     }
 
-    private Optional<Email> findConfig(String emailAddress) throws MessagingException {
+    private Optional<Email> findConfigEmail(String emailAddress) throws MessagingException {
         EmailFolder schiedsrichter = getFolder("SCHIEDSRICHTER");
 
         for(Email email:schiedsrichter.getEmails()){
@@ -74,7 +74,7 @@ public class EmailServer implements AutoCloseable {
     public void overwriteUserConfiguration(UserConfiguration userConfig) throws MessagingException {
 
         // first, lets search for an old config
-        Optional<Email> oldConfig = findConfig(userConfig.getEmail());
+        Optional<Email> oldConfig = findConfigEmail(userConfig.getEmail());
 
         // then, update
         saveUserConfig(userConfig);
@@ -100,6 +100,15 @@ public class EmailServer implements AutoCloseable {
     }
 
     public boolean hasUserConfig(String sender) throws MessagingException {
-        return findConfig(sender).isPresent();
+        return findConfigEmail(sender).isPresent();
+    }
+
+    public Optional<UserConfiguration> findConfig(String emailAddress) throws MessagingException, IOException {
+        Optional<Email> optionalConfigEmail = findConfigEmail(emailAddress);
+        if(optionalConfigEmail.isPresent()){
+            Email configEmail = optionalConfigEmail.get();
+            return Optional.of(new UserConfiguration(emailAddress, configEmail.getContent()));
+        }
+        return Optional.empty();
     }
 }
