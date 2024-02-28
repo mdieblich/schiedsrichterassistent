@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 @RestController
@@ -54,10 +55,32 @@ public class MailController {
         return "VORHER:\n" + vorher + "\n================\nNachher:\n" + nachher;
     }
 
+    @PostMapping("/tasks/checkInbox")
+    public String checkInbox() throws MessagingException {
+        EmailFolder inbox = strato.getFolder("INBOX");
+        String result = "";
+        for(Email email: inbox.getEmails()){
+            result += email.getSubject() + " von ";
+            Optional<String> optionalSender = email.getFrom();
+            if(optionalSender.isPresent()){
+                String sender = optionalSender.get();
+                result += sender;
+                if(strato.hasUserConfig(sender)){
+                    result += " - CONFIG VORHANDEN";
+                }
+            } else {
+                result += "[no sender]";
+            }
+            result += "\n";
+        }
+        return result;
+    }
+
+
     private String returnErrorAsString(Exception ex) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         ex.printStackTrace(pw);
-        return "Error: " + ex.getMessage() + "\nStacktrace:\n" + sw.toString();
+        return "Error: " + ex.getMessage() + "\nStacktrace:\n" + sw;
     }
 }

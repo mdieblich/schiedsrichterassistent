@@ -1,12 +1,14 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import jakarta.mail.*;
-import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Email {
 
@@ -25,15 +27,16 @@ public class Email {
     }
 
     public boolean isFrom(String sender) throws MessagingException {
-        for (Address from: message.getFrom()) {
-            if(from instanceof InternetAddress){
-                String fromString = ((InternetAddress)from).getAddress();
-                if(sender.equals(fromString)){
-                    return true;
-                }
-            }
-        }
-        return false;
+        return getAllSenders().stream()
+                .anyMatch(sender::equals);
+    }
+
+    private List<String> getAllSenders() throws MessagingException {
+        return Arrays.stream(message.getFrom())
+                .filter(address -> address instanceof InternetAddress)
+                .map(address -> (InternetAddress) address)
+                .map(InternetAddress::getAddress)
+                .collect(Collectors.toList());
     }
 
     public String getContent() throws MessagingException, IOException {
@@ -55,5 +58,13 @@ public class Email {
 
     public void setContent(String content) throws MessagingException {
         message.setText(content);
+    }
+
+    public Optional<String> getFrom() throws MessagingException {
+        return getAllSenders().stream().findAny();
+    }
+
+    public String getSubject() throws MessagingException {
+        return message.getSubject();
     }
 }

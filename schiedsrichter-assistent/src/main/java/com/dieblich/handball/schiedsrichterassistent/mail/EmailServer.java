@@ -99,4 +99,7 @@ public class EmailServer implements AutoCloseable {
         }
     }
 
+    public boolean hasUserConfig(String sender) throws MessagingException {
+        return findConfig(sender).isPresent();
+    }
 }
