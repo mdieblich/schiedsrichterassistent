@@ -99,10 +99,6 @@ public class EmailServer implements AutoCloseable {
         }
     }
 
-    public boolean hasUserConfig(String sender) throws MessagingException {
-        return findConfigEmail(sender).isPresent();
-    }
-
     public Optional<UserConfiguration> findConfig(String emailAddress) throws MessagingException, IOException {
         Optional<Email> optionalConfigEmail = findConfigEmail(emailAddress);
         if(optionalConfigEmail.isPresent()){
