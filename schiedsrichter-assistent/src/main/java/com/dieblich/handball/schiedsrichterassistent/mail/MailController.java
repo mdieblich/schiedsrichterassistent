@@ -9,12 +9,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 @RestController
 public class MailController {
 
     private final EmailServer strato;
 
-    @SuppressWarnings("unused")
     public MailController() {
         strato = new EmailServer(
                 "imap.strato.de",

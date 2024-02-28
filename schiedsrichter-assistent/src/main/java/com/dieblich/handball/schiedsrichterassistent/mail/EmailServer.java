@@ -1,7 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import jakarta.mail.*;
-import jakarta.mail.internet.InternetAddress;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -41,7 +40,7 @@ public class EmailServer implements AutoCloseable {
         return store.getDefaultFolder().list();
     }
 
-    public Folder getFolder(String name) throws MessagingException {
+    public EmailFolder getFolder(String name) throws MessagingException {
         ensureConnection();
         Folder defaultFolder = store.getDefaultFolder();
         Folder folder = defaultFolder.getFolder(name);
@@ -49,28 +48,24 @@ public class EmailServer implements AutoCloseable {
             folder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES);
         }
         folder.open(Folder.READ_WRITE);
-        return folder;
+        return new EmailFolder(folder);
     }
 
     public UserConfiguration loadUserConfiguration(String email) throws IOException, MessagingException {
-        Optional<Message> message = findConfig(email);
+        Optional<Email> message = findConfig(email);
         if(message.isEmpty()){
             return UserConfiguration.DEFAULT(email);
         } else {
-            return new UserConfiguration(email, message.get().getContent().toString());
+            return new UserConfiguration(email, message.get().getContent());
         }
     }
 
-    private Optional<Message> findConfig(String email) throws MessagingException {
-        Folder schiedsrichter = getFolder("SCHIEDSRICHTER");
-        for(Message message:schiedsrichter.getMessages()){
-            for (Address from: message.getFrom()) {
-                if(from instanceof InternetAddress){
-                    String fromString = ((InternetAddress)from).getAddress();
-                    if(email.equals(fromString)){
-                        return Optional.of(message);
-                    }
-                }
+    private Optional<Email> findConfig(String emailAddress) throws MessagingException {
+        EmailFolder schiedsrichter = getFolder("SCHIEDSRICHTER");
+
+        for(Email email:schiedsrichter.getEmails()){
+            if(email.isFrom(emailAddress)){
+                return Optional.of(email);
             }
         }
         return Optional.empty();
@@ -79,23 +74,22 @@ public class EmailServer implements AutoCloseable {
     public void overwriteUserConfiguration(UserConfiguration userConfig) throws MessagingException {
 
         // first, lets search for an old config
-        Optional<Message> oldConfig = findConfig(userConfig.getEmail());
+        Optional<Email> oldConfig = findConfig(userConfig.getEmail());
 
         // then, update
         saveUserConfig(userConfig);
 
         // last - delete the old one
         if(oldConfig.isPresent()){
-            Message oldConfig2 = oldConfig.get();
-            oldConfig2.setFlag(Flags.Flag.DELETED, true);
-            oldConfig2.getFolder().expunge();
+            Email oldConfig2 = oldConfig.get();
+            oldConfig2.deleteImmediately();
         }
     }
 
     private void saveUserConfig(UserConfiguration userConfig) throws MessagingException {
-        Folder schiedsrichter = getFolder("SCHIEDSRICHTER");
-        Message configAsMessage = userConfig.toMessage(session);
-        schiedsrichter.appendMessages(new Message[]{configAsMessage});
+        EmailFolder schiedsrichter = getFolder("SCHIEDSRICHTER");
+        Email configAsEmail = userConfig.toEmail(session);
+        schiedsrichter.upload(configAsEmail);
     }
 
     @Override

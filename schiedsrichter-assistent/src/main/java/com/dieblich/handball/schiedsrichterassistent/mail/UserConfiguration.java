@@ -1,10 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
-import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -26,9 +23,9 @@ public class UserConfiguration{
 
     public static UserConfiguration DEFAULT(String userEmail){
         UserConfiguration config = new UserConfiguration(userEmail);
-        config.configuration.put("Umziehen.DauerInMinuten", "15");
-        config.configuration.put("TechnischeBesprechung.Oberliga.DauerInMinuten", "45");
-        config.configuration.put("TechnischeBesprechung.UnterOberliga.DauerInMinuten", "30");
+        config.set("Umziehen.DauerInMinuten", "15");
+        config.set("TechnischeBesprechung.Oberliga.DauerInMinuten", "45");
+        config.set("TechnischeBesprechung.UnterOberliga.DauerInMinuten", "30");
         return config;
     }
 
@@ -40,13 +37,14 @@ public class UserConfiguration{
         configuration.put(key, value);
     }
 
-    public Message toMessage(Session session) throws MessagingException {
-        MimeMessage message = new MimeMessage(session);
-        message.setSubject("Konfiguration vom " + now());
-        message.setFrom(new InternetAddress(userEmail));
-        message.setText(configToString());
-        return message;
+    public Email toEmail(Session session) throws MessagingException {
+        Email email = new Email(session);
+        email.setSubject("Konfiguration vom " + now());
+        email.setFrom(userEmail);
+        email.setContent(configToString());
+        return email;
     }
+
     private String now(){
         Date now = new Date();
         return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(now);
