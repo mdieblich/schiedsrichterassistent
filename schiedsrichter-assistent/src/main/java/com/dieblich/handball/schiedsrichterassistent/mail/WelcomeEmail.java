@@ -15,9 +15,10 @@ public class WelcomeEmail extends Email{
                 Grundsätzlich reicht es, wenn du mir Ansetzungsemails zuschickt - ich antworte dir dann in ca. 5 Minuten.
                 
                 Bevor es losgeht, brauche ich aber aber noch deine Adresse von dir. Die benötige ich, damit ich deine
-                Fahrzeiten und Fahrtstrecke berechnen kann. Bitte schick mir daher eine Email, wo in der ersten Zeile
-                folgendes steht:
+                Fahrzeiten und Fahrtstrecke berechnen kann. Bitte antworte mir daher auf diese Email, wo in der ersten
+                Zeile folgendes steht:
                     Adresse=Musterstraße 17, 54321 Köln
+                Dabei gibst du natürlich deine richtige Adresse an.
                 
                 Ich speichere mir dann von dir:
                 * deine Emailadresse
