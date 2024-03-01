@@ -71,10 +71,6 @@ public class Email {
         return getAllSenders().stream().findAny();
     }
 
-    public String getSubject() throws MessagingException {
-        return message.getSubject();
-    }
-
     public void send() throws MessagingException {
         Transport.send(message);
     }

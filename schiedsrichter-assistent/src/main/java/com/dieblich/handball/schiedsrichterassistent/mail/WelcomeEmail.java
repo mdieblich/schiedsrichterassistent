@@ -14,8 +14,8 @@ public class WelcomeEmail extends Email{
                 
                 Grundsätzlich reicht es, wenn du mir Ansetzungsemails zuschickt - ich antworte dir dann in ca. 5 Minuten.
                 
-                Bevor es losgeht, brauche ich aber aber noch deine Adresse von dir. Die benötige ich, damit ich deine 
-                Fahrzeiten und Fahrtstrecke berechnen kann. Bitte schick mir daher eine Email, wo in der ersten Zeile 
+                Bevor es losgeht, brauche ich aber aber noch deine Adresse von dir. Die benötige ich, damit ich deine
+                Fahrzeiten und Fahrtstrecke berechnen kann. Bitte schick mir daher eine Email, wo in der ersten Zeile
                 folgendes steht:
                     Adresse=Musterstraße 17, 54321 Köln
                 
@@ -24,10 +24,10 @@ public class WelcomeEmail extends Email{
                 * deine Adresse
                 * deine Änderungen an der Konfiguration (z.B. längerer Puffer vor'm Spiel).
                 
-                Aktuell kannst du deine gespeicherten Daten nicht selbst löschen, bitte wende dich dafür an den 
-                Administrator des Schiribots. 
+                Aktuell kannst du deine gespeicherten Daten nicht selbst löschen, bitte wende dich dafür an den
+                Administrator des Schiribots.
                 
-                Ich speichere grundsätzlich keine Emails. ICH LÖSCHE ALLE EMAILS, die du mir zuschickst. 
+                Ich speichere grundsätzlich keine Emails. ICH LÖSCHE ALLE EMAILS, die du mir zuschickst.
                 Falls du mir also schon eine Ansetzungsemail zugeschickt hast, so musst du das erneut tun, nachdem du
                 mir deine Adresse zugeschickt hast.
                 

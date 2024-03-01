@@ -108,8 +108,4 @@ public class EmailServerRead implements AutoCloseable {
         return Optional.empty();
     }
 
-    public String getUser() {
-        return user;
-    }
-
 }
