@@ -56,6 +56,13 @@ public class Email {
         message.setFrom(new InternetAddress(emailAddress));
     }
 
+    public void setTo(String receiver) throws MessagingException {
+        message.setRecipients(
+                Message.RecipientType.TO,
+                InternetAddress.parse(receiver)
+        );
+    }
+
     public void setContent(String content) throws MessagingException {
         message.setText(content);
     }
@@ -66,5 +73,9 @@ public class Email {
 
     public String getSubject() throws MessagingException {
         return message.getSubject();
+    }
+
+    public void send() throws MessagingException {
+        Transport.send(message);
     }
 }

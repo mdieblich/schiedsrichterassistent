@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
 
-public class EmailServer implements AutoCloseable {
+public class EmailServerRead implements AutoCloseable {
 
     private final Session session;
     private Store store;
@@ -15,7 +15,7 @@ public class EmailServer implements AutoCloseable {
     private final String user;
     private final String password;
 
-    public EmailServer(String host, int port, String user, String password) {
+    public EmailServerRead(String host, int port, String user, String password) {
         this.host = host;
         this.port = port;
         this.user = user;
@@ -107,4 +107,9 @@ public class EmailServer implements AutoCloseable {
         }
         return Optional.empty();
     }
+
+    public String getUser() {
+        return user;
+    }
+
 }

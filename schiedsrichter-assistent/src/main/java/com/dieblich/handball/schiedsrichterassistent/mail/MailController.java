@@ -7,50 +7,55 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @SuppressWarnings("unused")
 @RestController
 public class MailController {
 
-    private final EmailServer strato;
+    private final EmailServerRead stratoRead;
+    private final EmailServerSend stratoSend;
 
     public MailController() {
-        strato = new EmailServer(
+        stratoRead = new EmailServerRead(
                 "imap.strato.de",
                 993,
                 "schiribot@fritz.koeln",
                 "tnMjQhgRaaTGomq-qBV*tyoA97t7Z!hB");
+        stratoSend = new EmailServerSend(
+                "smtp.strato.de",
+                587,
+                "schiribot@fritz.koeln",
+                "tnMjQhgRaaTGomq-qBV*tyoA97t7Z!hB"
+        );
     }
 
     @PostMapping("/checkFolderStructure")
     public String checkFolderStructure() throws MessagingException {
         StringBuilder vorher = new StringBuilder();
-        for (Folder folder: strato.listFolders()) {
+        for (Folder folder: stratoRead.listFolders()) {
             vorher.append(folder.getFullName()).append("\n");
         }
-        strato.getFolder("SCHIEDSRICHTER");
+        stratoRead.getFolder("SCHIEDSRICHTER");
         StringBuilder nachher = new StringBuilder();
-        for (Folder folder: strato.listFolders()) {
+        for (Folder folder: stratoRead.listFolders()) {
             nachher.append(folder.getFullName()).append("\n");
         }
         return "VORHER:\n" + vorher + "\n================\nNachher:\n" + nachher;
     }
     @GetMapping("/configuration/{email}")
     public String getConfiguration(@PathVariable(value="email") String email) throws IOException, MessagingException {
-        UserConfiguration config = strato.loadUserConfiguration(email);
+        UserConfiguration config = stratoRead.loadUserConfiguration(email);
         return config.toString();
     }
 
     @PatchMapping("/configuration/{email}")
     public String updateConfiguration(@PathVariable(value="email") String email, @RequestBody Map<String, String> propertiesUpdate) throws MessagingException, IOException {
-        UserConfiguration config = strato.loadUserConfiguration(email);
+        UserConfiguration config = stratoRead.loadUserConfiguration(email);
         String vorher = config.toString();
 
         config.updateWith(propertiesUpdate);
-        strato.overwriteUserConfiguration(config);
+        stratoRead.overwriteUserConfiguration(config);
 
         String nachher = config.toString();
         return "VORHER:\n" + vorher + "\n================\nNachher:\n" + nachher;
@@ -58,34 +63,34 @@ public class MailController {
 
     @PostMapping("/tasks/checkInbox")
     public void checkInbox() throws MessagingException, IOException {
-        EmailFolder inbox = strato.getFolder("INBOX");
-        Map<String, Email> unknownSenders = new HashMap<>();
+        EmailFolder inbox = stratoRead.getFolder("INBOX");
+        Set<String> unknownSenders = new HashSet<>();
         try {
             for (Email email : inbox.getEmails()) {
                 Optional<String> optionalSender = email.getFrom();
                 if (optionalSender.isPresent()) {
                     String sender = optionalSender.get();
-                    if(!unknownSenders.containsKey(sender)){
-                        Optional<UserConfiguration> optionalUserConfig = strato.findConfig(sender);
+                    if(!unknownSenders.contains(sender)){
+                        Optional<UserConfiguration> optionalUserConfig = stratoRead.findConfig(sender);
                         if(optionalUserConfig.isPresent()){
                             handleEmail(email);
                         }else{
-                            unknownSenders.put(sender, email);
+                            unknownSenders.add(sender);
                         }
                     }
                 }
             }
-            for (Email email : unknownSenders.values()) {
-                askForRegistration(email);
+            for (String unknownSender : unknownSenders) {
+                askForRegistration(unknownSender);
             }
         } finally {
             inbox.deleteAll();
         }
     }
 
-    private void askForRegistration(Email email) throws MessagingException, IOException {
-        // TODO
-        System.out.println("REGISTER: " + email.getFrom() + " - " + email.getContent());
+    private void askForRegistration(String newUserEmail) throws MessagingException{
+        WelcomeEmail welcomeEmail = stratoSend.createWelcomeEmail(newUserEmail);
+        welcomeEmail.send();
     }
 
     private void handleEmail(Email email) throws MessagingException, IOException {
