@@ -100,7 +100,6 @@ public class UserConfiguration{
                 .filter(entry -> ALL_CONFIG_KEYS.contains(entry.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        //das hier mal testen
         configuration.putAll(allowedKeyValuePairs);
     }
 
