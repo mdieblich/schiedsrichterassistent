@@ -50,8 +50,8 @@ public class MailController {
     }
 
     @PatchMapping("/configuration/{email}")
-    public String updateConfiguration(@PathVariable(value="email") String email, @RequestBody Map<String, String> propertiesUpdate) throws MessagingException, IOException {
-        UserConfiguration config = stratoRead.loadUserConfiguration(email);
+    public String updateConfiguration(@PathVariable(value="email") String emailAddress, @RequestBody Map<String, String> propertiesUpdate) throws MessagingException, IOException {
+        UserConfiguration config = stratoRead.loadUserConfiguration(emailAddress);
         String vorher = config.toString();
 
         config.updateWith(propertiesUpdate);
@@ -66,11 +66,15 @@ public class MailController {
         EmailFolder inbox = stratoRead.getFolder("INBOX");
         Set<String> unknownSenders = new HashSet<>();
         try {
+            // TODO First, sort them by sender, i.e. Map<Sender, Email>, then they can be sorted: Config-Update first, others later
             for (Email email : inbox.getEmails()) {
                 Optional<String> optionalSender = email.getFrom();
                 if (optionalSender.isPresent()) {
                     String sender = optionalSender.get();
-                    if(!unknownSenders.contains(sender)){
+                    if(isConfigUpdate(email)){
+                        handleConfigUpdate(email);
+                        // TODO if the config update was successful, all other Emails of that sender should be handled - instead of discarded
+                    } else if(!unknownSenders.contains(sender)){
                         Optional<UserConfiguration> optionalUserConfig = stratoRead.findConfig(sender);
                         if(optionalUserConfig.isPresent()){
                             handleEmail(email);
@@ -86,6 +90,22 @@ public class MailController {
         } finally {
             inbox.deleteAll();
         }
+    }
+
+    private boolean isConfigUpdate(Email email) throws MessagingException {
+        boolean isAReplyToAWelcomeEmail = email.getSubject().contains(WelcomeEmail.SUBJECT);
+        boolean isRegularConfigUpdate = email.getSubject().contains("Konfiguration");
+        return isAReplyToAWelcomeEmail || isRegularConfigUpdate;
+    }
+
+    private void handleConfigUpdate(Email email) throws MessagingException, IOException {
+        if(email.getFrom().isEmpty()){ return; }
+
+        String sender = email.getFrom().get();
+        UserConfiguration oldConfig = stratoRead.loadUserConfiguration(sender);
+
+        oldConfig.updateWith(email.getContent());
+        stratoRead.overwriteUserConfiguration(oldConfig);
     }
 
     private void askForRegistration(String newUserEmail) throws MessagingException{
