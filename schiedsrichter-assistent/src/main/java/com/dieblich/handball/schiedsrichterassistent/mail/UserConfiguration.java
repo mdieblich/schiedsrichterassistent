@@ -93,7 +93,7 @@ public class UserConfiguration{
         return userEmail;
     }
 
-    public void updateWith(String configUpdate) throws IOException {
+    public void updateWith(String configUpdate) {
         List<String> validLines = extractFirstValidLines(configUpdate);
         Map<String, String> keyValuePairs = toKeyValuePairs(validLines);
         Map<String, String> allowedKeyValuePairs = keyValuePairs.entrySet().stream()
@@ -112,7 +112,7 @@ public class UserConfiguration{
             if (trimmedLine.isEmpty()){
                 // ignore Empty lines
                 continue;
-            } else if(trimmedLine.matches("([\\w\\d\\.]*) *= *(.*)")){
+            } else if(trimmedLine.matches("([\\w\\d.]*) *= *(.*)")){
                 // this is a config-line "config.key = some value"
                 validLines.add(trimmedLine);
             } else {
