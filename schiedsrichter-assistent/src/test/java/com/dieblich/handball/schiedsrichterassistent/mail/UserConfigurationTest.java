@@ -101,6 +101,31 @@ class UserConfigurationTest {
         ), config);
     }
 
+    @Test
+    public void addressIsNew_false_ifNotPresent() throws IOException {
+        UserConfiguration config = new UserConfiguration("", "");
+        Map<String, String> update = Map.of();
+        assertFalse(config.addressIsNew(update));
+    }
+    @Test
+    public void addressIsNew_true_ifItWasNotThereBefore() throws IOException {
+        UserConfiguration config = new UserConfiguration("", "");
+        Map<String, String> update = Map.of(UserConfiguration.ADRESSE, "Musterstr. 5");
+        assertTrue(config.addressIsNew(update));
+    }
+    @Test
+    public void addressIsNew_false_ifTheSame() throws IOException {
+        UserConfiguration config = new UserConfiguration("", UserConfiguration.ADRESSE+"=Musterstr. 5");
+        Map<String, String> update = Map.of(UserConfiguration.ADRESSE, "Musterstr. 5");
+        assertFalse(config.addressIsNew(update));
+    }
+    @Test
+    public void addressIsNew_true_ifDiffers() throws IOException {
+        UserConfiguration config = new UserConfiguration("", UserConfiguration.ADRESSE+"=Musterstr. 5");
+        Map<String, String> update = Map.of(UserConfiguration.ADRESSE, "Musterstr. 6");
+        assertTrue(config.addressIsNew(update));
+    }
+
     private void assertExactContent(Map<String, String> expectedContent, UserConfiguration actualConfig){
         for(Map.Entry<String, String> entry:expectedContent.entrySet()){
             assertHas(entry.getKey(), entry.getValue(), actualConfig);

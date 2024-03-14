@@ -14,18 +14,26 @@ import java.util.stream.Collectors;
 
 public class UserConfiguration{
 
+    // TODO in EnumKlasse auslagern mit den Attributen "Key", "DefaultValue", "IsMandatory"
+    public static final String UMZIEHEN_DAUER_IN_MINUTEN = "Umziehen.DauerInMinuten";
+    public static final String TECHNISCHE_BESPRECHUNG_OBERLIGA_DAUER_IN_MINUTEN = "TechnischeBesprechung.Oberliga.DauerInMinuten";
+    public static final String TECHNISCHE_BESPRECHUNG_UNTER_OBERLIGA_DAUER_IN_MINUTEN = "TechnischeBesprechung.UnterOberliga.DauerInMinuten";
+
+    public static final String ADRESSE = "Adresse";
+    public static final String ADRESSE_GEOLOCATION = "Adresse.GeoLocation";
+
     private static final Map<String, String> DEFAULT_CONFIG = Map.ofEntries(
-            new AbstractMap.SimpleEntry<>("Umziehen.DauerInMinuten", "15"),
-            new AbstractMap.SimpleEntry<>("TechnischeBesprechung.Oberliga.DauerInMinuten", "45"),
-            new AbstractMap.SimpleEntry<>("TechnischeBesprechung.UnterOberliga.DauerInMinuten", "30")
+            new AbstractMap.SimpleEntry<>(UMZIEHEN_DAUER_IN_MINUTEN, "15"),
+            new AbstractMap.SimpleEntry<>(TECHNISCHE_BESPRECHUNG_OBERLIGA_DAUER_IN_MINUTEN, "45"),
+            new AbstractMap.SimpleEntry<>(TECHNISCHE_BESPRECHUNG_UNTER_OBERLIGA_DAUER_IN_MINUTEN, "30")
     );
 
     private static final Set<String> MANDATORY_CONFIG = Set.of(
-            "Adresse"
+            ADRESSE
     );
 
     private static final Set<String> OPTIONAL_CONFIG = Set.of(
-            "Adresse.GeoLocation"
+            ADRESSE_GEOLOCATION
     );
 
     private static final Set<String> ALL_CONFIG_KEYS;// = getAllConfigKeys();
@@ -100,8 +108,13 @@ public class UserConfiguration{
                 .filter(entry -> ALL_CONFIG_KEYS.contains(entry.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+        if(addressIsNew(allowedKeyValuePairs)){
+
+        }
+
         configuration.putAll(allowedKeyValuePairs);
     }
+
 
     private List<String> extractFirstValidLines(String content){
         String[] allLines = content.split("\\r?\\n|\\r");
@@ -134,6 +147,17 @@ public class UserConfiguration{
             keyValuePairs.put(key.trim(), value.trim());
         }
         return keyValuePairs;
+    }
+    boolean addressIsNew(Map<String, String> newConfig) {
+        String oldAddress = configuration.getProperty(ADRESSE);
+        String newAddress = newConfig.get(ADRESSE);
+        if(newAddress == null){
+            return false;
+        }
+        else if(oldAddress == null){
+            return true;
+        }
+        return !newAddress.equals(oldAddress);
     }
 
     public int size() {
