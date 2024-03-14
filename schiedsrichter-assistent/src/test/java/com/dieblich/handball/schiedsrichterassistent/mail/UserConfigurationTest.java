@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,46 +25,46 @@ class UserConfigurationTest {
     @Test
     public void updateWith_createSingleEntry() throws IOException {
         UserConfiguration config = new UserConfiguration("", "");
-        config.updateWith("Adresse=ABCD");
-        assertExactContent(Map.of("Adresse", "ABCD"), config);
+        config.updateWith("Umziehen.DauerInMinuten=30", doNotFindGeoLocation);
+        assertExactContent(Map.of("Umziehen.DauerInMinuten", "30"), config);
     }
     @Test
     public void updateWith_trims() throws IOException {
         UserConfiguration config = new UserConfiguration("", "");
-        config.updateWith("  Adresse  =\tABCD   ");
-        assertExactContent(Map.of("Adresse", "ABCD"), config);
+        config.updateWith("  Umziehen.DauerInMinuten  =\t30   ", doNotFindGeoLocation);
+        assertExactContent(Map.of("Umziehen.DauerInMinuten", "30"), config);
     }
 
     @Test
     public void updateWith_createsTwoEntries() throws IOException {
         UserConfiguration config = new UserConfiguration("", "");
         config.updateWith("""
-        Adresse=ABCD
+        TechnischeBesprechung.Oberliga.DauerInMinuten=100
         Umziehen.DauerInMinuten=35
-        """);
+        """, doNotFindGeoLocation);
         assertExactContent(Map.of(
-                "Adresse", "ABCD",
+                "TechnischeBesprechung.Oberliga.DauerInMinuten", "100",
                 "Umziehen.DauerInMinuten","35"
                 ), config);
     }
 
     @Test
     public void updateWith_updatesEntry() throws IOException {
-        UserConfiguration config = new UserConfiguration("", "Adresse=FFF");
-        config.updateWith("Adresse=ABCD");
-        assertExactContent(Map.of("Adresse", "ABCD"), config);
+        UserConfiguration config = new UserConfiguration("", "Umziehen.DauerInMinuten=20");
+        config.updateWith("Umziehen.DauerInMinuten=30", doNotFindGeoLocation);
+        assertExactContent(Map.of("Umziehen.DauerInMinuten", "30"), config);
     }
 
     @Test
     public void updateWith_refusesUnknownEntries() throws IOException{
         UserConfiguration config = new UserConfiguration("", "");
-        config.updateWith("blabla=ABCD");
+        config.updateWith("blabla=ABCD", doNotFindGeoLocation);
         assertExactContent(Map.of(), config);
     }
     @Test
     public void updateWith_ignoresTripleAssignments() throws IOException{
         UserConfiguration config = new UserConfiguration("", "");
-        config.updateWith("Adresse=ABCD=EFG");
+        config.updateWith("Umziehen.DauerInMinuten=30=45",doNotFindGeoLocation);
         assertExactContent(Map.of(), config);
     }
 
@@ -72,14 +73,14 @@ class UserConfigurationTest {
         UserConfiguration config = new UserConfiguration("", "");
         config.updateWith("""
         
-        Adresse=ABCD
+        TechnischeBesprechung.Oberliga.DauerInMinuten=100
         
         
         Umziehen.DauerInMinuten=35
         
-        """);
+        """, doNotFindGeoLocation);
         assertExactContent(Map.of(
-                "Adresse", "ABCD",
+                "TechnischeBesprechung.Oberliga.DauerInMinuten", "100",
                 "Umziehen.DauerInMinuten","35"
         ), config);
     }
@@ -89,15 +90,15 @@ class UserConfigurationTest {
         UserConfiguration config = new UserConfiguration("", "");
         config.updateWith("""
         
-        Adresse=ABCD
+        TechnischeBesprechung.Oberliga.DauerInMinuten=100
         
         heyho!
         
         Umziehen.DauerInMinuten=35
         
-        """);
+        """, doNotFindGeoLocation);
         assertExactContent(Map.of(
-                "Adresse", "ABCD"
+                "TechnischeBesprechung.Oberliga.DauerInMinuten", "100"
         ), config);
     }
 
@@ -125,6 +126,8 @@ class UserConfigurationTest {
         Map<String, String> update = Map.of(UserConfiguration.ADRESSE, "Musterstr. 6");
         assertTrue(config.addressIsNew(update));
     }
+
+    private final Function<String, Optional<String>> doNotFindGeoLocation = (String o) -> Optional.empty();
 
     private void assertExactContent(Map<String, String> expectedContent, UserConfiguration actualConfig){
         for(Map.Entry<String, String> entry:expectedContent.entrySet()){

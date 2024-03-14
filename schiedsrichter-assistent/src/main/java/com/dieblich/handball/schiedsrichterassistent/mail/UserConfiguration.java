@@ -9,6 +9,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -101,7 +103,7 @@ public class UserConfiguration{
         return userEmail;
     }
 
-    public void updateWith(String configUpdate) {
+    public void updateWith(String configUpdate, Function<String, Optional<String>> addressToGeoLocation) {
         List<String> validLines = extractFirstValidLines(configUpdate);
         Map<String, String> keyValuePairs = toKeyValuePairs(validLines);
         Map<String, String> allowedKeyValuePairs = keyValuePairs.entrySet().stream()
@@ -109,7 +111,12 @@ public class UserConfiguration{
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         if(addressIsNew(allowedKeyValuePairs)){
-
+            Optional<String> optionalGeoLocation = addressToGeoLocation.apply(allowedKeyValuePairs.get(ADRESSE));
+            if(optionalGeoLocation.isEmpty()){
+                allowedKeyValuePairs.remove(ADRESSE);
+            } else {
+                allowedKeyValuePairs.put(ADRESSE_GEOLOCATION, optionalGeoLocation.get());
+            }
         }
 
         configuration.putAll(allowedKeyValuePairs);
