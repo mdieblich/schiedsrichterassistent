@@ -52,15 +52,15 @@ public class Email {
     }
 
     private String getTextFromMimeMultipart(MimeMultipart mimeMultipart)  throws MessagingException, IOException{
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < mimeMultipart.getCount(); i++) {
             BodyPart bodyPart = mimeMultipart.getBodyPart(i);
             if (bodyPart.isMimeType("text/plain")) {
                 return result + "\n" + bodyPart.getContent(); // without return, same text appears twice in my tests
             }
-            result += this.parseBodyPart(bodyPart);
+            result.append(this.parseBodyPart(bodyPart));
         }
-        return result;
+        return result.toString();
     }
 
     private String parseBodyPart(BodyPart bodyPart) throws MessagingException, IOException {
