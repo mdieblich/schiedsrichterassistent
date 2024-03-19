@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 
+@SuppressWarnings("unused")
 @RestController
 public class MailController {
     @Value("${openrouteservice.apikey}")

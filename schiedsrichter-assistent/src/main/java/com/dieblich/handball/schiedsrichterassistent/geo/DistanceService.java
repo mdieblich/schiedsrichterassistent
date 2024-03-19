@@ -6,8 +6,8 @@ import java.util.Optional;
 
 public class DistanceService {
 
-    private GeoCodeService geoCodeService;
-    private DirectionService directionService;
+    private final GeoCodeService geoCodeService;
+    private final DirectionService directionService;
 
     public DistanceService(String apikey){
         this(new GeoCodeService(apikey), new DirectionService(apikey));
