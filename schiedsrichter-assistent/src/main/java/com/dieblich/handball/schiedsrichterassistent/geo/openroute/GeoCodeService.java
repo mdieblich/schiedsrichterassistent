@@ -28,7 +28,7 @@ public class GeoCodeService extends OpenRouteService{
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<GeoCode> response = restTemplate.exchange("https://api.openrouteservice.org/geocode/search?api_key="+getApikey()+"&size=1&text="+encodedAddress, HttpMethod.GET, requestEntity, GeoCode.class);
+        ResponseEntity<GeoCode> response = restTemplate.exchange("https://api.openrouteservice.org/geocode/search?api_key="+getApikey()+"&text="+encodedAddress+"&size=1", HttpMethod.GET, requestEntity, GeoCode.class);
 
         return Optional.ofNullable(response.getBody())
                 .flatMap(GeoCode::firstFeature)

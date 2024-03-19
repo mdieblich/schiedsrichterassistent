@@ -1,7 +1,10 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
+import com.dieblich.handball.schiedsrichterassistent.geo.DistanceService;
+import jakarta.annotation.PostConstruct;
 import jakarta.mail.Folder;
 import jakarta.mail.MessagingException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -9,25 +12,29 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 
-@SuppressWarnings("unused")
 @RestController
 public class MailController {
+    @Value("${openrouteservice.apikey}")
+    private String openRouteApikey;
 
-    private final EmailServerRead stratoRead;
-    private final EmailServerSend stratoSend;
+    @Value("${mail.imap.host}")
+    private String imapHost;
+    @Value("${mail.smtp.host}")
+    private String smtpHost;
+    @Value("${mail.user}")
+    private String botUsername;
+    @Value("${mail.password}")
+    private String botPassword;
 
-    public MailController() {
-        stratoRead = new EmailServerRead(
-                "imap.strato.de",
-                993,
-                "schiribot@fritz.koeln",
-                "tnMjQhgRaaTGomq-qBV*tyoA97t7Z!hB");
-        stratoSend = new EmailServerSend(
-                "smtp.strato.de",
-                587,
-                "schiribot@fritz.koeln",
-                "tnMjQhgRaaTGomq-qBV*tyoA97t7Z!hB"
-        );
+    private EmailServerRead stratoRead;
+    private EmailServerSend stratoSend;
+    private DistanceService distanceService;
+
+    @PostConstruct
+    public void init() {
+        stratoRead = new EmailServerRead(imapHost,993,botUsername,botPassword);
+        stratoSend = new EmailServerSend(smtpHost,587,botUsername,botPassword);
+        distanceService = new DistanceService(openRouteApikey);
     }
 
     @PostMapping("/checkFolderStructure")
@@ -88,7 +95,7 @@ public class MailController {
                 askForRegistration(unknownSender);
             }
         } finally {
-            inbox.deleteAll();
+            //inbox.deleteAll();
         }
     }
 
@@ -105,7 +112,7 @@ public class MailController {
         UserConfiguration oldConfig = stratoRead.loadUserConfiguration(sender);
 
         // TODO hier weitermachen: Address-Update in GeoLocation umwandeln
-        oldConfig.updateWith(email.getContent(), (String newAddress)-> Optional.empty());
+        oldConfig.updateWith(email.getContent(), distanceService::addressToGeoLocation);
         stratoRead.overwriteUserConfiguration(oldConfig);
     }
 
@@ -117,7 +124,6 @@ public class MailController {
     private void handleEmail(Email email) throws MessagingException, IOException {
         System.out.println("HANDLE: " + email.getFrom() + " - " + email.getContent());
     }
-
 
     private String returnErrorAsString(Exception ex) {
         StringWriter sw = new StringWriter();

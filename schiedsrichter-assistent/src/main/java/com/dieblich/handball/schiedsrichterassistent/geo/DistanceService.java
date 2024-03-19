@@ -1,12 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.geo;
 
-import com.dieblich.handball.schiedsrichterassistent.geo.Distance;
 import com.dieblich.handball.schiedsrichterassistent.geo.openroute.*;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
@@ -21,6 +15,11 @@ public class DistanceService {
     public DistanceService(GeoCodeService geoCodeService, DirectionService directionService){
         this.geoCodeService = geoCodeService;
         this.directionService = directionService;
+    }
+
+    public Optional<String> addressToGeoLocation(String address){
+        Optional<Point> location = geoCodeService.getPointForAddress(address);
+        return location.map(p -> p.coordinates()[0] + "," + p.coordinates()[1]);
     }
 
     public Optional<Distance> getTestDistance(){
