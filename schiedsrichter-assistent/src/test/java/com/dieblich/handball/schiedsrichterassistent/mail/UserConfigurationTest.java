@@ -111,19 +111,19 @@ class UserConfigurationTest {
     @Test
     public void addressIsNew_true_ifItWasNotThereBefore() throws IOException {
         UserConfiguration config = new UserConfiguration("", "");
-        Map<String, String> update = Map.of(UserConfiguration.ADRESSE, "Musterstr. 5");
+        Map<String, String> update = Map.of(UserConfiguration.SCHIRI_ADRESSE, "Musterstr. 5");
         assertTrue(config.addressIsNew(update));
     }
     @Test
     public void addressIsNew_false_ifTheSame() throws IOException {
-        UserConfiguration config = new UserConfiguration("", UserConfiguration.ADRESSE+"=Musterstr. 5");
-        Map<String, String> update = Map.of(UserConfiguration.ADRESSE, "Musterstr. 5");
+        UserConfiguration config = new UserConfiguration("", UserConfiguration.SCHIRI_ADRESSE +"=Musterstr. 5");
+        Map<String, String> update = Map.of(UserConfiguration.SCHIRI_ADRESSE, "Musterstr. 5");
         assertFalse(config.addressIsNew(update));
     }
     @Test
     public void addressIsNew_true_ifDiffers() throws IOException {
-        UserConfiguration config = new UserConfiguration("", UserConfiguration.ADRESSE+"=Musterstr. 5");
-        Map<String, String> update = Map.of(UserConfiguration.ADRESSE, "Musterstr. 6");
+        UserConfiguration config = new UserConfiguration("", UserConfiguration.SCHIRI_ADRESSE +"=Musterstr. 5");
+        Map<String, String> update = Map.of(UserConfiguration.SCHIRI_ADRESSE, "Musterstr. 6");
         assertTrue(config.addressIsNew(update));
     }
 

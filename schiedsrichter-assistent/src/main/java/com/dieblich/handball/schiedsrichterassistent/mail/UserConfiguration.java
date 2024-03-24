@@ -9,20 +9,20 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class UserConfiguration{
 
-    // TODO in EnumKlasse auslagern mit den Attributen "Key", "DefaultValue", "IsMandatory"
+    // TODO in Sub-Record-Klassen auslagern
     public static final String UMZIEHEN_DAUER_IN_MINUTEN = "Umziehen.DauerInMinuten";
     public static final String TECHNISCHE_BESPRECHUNG_OBERLIGA_DAUER_IN_MINUTEN = "TechnischeBesprechung.Oberliga.DauerInMinuten";
     public static final String TECHNISCHE_BESPRECHUNG_UNTER_OBERLIGA_DAUER_IN_MINUTEN = "TechnischeBesprechung.UnterOberliga.DauerInMinuten";
 
-    public static final String ADRESSE = "Adresse";
-    public static final String ADRESSE_GEOLOCATION = "Adresse.GeoLocation";
+    public static final String SCHIRI_VORNAME = "Schiri.Vorname";
+    public static final String SCHIRI_NACHNAME = "Schiri.Nachname";
+    public static final String SCHIRI_ADRESSE = "Schiri.Adresse";
+    public static final String SCHIRI_GEOLOCATION = "Schiri.GeoLocation";
 
     private static final Map<String, String> DEFAULT_CONFIG = Map.ofEntries(
             new AbstractMap.SimpleEntry<>(UMZIEHEN_DAUER_IN_MINUTEN, "15"),
@@ -31,11 +31,13 @@ public class UserConfiguration{
     );
 
     private static final Set<String> MANDATORY_CONFIG = Set.of(
-            ADRESSE
+            SCHIRI_VORNAME,
+            SCHIRI_NACHNAME,
+            SCHIRI_ADRESSE
     );
 
     private static final Set<String> OPTIONAL_CONFIG = Set.of(
-            ADRESSE_GEOLOCATION
+            SCHIRI_GEOLOCATION
     );
 
     private static final Set<String> ALL_CONFIG_KEYS;// = getAllConfigKeys();
@@ -111,11 +113,11 @@ public class UserConfiguration{
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         if(addressIsNew(allowedKeyValuePairs)){
-            Optional<String> optionalGeoLocation = addressToGeoLocation.apply(allowedKeyValuePairs.get(ADRESSE));
+            Optional<String> optionalGeoLocation = addressToGeoLocation.apply(allowedKeyValuePairs.get(SCHIRI_ADRESSE));
             if(optionalGeoLocation.isEmpty()){
-                allowedKeyValuePairs.remove(ADRESSE);
+                allowedKeyValuePairs.remove(SCHIRI_ADRESSE);
             } else {
-                allowedKeyValuePairs.put(ADRESSE_GEOLOCATION, optionalGeoLocation.get());
+                allowedKeyValuePairs.put(SCHIRI_GEOLOCATION, optionalGeoLocation.get());
             }
         }
 
@@ -156,8 +158,8 @@ public class UserConfiguration{
         return keyValuePairs;
     }
     boolean addressIsNew(Map<String, String> newConfig) {
-        String oldAddress = configuration.getProperty(ADRESSE);
-        String newAddress = newConfig.get(ADRESSE);
+        String oldAddress = configuration.getProperty(SCHIRI_ADRESSE);
+        String newAddress = newConfig.get(SCHIRI_ADRESSE);
         if(newAddress == null){
             return false;
         }

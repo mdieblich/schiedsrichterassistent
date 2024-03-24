@@ -16,15 +16,19 @@ public class WelcomeEmail extends Email{
                 
                 Grundsätzlich reicht es, wenn du mir Ansetzungsemails zuschickt - ich antworte dir dann in ca. 5 Minuten.
                 
-                Bevor es losgeht, brauche ich aber aber noch deine Adresse von dir. Die benötige ich, damit ich deine
-                Fahrzeiten und Fahrtstrecke berechnen kann. Bitte antworte mir daher auf diese Email, wo in der ersten
-                Zeile folgendes steht:
-                    Adresse=Musterstraße 17, 54321 Köln
-                Dabei gibst du natürlich deine richtige Adresse an.
+                Bevor es losgeht, brauche ich aber aber noch deinen Namen und deine Adresse von dir. Den Namen benötige
+                ich, damit ich dich in den Ansetzungs-Emails erkenne. Deine Adresse benötige ich, damit ich deine
+                Fahrzeiten und Fahrtstrecke berechnen kann. 
                 
-                Ich speichere mir dann von dir:
+                Bitte schick mir daher zuerst eine Email mit dem Betreff "Konfiguration", wo in den ersten Zeilen
+                folgendes steht:
+                    Schiri.Vorname=Max
+                    Schiri.Nachname=Musterpfeife
+                    Schiri.Adresse=Musterstraße 17, 54321 Köln
+                Dabei gibst du bitte deinen richtigen Namen + Adresse an.
+                
+                Darüber hinaus speichere ich mir dann von dir:
                 * deine Emailadresse
-                * deine Adresse
                 * deine Änderungen an der Konfiguration (z.B. längerer Puffer vor'm Spiel).
                 
                 Aktuell kannst du deine gespeicherten Daten nicht selbst löschen, bitte wende dich dafür an den
@@ -32,7 +36,7 @@ public class WelcomeEmail extends Email{
                 
                 Ich speichere grundsätzlich keine Emails. ICH LÖSCHE ALLE EMAILS, die du mir zuschickst.
                 Falls du mir also schon eine Ansetzungsemail zugeschickt hast, so musst du das erneut tun, nachdem du
-                mir deine Adresse zugeschickt hast.
+                mir die obige Konfiguration zugeschickt hast.
                 
                 Viele Grüße,
                 der Schiribot
