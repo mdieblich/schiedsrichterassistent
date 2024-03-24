@@ -1,6 +1,8 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
+import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.geo.DistanceService;
+import com.dieblich.handball.schiedsrichterassistent.mail.received.AnsetzungsEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.AskForConfigurationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.ConfigConfirmationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.DontKnowWhatToDoEmail;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.LocalDate;
 import java.util.*;
 
 @SuppressWarnings("unused")
@@ -140,7 +143,11 @@ public class MailController {
 
     private void handleEmail(String sender, Email email, UserConfiguration userConfig) throws MessagingException, IOException {
         if(isAnsetzung(email)){
-            System.out.println("HANDLE: " + email.getFrom() + " - " + email.getContent());
+            AnsetzungsEmail ansetzungsEmail = new AnsetzungsEmail(email);
+            SchiriEinsatz schiriEinsatz = ansetzungsEmail.extractSchiriEinsatz();
+            // TODO Termin daraus erstellen und zuschicken
+            System.out.println(schiriEinsatz);
+
         } else {
             DontKnowWhatToDoEmail response = stratoSend.createResponseForUnknownEmail(sender, email);
             response.send();
