@@ -10,7 +10,6 @@ import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class UserConfiguration{
 
@@ -106,26 +105,50 @@ public class UserConfiguration{
     }
 
     public void updateWith(String configUpdate, Function<String, Optional<String>> addressToGeoLocation) {
-        List<String> validLines = extractFirstValidLines(configUpdate);
-        Map<String, String> keyValuePairs = toKeyValuePairs(validLines);
-        Map<String, String> allowedKeyValuePairs = keyValuePairs.entrySet().stream()
-                .filter(entry -> ALL_CONFIG_KEYS.contains(entry.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        UserLog notUsed = new UserLog();
+        updateWith(configUpdate, addressToGeoLocation, notUsed);
+    }
+
+    public void updateWith(String configUpdate, Function<String, Optional<String>> addressToGeoLocation, UserLog log) {
+        List<String> validLines = extractFirstValidLines(configUpdate, log);
+        Map<String, String> keyValuePairs = toKeyValuePairs(validLines, log);
+        Map<String, String> allowedKeyValuePairs = filterAllowedKeys(keyValuePairs, log);
 
         if(addressIsNew(allowedKeyValuePairs)){
             Optional<String> optionalGeoLocation = addressToGeoLocation.apply(allowedKeyValuePairs.get(SCHIRI_ADRESSE));
             if(optionalGeoLocation.isEmpty()){
                 allowedKeyValuePairs.remove(SCHIRI_ADRESSE);
+                log.log("Die neue Adresse wird nicht übernommen, da der Breiten- und Längengrad bestimmt werden konnte.");
+                log.log("FALLS DAS PROBLEM WIEDERHOLT AUFTRITT SO KANNST DU FOLGENDES TUN:");
+                log.log("1. Bestimme mithilfe eines Kartendienstes (z.B. https://www.gpskoordinaten.de/) deinen Längen- und Breitengrad.");
+                log.log("2. Sende mir eine Konfigurationsemail mit der Zeile \"Schiri.GeoLocation=6.9582,50.9411\"");
+                log.log("   Beachte bitte, dass der Längengrad zuerst angegeben werden muss und dass du min. 4-Nachkommastellen verwendest.");
+                log.log("   Verwendet wird das Koordinatensystem WGS 84");
+
             } else {
                 allowedKeyValuePairs.put(SCHIRI_GEOLOCATION, optionalGeoLocation.get());
+                log.log("Erfolgreich neue Koordination übernommen: " + optionalGeoLocation.get());
             }
         }
 
         configuration.putAll(allowedKeyValuePairs);
     }
 
+    private static Map<String, String> filterAllowedKeys(Map<String, String> keyValuePairs, UserLog log) {
+        Map<String, String> validKeyValuePairs = new HashMap<>();
+        for(Map.Entry<String, String> entry:keyValuePairs.entrySet()){
+            if(ALL_CONFIG_KEYS.contains(entry.getKey())){
+                validKeyValuePairs.put(entry.getKey(), entry.getValue());
+            } else {
+                log.log("Eintrag "+entry.getKey()+"="+entry.getValue()+" wird ignoriert, "+
+                        "da es keine bekannte Konfiugurationsoption ist.");
+            }
+        }
+        return validKeyValuePairs;
+    }
 
-    private List<String> extractFirstValidLines(String content){
+
+    private List<String> extractFirstValidLines(String content, UserLog log){
         String[] allLines = content.split("\\r?\\n|\\r");
         List<String> validLines = new ArrayList<>();
         for (String line: allLines) {
@@ -134,10 +157,11 @@ public class UserConfiguration{
                 // ignore Empty lines
                 //noinspection UnnecessaryContinue
                 continue;
-            } else if(trimmedLine.matches("([\\w\\d.]*) *= *(.*)")){
+            } else if(trimmedLine.matches("([\\w.]*) *= *(.*)")){
                 // this is a config-line "config.key = some value"
                 validLines.add(trimmedLine);
             } else {
+                log.log("Stoppe das Interpretieren der Konfiguration ab Zeile >>"+trimmedLine+"<<");
                 // stop if there are strange lines
                 break;
             }
@@ -145,11 +169,12 @@ public class UserConfiguration{
         return validLines;
     }
 
-    private Map<String, String> toKeyValuePairs(List<String> lines){
+    private Map<String, String> toKeyValuePairs(List<String> lines, UserLog log){
         Map<String, String> keyValuePairs = new HashMap<>();
         for (String line:lines) {
             String[] lineParts = line.split("=");
             if(lineParts.length != 2){
+                log.log("Die Zeile >>"+line+"<< wird ignoriert, da sie nicht dem Format \"ABC=XYZ\" entspricht");
                 continue;
             }
             String key = lineParts[0];

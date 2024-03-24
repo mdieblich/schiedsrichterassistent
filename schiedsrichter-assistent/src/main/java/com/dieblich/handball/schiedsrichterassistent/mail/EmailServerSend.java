@@ -30,7 +30,7 @@ public class EmailServerSend {
         return new WelcomeEmail(botEmailAddress, schiriEmailAddress, session);
     }
 
-    public ConfigConfirmationEmail createConfigConfirmationEmail(String schiriEmailAddress, UserConfiguration currentConfig) throws MessagingException {
-        return new ConfigConfirmationEmail(botEmailAddress, schiriEmailAddress, currentConfig, session);
+    public ConfigConfirmationEmail createConfigConfirmationEmail(String schiriEmailAddress, UserConfiguration currentConfig, UserLog log) throws MessagingException {
+        return new ConfigConfirmationEmail(botEmailAddress, schiriEmailAddress, currentConfig, log, session);
     }
 }

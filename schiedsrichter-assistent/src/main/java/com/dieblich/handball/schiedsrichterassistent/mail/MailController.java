@@ -114,9 +114,10 @@ public class MailController {
         String sender = email.getFrom().get();
         UserConfiguration oldConfig = stratoRead.loadUserConfiguration(sender);
 
-        oldConfig.updateWith(email.getContent(), distanceService::addressToGeoLocation);
+        UserLog log = new UserLog();
+        oldConfig.updateWith(email.getContent(), distanceService::addressToGeoLocation, log);
         stratoRead.overwriteUserConfiguration(oldConfig);
-        ConfigConfirmationEmail responseEmail = stratoSend.createConfigConfirmationEmail(sender, oldConfig);
+        ConfigConfirmationEmail responseEmail = stratoSend.createConfigConfirmationEmail(sender, oldConfig, log);
         responseEmail.send();
     }
 
