@@ -18,7 +18,7 @@ public class ConfigConfirmationEmail extends Email {
         setSubject(SUBJECT);
         setContent("""
                 Ich habe deine Konfigurationsänderung erhalten. Die vollständige Konfiguration siehst du unten.
-                Solltest du etwas vermissen, so findest du noch weiter unten mein (Fehler-)Protokoll. 
+                Solltest du etwas vermissen, so findest du noch weiter unten mein (Fehler-)Protokoll.
                 
                 Du kannst deine Konfiguration jederzeit ändern, wenn du mir eine Email mit dem Betreff "Konfiguration"
                 zuschickst. Inhalt der Email sollten ausschließlich die Einstellungen sein, die du ändern möchtest.
