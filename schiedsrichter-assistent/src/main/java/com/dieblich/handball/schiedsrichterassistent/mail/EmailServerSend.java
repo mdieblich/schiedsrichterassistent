@@ -1,9 +1,11 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
+import com.dieblich.handball.schiedsrichterassistent.mail.templates.AskForConfigurationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.ConfigConfirmationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.WelcomeEmail;
 import jakarta.mail.*;
 
+import java.util.List;
 import java.util.Properties;
 
 public class EmailServerSend {
@@ -32,5 +34,9 @@ public class EmailServerSend {
 
     public ConfigConfirmationEmail createConfigConfirmationEmail(String schiriEmailAddress, UserConfiguration currentConfig, UserLog log) throws MessagingException {
         return new ConfigConfirmationEmail(botEmailAddress, schiriEmailAddress, currentConfig, log, session);
+    }
+
+    public AskForConfigurationEmail createAskForConfigEmail(String schiriEmailAddress, List<String> missingConfigKeys) throws MessagingException {
+        return new AskForConfigurationEmail(botEmailAddress, schiriEmailAddress, missingConfigKeys, session);
     }
 }

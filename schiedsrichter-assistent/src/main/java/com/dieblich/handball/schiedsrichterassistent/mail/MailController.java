@@ -1,6 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import com.dieblich.handball.schiedsrichterassistent.geo.DistanceService;
+import com.dieblich.handball.schiedsrichterassistent.mail.templates.AskForConfigurationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.ConfigConfirmationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.WelcomeEmail;
 import jakarta.annotation.PostConstruct;
@@ -87,7 +88,12 @@ public class MailController {
                     } else if(!unknownSenders.contains(sender)){
                         Optional<UserConfiguration> optionalUserConfig = stratoRead.findConfig(sender);
                         if(optionalUserConfig.isPresent()){
-                            handleEmail(email);
+                            UserConfiguration userConfig = optionalUserConfig.get();
+                            if(userConfig.isComplete()){
+                                handleEmail(email);
+                            } else{
+                                askForMissingConfig(sender, userConfig.getMissingConfigKeys());
+                            }
                         }else{
                             unknownSenders.add(sender);
                         }
@@ -98,8 +104,13 @@ public class MailController {
                 askForRegistration(unknownSender);
             }
         } finally {
-            inbox.deleteAll();
+//            inbox.deleteAll();
         }
+    }
+
+    private void askForMissingConfig(String sender, List<String> missingConfigKeys) throws MessagingException {
+        AskForConfigurationEmail email = stratoSend.createAskForConfigEmail(sender, missingConfigKeys);
+        email.send();
     }
 
     private boolean isConfigUpdate(Email email) throws MessagingException {

@@ -195,6 +195,20 @@ public class UserConfiguration{
         return !newAddress.equals(oldAddress);
     }
 
+    public List<String> getMissingConfigKeys(){
+        List<String> missingConfigKeys = new ArrayList<>();
+
+        for(String mandatoryKey:MANDATORY_CONFIG){
+            if(!configuration.containsKey(mandatoryKey)){
+                missingConfigKeys.add(mandatoryKey);
+            }
+        }
+        return missingConfigKeys;
+    }
+    public boolean isComplete(){
+        return getMissingConfigKeys().isEmpty();
+    }
+
     public int size() {
         return configuration.size();
     }
