@@ -1,5 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
+import com.dieblich.handball.schiedsrichterassistent.mail.templates.ConfigConfirmationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.WelcomeEmail;
 import jakarta.mail.*;
 
@@ -27,5 +28,9 @@ public class EmailServerSend {
 
     public WelcomeEmail createWelcomeEmail(String schiriEmailAddress) throws MessagingException {
         return new WelcomeEmail(botEmailAddress, schiriEmailAddress, session);
+    }
+
+    public ConfigConfirmationEmail createConfigConfirmationEmail(String schiriEmailAddress, UserConfiguration currentConfig) throws MessagingException {
+        return new ConfigConfirmationEmail(botEmailAddress, schiriEmailAddress, currentConfig, session);
     }
 }

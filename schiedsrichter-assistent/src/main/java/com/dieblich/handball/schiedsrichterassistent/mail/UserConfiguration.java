@@ -80,7 +80,7 @@ public class UserConfiguration{
         return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(now);
     }
 
-    private String configToString() {
+    public String configToString() {
         try {
             StringWriter writer = new StringWriter();
             configuration.store(new PrintWriter(writer), null);

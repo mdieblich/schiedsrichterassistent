@@ -1,6 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import com.dieblich.handball.schiedsrichterassistent.geo.DistanceService;
+import com.dieblich.handball.schiedsrichterassistent.mail.templates.ConfigConfirmationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.WelcomeEmail;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.Folder;
@@ -115,6 +116,8 @@ public class MailController {
 
         oldConfig.updateWith(email.getContent(), distanceService::addressToGeoLocation);
         stratoRead.overwriteUserConfiguration(oldConfig);
+        ConfigConfirmationEmail responseEmail = stratoSend.createConfigConfirmationEmail(sender, oldConfig);
+        responseEmail.send();
     }
 
     private void askForRegistration(String newUserEmail) throws MessagingException{
