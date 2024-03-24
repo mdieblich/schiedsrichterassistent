@@ -21,20 +21,22 @@ public class ConfigConfirmationEmail extends Email {
                 Solltest du etwas vermissen, so findest du noch weiter unten mein (Fehler-)Protokoll. 
                 
                 Du kannst deine Konfiguration jederzeit ändern, wenn du mir eine Email mit dem Betreff "Konfiguration"
-                zuschickst. Inhalt der Email sollten ausschlißelich die Einstellungen sein, die du ändern möchtest.
+                zuschickst. Inhalt der Email sollten ausschließlich die Einstellungen sein, die du ändern möchtest.
                 """ +
                 "Die \""+SCHIRI_GEOLOCATION+"\" wird automatisch aktualisiert, wenn du die Adresse änderst.\n\n"+
                 """
-                ------------------------------------------------------------
+                ---------- KONFIGURATION START -------------------------------
                 """ + currentConfig.configToString() + """
-                ------------------------------------------------------------
+                ---------- KONFIGURATION ENDE --------------------------------
                                 
                 Viele Grüße,
                 der Schiribot
                 
                 Eine Kreation von Martin Fritz
-                ------------------------------------------------------------
-                """ + log.createOutput()
+                ---------- FEHLERPROTOKOLL START -----------------------------
+                """ + log.createOutput() + """
+                ---------- FEHLERPROTOKOLL ENDE ------------------------------
+                """
                 );
     }
 }
