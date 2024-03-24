@@ -113,7 +113,6 @@ public class MailController {
         String sender = email.getFrom().get();
         UserConfiguration oldConfig = stratoRead.loadUserConfiguration(sender);
 
-        // TODO hier weitermachen: Address-Update in GeoLocation umwandeln
         oldConfig.updateWith(email.getContent(), distanceService::addressToGeoLocation);
         stratoRead.overwriteUserConfiguration(oldConfig);
     }
