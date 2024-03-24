@@ -3,6 +3,7 @@ package com.dieblich.handball.schiedsrichterassistent.mail;
 import com.dieblich.handball.schiedsrichterassistent.geo.DistanceService;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.AskForConfigurationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.ConfigConfirmationEmail;
+import com.dieblich.handball.schiedsrichterassistent.mail.templates.DontKnowWhatToDoEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.WelcomeEmail;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.Folder;
@@ -90,7 +91,7 @@ public class MailController {
                         if(optionalUserConfig.isPresent()){
                             UserConfiguration userConfig = optionalUserConfig.get();
                             if(userConfig.isComplete()){
-                                handleEmail(email);
+                                handleEmail(sender, email, userConfig);
                             } else{
                                 askForMissingConfig(sender, userConfig.getMissingConfigKeys());
                             }
@@ -137,8 +138,17 @@ public class MailController {
         welcomeEmail.send();
     }
 
-    private void handleEmail(Email email) throws MessagingException, IOException {
-        System.out.println("HANDLE: " + email.getFrom() + " - " + email.getContent());
+    private void handleEmail(String sender, Email email, UserConfiguration userConfig) throws MessagingException, IOException {
+        if(isAnsetzung(email)){
+            System.out.println("HANDLE: " + email.getFrom() + " - " + email.getContent());
+        } else {
+            DontKnowWhatToDoEmail response = stratoSend.createResponseForUnknownEmail(sender, email);
+            response.send();
+        }
+    }
+
+    private boolean isAnsetzung(Email email) throws MessagingException {
+        return email.getSubject().contains("Spielansetzung");
     }
 
     private String returnErrorAsString(Exception ex) {
