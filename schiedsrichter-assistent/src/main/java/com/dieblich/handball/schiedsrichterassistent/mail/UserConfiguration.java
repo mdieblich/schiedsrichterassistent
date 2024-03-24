@@ -132,6 +132,7 @@ public class UserConfiguration{
             String trimmedLine = line.trim();
             if (trimmedLine.isEmpty()){
                 // ignore Empty lines
+                //noinspection UnnecessaryContinue
                 continue;
             } else if(trimmedLine.matches("([\\w\\d.]*) *= *(.*)")){
                 // this is a config-line "config.key = some value"

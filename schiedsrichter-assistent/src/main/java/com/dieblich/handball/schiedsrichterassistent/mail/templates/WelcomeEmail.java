@@ -19,7 +19,7 @@ public class WelcomeEmail extends Email {
                 
                 Bevor es losgeht, brauche ich aber aber noch deinen Namen und deine Adresse von dir. Den Namen benötige
                 ich, damit ich dich in den Ansetzungs-Emails erkenne. Deine Adresse benötige ich, damit ich deine
-                Fahrzeiten und Fahrtstrecke berechnen kann. 
+                Fahrzeiten und Fahrtstrecke berechnen kann.
                 
                 Bitte schick mir daher zuerst eine Email mit dem Betreff "Konfiguration", wo in den ersten Zeilen
                 folgendes steht:
