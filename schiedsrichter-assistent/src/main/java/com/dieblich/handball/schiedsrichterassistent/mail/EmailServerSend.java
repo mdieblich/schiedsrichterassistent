@@ -1,5 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
+import com.dieblich.handball.schiedsrichterassistent.mail.templates.WelcomeEmail;
 import jakarta.mail.*;
 
 import java.util.Properties;

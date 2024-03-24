@@ -1,6 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import com.dieblich.handball.schiedsrichterassistent.geo.DistanceService;
+import com.dieblich.handball.schiedsrichterassistent.mail.templates.WelcomeEmail;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.Folder;
 import jakarta.mail.MessagingException;

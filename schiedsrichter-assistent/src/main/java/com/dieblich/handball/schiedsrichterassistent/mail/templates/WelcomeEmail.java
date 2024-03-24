@@ -1,9 +1,10 @@
-package com.dieblich.handball.schiedsrichterassistent.mail;
+package com.dieblich.handball.schiedsrichterassistent.mail.templates;
 
+import com.dieblich.handball.schiedsrichterassistent.mail.Email;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 
-public class WelcomeEmail extends Email{
+public class WelcomeEmail extends Email {
 
     public static final String SUBJECT = "Willkommen beim Schiribot!";
     public WelcomeEmail(String sender, String receiver, Session session) throws MessagingException {
