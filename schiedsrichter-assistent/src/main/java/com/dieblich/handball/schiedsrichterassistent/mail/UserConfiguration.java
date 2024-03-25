@@ -15,8 +15,13 @@ public class UserConfiguration{
 
     // TODO in Sub-Record-Klassen auslagern
     public static final String UMZIEHEN_DAUER_IN_MINUTEN = "Umziehen.DauerInMinuten";
-    public static final String TECHNISCHE_BESPRECHUNG_OBERLIGA_DAUER_IN_MINUTEN = "TechnischeBesprechung.Oberliga.DauerInMinuten";
-    public static final String TECHNISCHE_BESPRECHUNG_UNTER_OBERLIGA_DAUER_IN_MINUTEN = "TechnischeBesprechung.UnterOberliga.DauerInMinuten";
+
+
+    public static final String TECHNISCHE_BESPRECHUNG = "TechnischeBesprechung";
+    public static final String DAUER_IN_MINUTEN = "DauerInMinuten";
+    public static final String TECHNISCHE_BESPRECHUNG_REGIONALLIGA_DAUER_IN_MINUTEN = TECHNISCHE_BESPRECHUNG+".Regionalliga."+DAUER_IN_MINUTEN;
+    public static final String TECHNISCHE_BESPRECHUNG_OBERLIGA_DAUER_IN_MINUTEN = TECHNISCHE_BESPRECHUNG+".Oberliga."+DAUER_IN_MINUTEN;
+    public static final String TECHNISCHE_BESPRECHUNG_ANDERE_LIGEN_DAUER_IN_MINUTEN = TECHNISCHE_BESPRECHUNG+".AndereLigen."+DAUER_IN_MINUTEN;
 
     public static final String SCHIRI_VORNAME = "Schiri.Vorname";
     public static final String SCHIRI_NACHNAME = "Schiri.Nachname";
@@ -25,8 +30,9 @@ public class UserConfiguration{
 
     private static final Map<String, String> DEFAULT_CONFIG = Map.ofEntries(
             new AbstractMap.SimpleEntry<>(UMZIEHEN_DAUER_IN_MINUTEN, "15"),
+            new AbstractMap.SimpleEntry<>(TECHNISCHE_BESPRECHUNG_REGIONALLIGA_DAUER_IN_MINUTEN, "45"),
             new AbstractMap.SimpleEntry<>(TECHNISCHE_BESPRECHUNG_OBERLIGA_DAUER_IN_MINUTEN, "45"),
-            new AbstractMap.SimpleEntry<>(TECHNISCHE_BESPRECHUNG_UNTER_OBERLIGA_DAUER_IN_MINUTEN, "30")
+            new AbstractMap.SimpleEntry<>(TECHNISCHE_BESPRECHUNG_ANDERE_LIGEN_DAUER_IN_MINUTEN, "30")
     );
 
     private static final Set<String> MANDATORY_CONFIG = Set.of(
@@ -216,5 +222,38 @@ public class UserConfiguration{
     public Optional<String> get(String key) {
         String value = configuration.getProperty(key);
         return Optional.ofNullable(value);
+    }
+
+    public Optional<Integer> getTechnischeBesprechung(String liga) {
+        Optional<String> optionalLigaName = findLigaName(liga);
+        if(optionalLigaName.isEmpty()){
+            return Optional.empty();
+        }
+
+        String dauerString = configuration.getProperty(TECHNISCHE_BESPRECHUNG+"."+optionalLigaName.get()+"."+DAUER_IN_MINUTEN);
+        if(dauerString == null){
+            dauerString = configuration.getProperty(TECHNISCHE_BESPRECHUNG_ANDERE_LIGEN_DAUER_IN_MINUTEN);
+        }
+        if(dauerString == null){
+            return Optional.empty();
+        }
+
+        try{
+            int dauer = Integer.parseInt(dauerString);
+            return Optional.of(dauer);
+        } catch(NumberFormatException e){
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<String> findLigaName(String liga){
+        String[] ligaParts = liga.split(" ");
+        for(String ligaPart:ligaParts){
+            String lowerCaseliga = ligaPart.toLowerCase();
+            if(lowerCaseliga.contains("liga") || lowerCaseliga.contains("klasse")){
+                return Optional.of(ligaPart);
+            }
+        }
+        return Optional.empty();
     }
 }
