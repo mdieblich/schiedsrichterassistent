@@ -22,6 +22,7 @@ dependencies {
 	implementation 'jakarta.mail:jakarta.mail-api'
 	implementation 'org.eclipse.angus:angus-mail:2.0.2'
 	implementation 'org.jsoup:jsoup:1.17.2'
+	implementation 'net.sf.biweekly:biweekly:0.6.8'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
