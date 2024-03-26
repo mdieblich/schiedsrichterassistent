@@ -224,8 +224,8 @@ public class UserConfiguration{
         return Optional.ofNullable(value);
     }
 
-    public int getTechnischeBesprechung(String liga) {
-        String ligaName = findLigaName(liga);
+    public int getTechnischeBesprechung(String ligaBezeichnungAusEmail) {
+        String ligaName = findLigaName(ligaBezeichnungAusEmail);
 
         String dauerString = configuration.getProperty(TECHNISCHE_BESPRECHUNG+"."+ligaName+"."+DAUER_IN_MINUTEN);
         if(dauerString == null){
@@ -233,7 +233,7 @@ public class UserConfiguration{
         }
         if(dauerString == null){
             throw new RuntimeException("Konfiguration fehlerhaft: Die Default-Konfiguration "+TECHNISCHE_BESPRECHUNG_ANDERE_LIGEN_DAUER_IN_MINUTEN+" konnte nicht gefunden werden.\n"+
-                    "Benutzer: " + this.userEmail + ", Liga-Bezeichung aus Email: " + liga + ", extrahierte Liga-Bezeichnung: " + ligaName);
+                    "Benutzer: " + this.userEmail + ", Liga-Bezeichung aus Email: " + ligaBezeichnungAusEmail + ", extrahierte Liga-Bezeichnung: " + ligaName);
         }
 
         try{
@@ -241,20 +241,20 @@ public class UserConfiguration{
         } catch(NumberFormatException e){
             throw new RuntimeException("Konfiguration fehlerhaft: die dauer der technischen Besprechung scheint keine Zahl zu sein.\n"+
                     "Benutzer: " + this.userEmail + ", "+
-                    "Liga-Bezeichung aus Email: " + liga + ", "+
+                    "Liga-Bezeichung aus Email: " + ligaBezeichnungAusEmail + ", "+
                     "extrahierte Liga-Bezeichnung: " + ligaName + ", " +
                     "Dauer der technischen Besprechung: \""+dauerString+"\"", e);
         }
     }
 
-    public static String findLigaName(String liga){
-        String[] ligaParts = liga.split(" ");
+    public static String findLigaName(String ligaBezeichnungAusEmail){
+        String[] ligaParts = ligaBezeichnungAusEmail.split(" ");
         for(String ligaPart:ligaParts){
             String lowerCaseliga = ligaPart.toLowerCase();
             if(lowerCaseliga.contains("liga") || lowerCaseliga.contains("klasse")){
                 return ligaPart;
             }
         }
-        throw new IllegalArgumentException("Aus der Liga-Bezeichung \""+liga+"\" konnte nicht die Liga oder Klasse extrahiert werden");
+        throw new IllegalArgumentException("Aus der Liga-Bezeichung \""+ligaBezeichnungAusEmail+"\" konnte nicht die Liga oder Klasse extrahiert werden");
     }
 }
