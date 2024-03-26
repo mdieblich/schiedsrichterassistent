@@ -141,10 +141,15 @@ class UserConfigurationTest {
             "Irgendwie Regionalliga weibliche Jugend A,Regionalliga",
     })
     public void findLigaName(String gruppe, String expectedLiga) {
-        Optional<String> optionalLiga = UserConfiguration.findLigaName(gruppe);
-        assertTrue(optionalLiga.isPresent());
-        assertEquals(expectedLiga, optionalLiga.get());
+        String optionalLiga = UserConfiguration.findLigaName(gruppe);
+        assertEquals(expectedLiga, optionalLiga);
     }
+
+    @Test
+    public void findLigaNameThrowsException(){
+        assertThrows(IllegalArgumentException.class,() -> UserConfiguration.findLigaName("aaabbbccc"));
+    }
+
     @ParameterizedTest
     @CsvSource({
             "Kreisliga Männer,30",
@@ -157,15 +162,32 @@ class UserConfigurationTest {
     })
     public void getTechnischeBesprechung(String liga, int expectedDauer) throws IOException {
         UserConfiguration config = new UserConfiguration("",
-    TECHNISCHE_BESPRECHUNG_REGIONALLIGA_DAUER_IN_MINUTEN+"=45\n"+
-            TECHNISCHE_BESPRECHUNG_OBERLIGA_DAUER_IN_MINUTEN+"=45\n"+
-            TECHNISCHE_BESPRECHUNG_ANDERE_LIGEN_DAUER_IN_MINUTEN+"=30\n"
+                TECHNISCHE_BESPRECHUNG_REGIONALLIGA_DAUER_IN_MINUTEN+"=45\n"+
+                        TECHNISCHE_BESPRECHUNG_OBERLIGA_DAUER_IN_MINUTEN+"=45\n"+
+                        TECHNISCHE_BESPRECHUNG_ANDERE_LIGEN_DAUER_IN_MINUTEN+"=30\n"
         );
 
-        Optional<Integer> optionalDauer = config.getTechnischeBesprechung(liga);
-        assertTrue(optionalDauer.isPresent());
-        assertEquals(expectedDauer, optionalDauer.get());
+        int dauer = config.getTechnischeBesprechung(liga);
+        assertEquals(expectedDauer,dauer);
 
+    }
+    @Test
+    public void getTechnischeBesprechungFailsOnMissingConfig() throws IOException {
+        UserConfiguration config = new UserConfiguration("",
+                TECHNISCHE_BESPRECHUNG_REGIONALLIGA_DAUER_IN_MINUTEN+"=45\n"+
+                        TECHNISCHE_BESPRECHUNG_OBERLIGA_DAUER_IN_MINUTEN+"=45"
+                // mising: TECHNISCHE_BESPRECHUNG_ANDERE_LIGEN_DAUER_IN_MINUTEN
+        );
+
+        assertThrows(RuntimeException.class, () -> config.getTechnischeBesprechung("Kreisliga"));
+    }
+    @Test
+    public void getTechnischeBesprechungFailsOnNotANumber() throws IOException {
+        UserConfiguration config = new UserConfiguration("",
+                        TECHNISCHE_BESPRECHUNG_OBERLIGA_DAUER_IN_MINUTEN+"=keks"
+        );
+
+        assertThrows(RuntimeException.class, () -> config.getTechnischeBesprechung("Oberliga"));
     }
 
     private final Function<String, Optional<String>> doNotFindGeoLocation = (String o) -> Optional.empty();

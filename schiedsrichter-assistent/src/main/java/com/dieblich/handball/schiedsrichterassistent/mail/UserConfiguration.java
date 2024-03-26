@@ -224,36 +224,37 @@ public class UserConfiguration{
         return Optional.ofNullable(value);
     }
 
-    public Optional<Integer> getTechnischeBesprechung(String liga) {
-        Optional<String> optionalLigaName = findLigaName(liga);
-        if(optionalLigaName.isEmpty()){
-            return Optional.empty();
-        }
+    public int getTechnischeBesprechung(String liga) {
+        String ligaName = findLigaName(liga);
 
-        String dauerString = configuration.getProperty(TECHNISCHE_BESPRECHUNG+"."+optionalLigaName.get()+"."+DAUER_IN_MINUTEN);
+        String dauerString = configuration.getProperty(TECHNISCHE_BESPRECHUNG+"."+ligaName+"."+DAUER_IN_MINUTEN);
         if(dauerString == null){
             dauerString = configuration.getProperty(TECHNISCHE_BESPRECHUNG_ANDERE_LIGEN_DAUER_IN_MINUTEN);
         }
         if(dauerString == null){
-            return Optional.empty();
+            throw new RuntimeException("Konfiguration fehlerhaft: Die Default-Konfiguration "+TECHNISCHE_BESPRECHUNG_ANDERE_LIGEN_DAUER_IN_MINUTEN+" konnte nicht gefunden werden.\n"+
+                    "Benutzer: " + this.userEmail + ", Liga-Bezeichung aus Email: " + liga + ", extrahierte Liga-Bezeichnung: " + ligaName);
         }
 
         try{
-            int dauer = Integer.parseInt(dauerString);
-            return Optional.of(dauer);
+            return Integer.parseInt(dauerString);
         } catch(NumberFormatException e){
-            return Optional.empty();
+            throw new RuntimeException("Konfiguration fehlerhaft: die dauer der technischen Besprechung scheint keine Zahl zu sein.\n"+
+                    "Benutzer: " + this.userEmail + ", "+
+                    "Liga-Bezeichung aus Email: " + liga + ", "+
+                    "extrahierte Liga-Bezeichnung: " + ligaName + ", " +
+                    "Dauer der technischen Besprechung: \""+dauerString+"\"", e);
         }
     }
 
-    public static Optional<String> findLigaName(String liga){
+    public static String findLigaName(String liga){
         String[] ligaParts = liga.split(" ");
         for(String ligaPart:ligaParts){
             String lowerCaseliga = ligaPart.toLowerCase();
             if(lowerCaseliga.contains("liga") || lowerCaseliga.contains("klasse")){
-                return Optional.of(ligaPart);
+                return ligaPart;
             }
         }
-        return Optional.empty();
+        throw new IllegalArgumentException("Aus der Liga-Bezeichung \""+liga+"\" konnte nicht die Liga oder Klasse extrahiert werden");
     }
 }
