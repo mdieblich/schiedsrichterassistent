@@ -81,4 +81,40 @@ class SchiriConfigurationTest {
         JsonNode actualTree = mapper.readTree(json);
         assertEquals(expectedTree, actualTree);
     }
+
+    @Test
+    public void canReadFromJSON() throws JsonProcessingException {
+        String json = """
+        {
+          "Benutzerdaten" : {
+            "Email" : "muster@max.de",
+            "Vorname" : "Max",
+            "Nachname" : "Mustermann",
+            "Adresse" : "Musterstr. 17, 54321 Köln",
+            "Längengrad" : 1.23456,
+            "Breitengrad" : 5.67891
+          },
+          "Spielablauf" : {
+            "PapierKramNachSpiel" : 15,
+            "UmziehenVorSpiel" : 15,
+            "UmziehenNachSpiel" : 15,
+            "TechnischeBesprechung" : {
+              "StandardDauerInMinuten" : 30,
+              "Abweichungen" : {
+                "Oberliga" : 45,
+                "Regionalliga" : 45
+              }
+            }
+          }
+        }
+        """;
+
+        SchiriConfiguration actual = SchiriConfiguration.fromJSON(json);
+
+        SchiriConfiguration expected = new SchiriConfiguration("muster@max.de");
+        expected.Benutzerdaten.Längengrad  = 1.23456;
+        expected.Benutzerdaten.Breitengrad = 5.67891;
+
+        assertEquals(expected, actual);
+    }
 }

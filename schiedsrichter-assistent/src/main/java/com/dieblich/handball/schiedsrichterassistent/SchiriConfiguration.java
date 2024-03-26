@@ -60,4 +60,8 @@ public class SchiriConfiguration {
         return mapper.writeValueAsString(this);
     }
 
+    public static SchiriConfiguration fromJSON(String json) throws JsonProcessingException {
+        return mapper.readValue(json, SchiriConfiguration.class);
+    }
+
 }
