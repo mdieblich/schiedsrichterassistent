@@ -14,6 +14,7 @@ import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("NonAsciiCharacters")
 class SchiriConfigurationTest {
 
     @Test
@@ -321,7 +322,6 @@ class SchiriConfigurationTest {
     public void updateWithWrongTypeDoesNothing() {
         SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
         int umziehenVorher = config.Spielablauf.UmziehenVorSpiel;
-        List<String> log = new ArrayList<>();
         config.updateWith("""
                 {
                 	"Spielablauf": {
@@ -348,8 +348,8 @@ class SchiriConfigurationTest {
         assertEquals(1, log.size());
     }
 
-    private Function<String, Optional<double[]>> fakeAddressToGeoLocation = (String) -> Optional.empty();
-    private Consumer<String> fakeLog = (String) -> {};
+    private final Function<String, Optional<double[]>> fakeAddressToGeoLocation = (String) -> Optional.empty();
+    private final Consumer<String> fakeLog = (String) -> {};
 
 
 }
