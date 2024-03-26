@@ -5,11 +5,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.Map;
 
 @SuppressWarnings("NonAsciiCharacters")
-public class UserConfiguration2{
+public class SchiriConfiguration {
     public Benutzerdaten Benutzerdaten;
     public Spielablauf Spielablauf = new Spielablauf();
 
-    public UserConfiguration2(String email){
+    public SchiriConfiguration(String email){
         Benutzerdaten = new Benutzerdaten(email);
     }
 

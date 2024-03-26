@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserConfiguration2Test {
+class SchiriConfigurationTest {
 
     @Test
     public void hasNiceJSON() throws JsonProcessingException {
-        UserConfiguration2 config = new UserConfiguration2("muster@max.de");
+        SchiriConfiguration config = new SchiriConfiguration("muster@max.de");
         config.Benutzerdaten.Längengrad  = 1.23456;
         config.Benutzerdaten.Breitengrad = 5.67891;
 
@@ -48,7 +48,7 @@ class UserConfiguration2Test {
     }
     @Test
     public void jsonLeavesOutLongitudeAndLatitude() throws JsonProcessingException {
-        UserConfiguration2 config = new UserConfiguration2("muster@max.de");
+        SchiriConfiguration config = new SchiriConfiguration("muster@max.de");
         config.Benutzerdaten.Längengrad  = null;
         config.Benutzerdaten.Breitengrad = null;
 
