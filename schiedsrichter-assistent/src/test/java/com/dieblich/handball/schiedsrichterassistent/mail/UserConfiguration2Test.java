@@ -12,9 +12,6 @@ class UserConfiguration2Test {
     @Test
     public void hasNiceJSON() throws JsonProcessingException {
         UserConfiguration2 config = new UserConfiguration2("muster@max.de");
-        config.Benutzerdaten.Vorname     = "Max";
-        config.Benutzerdaten.Nachname    = "Mustermann";
-        config.Benutzerdaten.Adresse     = "Musterstr. 17, 54321 Köln";
         config.Benutzerdaten.Längengrad  = 1.23456;
         config.Benutzerdaten.Breitengrad = 5.67891;
 
@@ -52,9 +49,6 @@ class UserConfiguration2Test {
     @Test
     public void jsonLeavesOutLongitudeAndLatitude() throws JsonProcessingException {
         UserConfiguration2 config = new UserConfiguration2("muster@max.de");
-        config.Benutzerdaten.Vorname     = "Max";
-        config.Benutzerdaten.Nachname    = "Mustermann";
-        config.Benutzerdaten.Adresse     = "Musterstr. 17, 54321 Köln";
         config.Benutzerdaten.Längengrad  = null;
         config.Benutzerdaten.Breitengrad = null;
 

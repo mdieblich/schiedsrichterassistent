@@ -15,9 +15,9 @@ public class UserConfiguration2{
 
     public class Benutzerdaten {
         public String Email;
-        public String Vorname;
-        public String Nachname;
-        public String Adresse;
+        public String Vorname = "Max";
+        public String Nachname = "Mustermann";
+        public String Adresse = "Musterstr. 17, 54321 Köln";
         @JsonInclude(JsonInclude.Include.NON_NULL)
         public Double Längengrad;
         @JsonInclude(JsonInclude.Include.NON_NULL)
