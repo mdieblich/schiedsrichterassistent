@@ -1,4 +1,4 @@
-package com.dieblich.handball.schiedsrichterassistent.mail;
+package com.dieblich.handball.schiedsrichterassistent;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

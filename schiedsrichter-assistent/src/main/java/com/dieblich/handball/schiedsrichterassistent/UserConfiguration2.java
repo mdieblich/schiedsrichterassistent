@@ -1,4 +1,4 @@
-package com.dieblich.handball.schiedsrichterassistent.mail;
+package com.dieblich.handball.schiedsrichterassistent;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
