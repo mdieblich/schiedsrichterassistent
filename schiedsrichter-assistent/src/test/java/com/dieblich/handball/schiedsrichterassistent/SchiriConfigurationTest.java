@@ -15,9 +15,9 @@ class SchiriConfigurationTest {
         config.Benutzerdaten.Längengrad  = 1.23456;
         config.Benutzerdaten.Breitengrad = 5.67891;
 
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(config);
+        String json = config.toJSON();
 
+        ObjectMapper mapper = new ObjectMapper();
         JsonNode expectedTree = mapper.readTree("""
         {
           "Benutzerdaten" : {
@@ -52,9 +52,9 @@ class SchiriConfigurationTest {
         config.Benutzerdaten.Längengrad  = null;
         config.Benutzerdaten.Breitengrad = null;
 
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(config);
+        String json = config.toJSON();
 
+        ObjectMapper mapper = new ObjectMapper();
         JsonNode expectedTree = mapper.readTree("""
         {
           "Benutzerdaten" : {

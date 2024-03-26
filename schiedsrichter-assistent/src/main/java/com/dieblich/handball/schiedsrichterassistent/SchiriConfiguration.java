@@ -1,6 +1,9 @@
 package com.dieblich.handball.schiedsrichterassistent;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.util.Map;
 
@@ -37,6 +40,13 @@ public class SchiriConfiguration {
             public int StandardDauerInMinuten = 30;
             public Map<String, Integer> Abweichungen = Map.of("Regionalliga", 45, "Oberliga", 45);
         }
+    }
+
+    /// JSON serialization and deserialization
+    private final static ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+    public String toJSON() throws JsonProcessingException {
+        return mapper.writeValueAsString(this);
     }
 
 }
