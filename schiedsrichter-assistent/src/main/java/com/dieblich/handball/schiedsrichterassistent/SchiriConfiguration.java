@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Map;
 
-@SuppressWarnings("NonAsciiCharacters")
+@SuppressWarnings({"NonAsciiCharacters", "SpellCheckingInspection"})
 public class SchiriConfiguration {
     public Benutzerdaten Benutzerdaten;
     public Spielablauf Spielablauf = new Spielablauf();
