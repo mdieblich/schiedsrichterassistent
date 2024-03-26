@@ -42,6 +42,36 @@ public class SchiriConfiguration {
         public Benutzerdaten(String email){
             this.Email = email;
         }
+
+        public void updateWith(Benutzerdaten other, Function<String, Optional<double[]>> addressToGeoLocation, Consumer<String> log) {
+            if(other.Email != null) {Email = other.Email;}
+            if(other.Vorname != null) {Vorname = other.Vorname;}
+            if(other.Nachname != null) {Nachname = other.Nachname;}
+
+            if(other.Adresse != null) {
+                if(other.Längengrad != null && other.Breitengrad != null){
+                    // all 3 have been set
+                    Adresse = other.Adresse;
+                    Längengrad = other.Längengrad;
+                    Breitengrad = other.Breitengrad;
+                } else {
+                    // only address was set, let's search the geolocation
+                    Optional<double[]> optionalGeoLocation = addressToGeoLocation.apply(other.Adresse);
+                    if(optionalGeoLocation.isPresent()){
+                        Adresse = other.Adresse;
+                        Längengrad = optionalGeoLocation.get()[0];
+                        Breitengrad = optionalGeoLocation.get()[1];
+                    }else{
+                        log.accept("Für die Adresse \""+other.Adresse+"\" konnten Längen- und Breitengrad nicht bestimmt werden. Sie wird daher nicht übernomen.");
+                        log.accept("FALLS DAS PROBLEM WIEDERHOLT AUFTRITT SO KANNST DU FOLGENDES TUN:");
+                        log.accept("1. Bestimme mithilfe eines Kartendienstes (z.B. https://www.gpskoordinaten.de/) deinen Längen- und Breitengrad.");
+                        log.accept("2. Setze in der Konfiguration im Abschnitt \"Benutzerdaten\" die Adresse UND Werte für \"Löngengrad\"");
+                        log.accept("   und \"Breitengrad\". Beachte bitte, dass du min. 4-Nachkommastellen verwendest.");
+                        log.accept("   Verwendet wird das Koordinatensystem WGS 84");
+                    }
+                }
+            }
+        }
     }
 
     @ToString
@@ -52,11 +82,25 @@ public class SchiriConfiguration {
         public Integer UmziehenNachSpiel;
         public TechnischeBesprechung TechnischeBesprechung = new TechnischeBesprechung();
 
+        public void updateWith(Spielablauf other) {
+            if(other.UmziehenVorSpiel != null) {UmziehenVorSpiel = other.UmziehenVorSpiel;}
+            if(other.PapierKramNachSpiel != null) {PapierKramNachSpiel = other.PapierKramNachSpiel;}
+            if(other.UmziehenNachSpiel != null) {UmziehenNachSpiel = other.UmziehenNachSpiel;}
+            if(other.TechnischeBesprechung != null) {
+                TechnischeBesprechung.updateWith(other.TechnischeBesprechung);
+            }
+        }
+
         @ToString
         @EqualsAndHashCode
         public static class TechnischeBesprechung{
             public Integer StandardDauerInMinuten;
             public Map<String, Integer> Abweichungen = new HashMap<>();
+
+            public void updateWith(TechnischeBesprechung other) {
+                if(other.StandardDauerInMinuten != null) {StandardDauerInMinuten = other.StandardDauerInMinuten;                }
+                if(other.Abweichungen != null){Abweichungen.putAll(other.Abweichungen);}
+            }
         }
     }
 
@@ -71,7 +115,7 @@ public class SchiriConfiguration {
         config.Spielablauf.UmziehenNachSpiel = 15;
         config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten = 30;
         config.Spielablauf.TechnischeBesprechung.Abweichungen.putAll(Map.of(
-                // put Map.of inside of HashMap to have it mutable
+                // put Map.of inside HashMap to have it mutable
                 "Regionalliga", 45,
                 "Oberliga", 45
         ));
@@ -79,52 +123,19 @@ public class SchiriConfiguration {
     }
     public void updateWith(String configUpdate, Function<String, Optional<double[]>> addressToGeoLocation, Consumer<String> log) {
         try {
-        SchiriConfiguration newConfig = mapper.readValue(configUpdate, SchiriConfiguration.class);
-        if(newConfig.Benutzerdaten != null){
-            if(newConfig.Benutzerdaten.Email != null) {Benutzerdaten.Email = newConfig.Benutzerdaten.Email;}
-            if(newConfig.Benutzerdaten.Vorname != null) {Benutzerdaten.Vorname = newConfig.Benutzerdaten.Vorname;}
-            if(newConfig.Benutzerdaten.Nachname != null) {Benutzerdaten.Nachname = newConfig.Benutzerdaten.Nachname;}
-
-            if(newConfig.Benutzerdaten.Adresse != null) {
-                if(newConfig.Benutzerdaten.Längengrad != null && newConfig.Benutzerdaten.Breitengrad != null){
-                    // all 3 have been set
-                    Benutzerdaten.Adresse = newConfig.Benutzerdaten.Adresse;
-                    Benutzerdaten.Längengrad = newConfig.Benutzerdaten.Längengrad;
-                    Benutzerdaten.Breitengrad = newConfig.Benutzerdaten.Breitengrad;
-                } else {
-                    // only address was set, let's search the geolocation
-                    Optional<double[]> optionalGeoLocation = addressToGeoLocation.apply(newConfig.Benutzerdaten.Adresse);
-                    if(optionalGeoLocation.isPresent()){
-                        Benutzerdaten.Adresse = newConfig.Benutzerdaten.Adresse;
-                        Benutzerdaten.Längengrad = optionalGeoLocation.get()[0];
-                        Benutzerdaten.Breitengrad = optionalGeoLocation.get()[1];
-                    }else{
-                        log.accept("Für die Adresse \""+newConfig.Benutzerdaten.Adresse+"\" konnten Längen- und Breitengrad nicht bestimmt werden. Sie wird daher nicht übernomen.");
-                        log.accept("FALLS DAS PROBLEM WIEDERHOLT AUFTRITT SO KANNST DU FOLGENDES TUN:");
-                        log.accept("1. Bestimme mithilfe eines Kartendienstes (z.B. https://www.gpskoordinaten.de/) deinen Längen- und Breitengrad.");
-                        log.accept("2. Setze in der Konfiguration im Abschnitt \"Benutzerdaten\" die Adresse UND Werte für \"Löngengrad\"");
-                        log.accept("   und \"Breitengrad\". Beachte bitte, dass du min. 4-Nachkommastellen verwendest.");
-                        log.accept("   Verwendet wird das Koordinatensystem WGS 84");
-                    }
-                }
-            }
-        }
-        if(newConfig.Spielablauf != null){
-            if(newConfig.Spielablauf.UmziehenVorSpiel != null) {Spielablauf.UmziehenVorSpiel = newConfig.Spielablauf.UmziehenVorSpiel;}
-            if(newConfig.Spielablauf.PapierKramNachSpiel != null) {Spielablauf.PapierKramNachSpiel = newConfig.Spielablauf.PapierKramNachSpiel;}
-            if(newConfig.Spielablauf.UmziehenNachSpiel != null) {Spielablauf.UmziehenNachSpiel = newConfig.Spielablauf.UmziehenNachSpiel;}
-            if(newConfig.Spielablauf.TechnischeBesprechung != null) {
-                if(newConfig.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten != null) {
-                    Spielablauf.TechnischeBesprechung.StandardDauerInMinuten = newConfig.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten;
-                }
-                if(newConfig.Spielablauf.TechnischeBesprechung.Abweichungen != null){
-                    Spielablauf.TechnischeBesprechung.Abweichungen.putAll(newConfig.Spielablauf.TechnischeBesprechung.Abweichungen);
-                }
-            }
-        }
-
+            SchiriConfiguration newConfig = mapper.readValue(configUpdate, SchiriConfiguration.class);
+            updateWith(newConfig, addressToGeoLocation, log);
         } catch (JsonProcessingException e) {
             log.accept("Fehler beim Lesen der Konfiguration: " + e.getMessage());
+        }
+    }
+
+    private void updateWith(SchiriConfiguration other, Function<String, Optional<double[]>> addressToGeoLocation, Consumer<String> log) {
+        if(other.Benutzerdaten != null){
+            Benutzerdaten.updateWith(other.Benutzerdaten, addressToGeoLocation, log);
+        }
+        if(other.Spielablauf != null){
+            Spielablauf.updateWith(other.Spielablauf);
         }
     }
 
