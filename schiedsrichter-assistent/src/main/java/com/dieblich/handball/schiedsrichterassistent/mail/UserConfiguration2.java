@@ -1,5 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.Map;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -16,7 +18,9 @@ public class UserConfiguration2{
         public String Vorname;
         public String Nachname;
         public String Adresse;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         public Double Längengrad;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         public Double Breitengrad;
         public Benutzerdaten(String email){
             this.Email = email;
