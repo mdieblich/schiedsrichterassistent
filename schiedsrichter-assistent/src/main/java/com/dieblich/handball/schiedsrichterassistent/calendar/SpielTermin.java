@@ -15,7 +15,7 @@ public class SpielTermin {
         ICalendar ical = new  ICalendar();
         VEvent event = new VEvent();
 
-        event.setSummary("Schiri: " + einsatz.liga());
+        event.setSummary("Schiri: " + einsatz.ligaBezeichnungAusEmail());
         event.setLocation(einsatz.hallenAdresse());
 
         ical.addEvent(event);

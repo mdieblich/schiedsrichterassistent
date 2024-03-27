@@ -1,9 +1,8 @@
 package com.dieblich.handball.schiedsrichterassistent.nuliga;
 
 import com.dieblich.handball.schiedsrichterassistent.geo.Distance;
-import com.dieblich.handball.schiedsrichterassistent.geo.DistanceService;
+import com.dieblich.handball.schiedsrichterassistent.geo.GeoService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +23,7 @@ public class NuLigaController {
     public Optional<Distance> testDistance() {
 //        Jsoup
 
-        DistanceService distanceService = new DistanceService(apikey);
-        return distanceService.getTestDistance();
+        GeoService geoService = new GeoService(apikey);
+        return geoService.getTestDistance();
     }
 }

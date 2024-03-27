@@ -4,22 +4,17 @@ import com.dieblich.handball.schiedsrichterassistent.geo.openroute.*;
 
 import java.util.Optional;
 
-public class DistanceService {
+public class GeoService {
 
     private final GeoCodeService geoCodeService;
     private final DirectionService directionService;
 
-    public DistanceService(String apikey){
+    public GeoService(String apikey){
         this(new GeoCodeService(apikey), new DirectionService(apikey));
     }
-    public DistanceService(GeoCodeService geoCodeService, DirectionService directionService){
+    public GeoService(GeoCodeService geoCodeService, DirectionService directionService){
         this.geoCodeService = geoCodeService;
         this.directionService = directionService;
-    }
-
-    public Optional<String> addressToGeoLocation(String address){
-        Optional<Point> location = geoCodeService.getPointForAddress(address);
-        return location.map(p -> p.coordinates()[0] + "," + p.coordinates()[1]);
     }
 
     public Optional<double[]> addressToPoint(String address){

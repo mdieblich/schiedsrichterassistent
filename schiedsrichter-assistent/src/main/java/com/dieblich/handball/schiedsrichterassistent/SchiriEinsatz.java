@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public record SchiriEinsatz(
     LocalDateTime anwurf,
     String hallenAdresse,
-    String liga,
+    String ligaBezeichnungAusEmail,
     String heimMannschaft,
     String gastMannschaft){
 }

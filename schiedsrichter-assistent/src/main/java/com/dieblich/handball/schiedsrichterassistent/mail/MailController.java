@@ -2,7 +2,7 @@ package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
-import com.dieblich.handball.schiedsrichterassistent.geo.DistanceService;
+import com.dieblich.handball.schiedsrichterassistent.geo.GeoService;
 import com.dieblich.handball.schiedsrichterassistent.mail.received.AnsetzungsEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.AskForConfigurationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.ConfigConfirmationEmail;
@@ -36,13 +36,13 @@ public class MailController {
 
     private EmailServerRead stratoRead;
     private EmailServerSend stratoSend;
-    private DistanceService distanceService;
+    private GeoService geoService;
 
     @PostConstruct
     public void init() {
         stratoRead = new EmailServerRead(imapHost,993,botUsername,botPassword);
         stratoSend = new EmailServerSend(smtpHost,587,botUsername,botPassword);
-        distanceService = new DistanceService(openRouteApikey);
+        geoService = new GeoService(openRouteApikey);
     }
 
     @PostMapping("/checkFolderStructure")
@@ -71,7 +71,7 @@ public class MailController {
 
         List<String> log = new ArrayList<>();
 
-        config.updateWith(configUpdate, distanceService::addressToPoint, log::add);
+        config.updateWith(configUpdate, geoService::addressToPoint, log::add);
         stratoRead.overwriteSchiriConfiguration(config);
 
         String nachher = config.toJSON();
@@ -136,7 +136,7 @@ public class MailController {
         SchiriConfiguration config = stratoRead.loadSchiriConfiguration(sender);
 
         List<String> log = new ArrayList<>();
-        config.updateWith(email.getContent(), distanceService::addressToPoint, log::add);
+        config.updateWith(email.getContent(), geoService::addressToPoint, log::add);
         stratoRead.overwriteSchiriConfiguration(config);
         ConfigConfirmationEmail responseEmail = stratoSend.createConfigConfirmationEmail(sender, config, log);
         responseEmail.send();
