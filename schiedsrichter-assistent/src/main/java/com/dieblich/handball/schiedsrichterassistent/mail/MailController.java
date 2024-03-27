@@ -71,7 +71,7 @@ public class MailController {
 
         List<String> log = new ArrayList<>();
 
-        config.updateWith(configUpdate, geoService::addressToPoint, log::add);
+        config.updateWith(configUpdate, geoService::findKoordinaten, log::add);
         stratoRead.overwriteSchiriConfiguration(config);
 
         String nachher = config.toJSON();
@@ -136,7 +136,7 @@ public class MailController {
         SchiriConfiguration config = stratoRead.loadSchiriConfiguration(sender);
 
         List<String> log = new ArrayList<>();
-        config.updateWith(email.getContent(), geoService::addressToPoint, log::add);
+        config.updateWith(email.getContent(), geoService::findKoordinaten, log::add);
         stratoRead.overwriteSchiriConfiguration(config);
         ConfigConfirmationEmail responseEmail = stratoSend.createConfigConfirmationEmail(sender, config, log);
         responseEmail.send();

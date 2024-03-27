@@ -17,8 +17,9 @@ public class GeoService {
         this.directionService = directionService;
     }
 
-    public Optional<double[]> addressToPoint(String address){
-        return geoCodeService.getPointForAddress(address).map(Point::coordinates);
+
+    public Optional<Koordinaten> findKoordinaten(String address){
+        return geoCodeService.getPointForAddress(address).map(Koordinaten::new);
     }
 
     public Optional<Distance> getTestDistance(){

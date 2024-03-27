@@ -1,5 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent;
 
+import com.dieblich.handball.schiedsrichterassistent.geo.Koordinaten;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -50,7 +51,7 @@ public class SchiriConfiguration {
             this.Email = email;
         }
 
-        public void updateWith(Benutzerdaten other, Function<String, Optional<double[]>> addressToGeoLocation, Consumer<String> log) {
+        public void updateWith(Benutzerdaten other, Function<String, Optional<Koordinaten>> addressToKoordinaten, Consumer<String> log) {
             if(other.Email != null) {Email = other.Email;}
             if(other.Vorname != null) {Vorname = other.Vorname;}
             if(other.Nachname != null) {Nachname = other.Nachname;}
@@ -63,11 +64,11 @@ public class SchiriConfiguration {
                     Breitengrad = other.Breitengrad;
                 } else {
                     // only address was set, let's search the geolocation
-                    Optional<double[]> optionalGeoLocation = addressToGeoLocation.apply(other.Adresse);
-                    if(optionalGeoLocation.isPresent()){
+                    Optional<Koordinaten> optionalKoordinaten = addressToKoordinaten.apply(other.Adresse);
+                    if(optionalKoordinaten.isPresent()){
                         Adresse = other.Adresse;
-                        Längengrad = optionalGeoLocation.get()[0];
-                        Breitengrad = optionalGeoLocation.get()[1];
+                        Längengrad = optionalKoordinaten.get().längengrad();
+                        Breitengrad = optionalKoordinaten.get().breitengrad();
                     }else{
                         log.accept("Für die Adresse \""+other.Adresse+"\" konnten Längen- und Breitengrad nicht bestimmt werden. Sie wird daher nicht übernomen.");
                         log.accept("FALLS DAS PROBLEM WIEDERHOLT AUFTRITT SO KANNST DU FOLGENDES TUN:");
@@ -179,18 +180,18 @@ public class SchiriConfiguration {
         ));
         return config;
     }
-    public void updateWith(String configUpdate, Function<String, Optional<double[]>> addressToGeoLocation, Consumer<String> log) {
+    public void updateWith(String configUpdate, Function<String, Optional<Koordinaten>> addressToKoordinaten, Consumer<String> log) {
         try {
             SchiriConfiguration newConfig = mapper.readValue(configUpdate, SchiriConfiguration.class);
-            updateWith(newConfig, addressToGeoLocation, log);
+            updateWith(newConfig, addressToKoordinaten, log);
         } catch (JsonProcessingException e) {
             log.accept("Fehler beim Lesen der Konfiguration: " + e.getMessage());
         }
     }
 
-    public void updateWith(SchiriConfiguration other, Function<String, Optional<double[]>> addressToGeoLocation, Consumer<String> log) {
+    public void updateWith(SchiriConfiguration other, Function<String, Optional<Koordinaten>> addressToKoordinaten, Consumer<String> log) {
         if(other.Benutzerdaten != null){
-            Benutzerdaten.updateWith(other.Benutzerdaten, addressToGeoLocation, log);
+            Benutzerdaten.updateWith(other.Benutzerdaten, addressToKoordinaten, log);
         }
         if(other.Spielablauf != null){
             Spielablauf.updateWith(other.Spielablauf);

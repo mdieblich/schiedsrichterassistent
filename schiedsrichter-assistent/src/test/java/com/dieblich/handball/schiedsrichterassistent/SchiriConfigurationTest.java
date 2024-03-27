@@ -1,5 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent;
 
+import com.dieblich.handball.schiedsrichterassistent.geo.Koordinaten;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -246,7 +247,7 @@ class SchiriConfigurationTest {
                 		"Adresse": "Dudelstr. 15, 12345 Dudelstadt"
                 	}
                 }
-                """, String -> Optional.of(new double[]{3,5}), fakeLog);
+                """, String -> Optional.of(new Koordinaten(5,3)), fakeLog);
 
         assertEquals("Dudelstr. 15, 12345 Dudelstadt", config.Benutzerdaten.Adresse);
         assertEquals(3, config.Benutzerdaten.Längengrad);
@@ -353,7 +354,7 @@ class SchiriConfigurationTest {
         assertEquals(1, log.size());
     }
 
-    private final Function<String, Optional<double[]>> fakeAddressToGeoLocation = (String) -> Optional.empty();
+    private final Function<String, Optional<Koordinaten>> fakeAddressToGeoLocation = (String) -> Optional.empty();
     private final Consumer<String> fakeLog = (String) -> {};
 
 
