@@ -1,9 +1,11 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
+import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.AskForConfigurationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.ConfigConfirmationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.DontKnowWhatToDoEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.WelcomeEmail;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.mail.*;
 
 import java.util.List;
@@ -33,12 +35,12 @@ public class EmailServerSend {
         return new WelcomeEmail(botEmailAddress, schiriEmailAddress, session);
     }
 
-    public ConfigConfirmationEmail createConfigConfirmationEmail(String schiriEmailAddress, UserConfiguration currentConfig, UserLog log) throws MessagingException {
-        return new ConfigConfirmationEmail(botEmailAddress, schiriEmailAddress, currentConfig, log, session);
+    public ConfigConfirmationEmail createConfigConfirmationEmail(String schiriEmailAddress, SchiriConfiguration config, List<String> log) throws MessagingException, JsonProcessingException {
+        return new ConfigConfirmationEmail(botEmailAddress, schiriEmailAddress, config, log, session);
     }
 
-    public AskForConfigurationEmail createAskForConfigEmail(String schiriEmailAddress, List<String> missingConfigKeys) throws MessagingException {
-        return new AskForConfigurationEmail(botEmailAddress, schiriEmailAddress, missingConfigKeys, session);
+    public AskForConfigurationEmail createAskForConfigEmail(String schiriEmailAddress) throws MessagingException {
+        return new AskForConfigurationEmail(botEmailAddress, schiriEmailAddress, session);
     }
 
     public DontKnowWhatToDoEmail createResponseForUnknownEmail(String schiriEmailAddress, Email unknownEmail) throws MessagingException {

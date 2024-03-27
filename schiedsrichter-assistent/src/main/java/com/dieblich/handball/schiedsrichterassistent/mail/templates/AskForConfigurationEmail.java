@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class AskForConfigurationEmail extends Email {
 
     public static final String SUBJECT = "Konfiguration nicht vollständig";
-    public AskForConfigurationEmail(String botEmailAddress, String schiriEmailAddress, List<String> missingConfigKeys, Session session) throws MessagingException {
+    public AskForConfigurationEmail(String botEmailAddress, String schiriEmailAddress, Session session) throws MessagingException {
         super(session);
         setFrom(botEmailAddress);
         setTo(schiriEmailAddress);
@@ -19,12 +19,16 @@ public class AskForConfigurationEmail extends Email {
             Hallo!
             
             Ich habe eine Email von dir erhalten (vermutlich mit einer Ansetzung). Deine Konfiguration ist aber noch
-            nicht vollständig. Bitte schick mir daher zuerst eine Email mit dem Betreff "Konfiguration", wo in den 
-            ersten Zeilen folgendes steht:
+            nicht vollständig. Bitte schick mir daher zuerst eine Email mit dem Betreff "Konfiguration", in der 
+            folgendes steht:
             
-            """+
-            joinConfigKeys(missingConfigKeys)+"\n"+
-            """
+            {
+                "Benutzerdaten": {
+                    "Vorname": "Max",
+                    "Nachname": "Mustermann",
+                    "Adresse": "Musterstr. 17, 54321 Köln"
+                }
+            }
             
             Besten Dank. Hier nochmal zusammengefasst, wofür die Daten benötigt werden:
             - Vor- & Nachname um dich in den Ansetzungsemails zu identifieren
@@ -36,11 +40,5 @@ public class AskForConfigurationEmail extends Email {
             Eine Kreation von Martin Fritz
             """
         );
-    }
-
-    private static String joinConfigKeys(List<String> missingConfigKeys){
-        return missingConfigKeys.stream()
-                .map(s -> s+"=")
-                .collect(Collectors.joining("\n"));
     }
 }

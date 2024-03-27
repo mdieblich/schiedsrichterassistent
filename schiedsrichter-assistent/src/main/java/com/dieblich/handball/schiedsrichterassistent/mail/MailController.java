@@ -3,7 +3,6 @@ package com.dieblich.handball.schiedsrichterassistent.mail;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.geo.DistanceService;
-import com.dieblich.handball.schiedsrichterassistent.geo.openroute.Point;
 import com.dieblich.handball.schiedsrichterassistent.mail.received.AnsetzungsEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.AskForConfigurationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.ConfigConfirmationEmail;
@@ -19,7 +18,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @RestController
@@ -98,13 +96,13 @@ public class MailController {
                         handleConfigUpdate(email);
                         // TODO if the config update was successful, all other Emails of that sender should be handled - instead of discarded
                     } else if(!unknownSenders.contains(sender)){
-                        Optional<UserConfiguration> optionalUserConfig = stratoRead.findConfig(sender);
-                        if(optionalUserConfig.isPresent()){
-                            UserConfiguration userConfig = optionalUserConfig.get();
-                            if(userConfig.isComplete()){
-                                handleEmail(sender, email, userConfig);
+                        Optional<SchiriConfiguration> optionalSchiriConfig = stratoRead.findConfig(sender);
+                        if(optionalSchiriConfig.isPresent()){
+                            SchiriConfiguration schiriConfiguration = optionalSchiriConfig.get();
+                            if(schiriConfiguration.isComplete()){
+                                handleEmail(sender, email, schiriConfiguration);
                             } else{
-                                askForMissingConfig(sender, userConfig.getMissingConfigKeys());
+                                askForMissingConfig(sender);
                             }
                         }else{
                             unknownSenders.add(sender);
@@ -120,8 +118,8 @@ public class MailController {
         }
     }
 
-    private void askForMissingConfig(String sender, List<String> missingConfigKeys) throws MessagingException {
-        AskForConfigurationEmail email = stratoSend.createAskForConfigEmail(sender, missingConfigKeys);
+    private void askForMissingConfig(String sender) throws MessagingException {
+        AskForConfigurationEmail email = stratoSend.createAskForConfigEmail(sender);
         email.send();
     }
 
@@ -135,12 +133,12 @@ public class MailController {
         if(email.getFrom().isEmpty()){ return; }
 
         String sender = email.getFrom().get();
-        UserConfiguration oldConfig = stratoRead.loadUserConfiguration(sender);
+        SchiriConfiguration config = stratoRead.loadSchiriConfiguration(sender);
 
-        UserLog log = new UserLog();
-        oldConfig.updateWith(email.getContent(), distanceService::addressToGeoLocation, log);
-        stratoRead.overwriteUserConfiguration(oldConfig);
-        ConfigConfirmationEmail responseEmail = stratoSend.createConfigConfirmationEmail(sender, oldConfig, log);
+        List<String> log = new ArrayList<>();
+        config.updateWith(email.getContent(), distanceService::addressToPoint, log::add);
+        stratoRead.overwriteSchiriConfiguration(config);
+        ConfigConfirmationEmail responseEmail = stratoSend.createConfigConfirmationEmail(sender, config, log);
         responseEmail.send();
     }
 
@@ -149,7 +147,7 @@ public class MailController {
         welcomeEmail.send();
     }
 
-    private void handleEmail(String sender, Email email, UserConfiguration userConfig) throws MessagingException, IOException {
+    private void handleEmail(String sender, Email email, SchiriConfiguration config) throws MessagingException, IOException {
         if(isAnsetzung(email)){
             AnsetzungsEmail ansetzungsEmail = new AnsetzungsEmail(email);
             SchiriEinsatz schiriEinsatz = ansetzungsEmail.extractSchiriEinsatz();

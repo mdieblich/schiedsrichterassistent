@@ -1,17 +1,19 @@
 package com.dieblich.handball.schiedsrichterassistent.mail.templates;
 
+import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.mail.Email;
-import com.dieblich.handball.schiedsrichterassistent.mail.UserConfiguration;
-import com.dieblich.handball.schiedsrichterassistent.mail.UserLog;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 
-import static com.dieblich.handball.schiedsrichterassistent.mail.UserConfiguration.SCHIRI_GEOLOCATION;
+import java.util.List;
+
 
 public class ConfigConfirmationEmail extends Email {
 
     public static final String SUBJECT = "RE: Konfiguration";
-    public ConfigConfirmationEmail(String sender, String receiver, UserConfiguration currentConfig, UserLog log, Session session) throws MessagingException {
+
+    public ConfigConfirmationEmail(String sender, String receiver, SchiriConfiguration currentConfig, List<String> log, Session session) throws MessagingException, JsonProcessingException {
         super(session);
         setFrom(sender);
         setTo(receiver);
@@ -23,10 +25,10 @@ public class ConfigConfirmationEmail extends Email {
                 Du kannst deine Konfiguration jederzeit ändern, wenn du mir eine Email mit dem Betreff "Konfiguration"
                 zuschickst. Inhalt der Email sollten ausschließlich die Einstellungen sein, die du ändern möchtest.
                 """ +
-                "Die \""+SCHIRI_GEOLOCATION+"\" wird automatisch aktualisiert, wenn du die Adresse änderst.\n\n"+
+                "Längen- und Breitengrad werden automatisch aktualisiert, wenn du die Adresse änderst.\n\n"+
                 """
                 ---------- KONFIGURATION START -------------------------------
-                """ + currentConfig.configToString() + """
+                """ + currentConfig.toJSON() + """
                 ---------- KONFIGURATION ENDE --------------------------------
                                 
                 Viele Grüße,
@@ -34,9 +36,9 @@ public class ConfigConfirmationEmail extends Email {
                 
                 Eine Kreation von Martin Fritz
                 ---------- FEHLERPROTOKOLL START -----------------------------
-                """ + log.createOutput() + """
+                """ + String.join("\n", log) + """
                 ---------- FEHLERPROTOKOLL ENDE ------------------------------
                 """
-                );
+        );
     }
 }

@@ -21,11 +21,14 @@ public class WelcomeEmail extends Email {
                 ich, damit ich dich in den Ansetzungs-Emails erkenne. Deine Adresse benötige ich, damit ich deine
                 Fahrzeiten und Fahrtstrecke berechnen kann.
                 
-                Bitte schick mir daher zuerst eine Email mit dem Betreff "Konfiguration", wo in den ersten Zeilen
-                folgendes steht:
-                    Schiri.Vorname=Max
-                    Schiri.Nachname=Musterpfeife
-                    Schiri.Adresse=Musterstraße 17, 54321 Köln
+                Bitte schick mir daher zuerst eine Email mit dem Betreff "Konfiguration", in der folgendes steht:
+                {
+                    "Benutzerdaten": {
+                        "Vorname": "Max",
+                        "Nachname": "Mustermann",
+                        "Adresse": "Musterstr. 17, 54321 Köln"
+                    }
+                }
                 Dabei gibst du bitte deinen richtigen Namen + Adresse an.
                 
                 Darüber hinaus speichere ich mir dann von dir:

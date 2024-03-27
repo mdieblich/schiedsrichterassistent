@@ -1,17 +1,17 @@
 package com.dieblich.handball.schiedsrichterassistent;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -25,6 +25,14 @@ public class SchiriConfiguration {
 
     public SchiriConfiguration(String email){
         Benutzerdaten = new Benutzerdaten(email);
+    }
+
+    @JsonIgnore
+    public boolean isComplete() {
+        if(Benutzerdaten == null || Spielablauf == null){
+            return false;
+        }
+        return Benutzerdaten.isComplete() && Spielablauf.isComplete();
     }
 
     @ToString
@@ -72,6 +80,16 @@ public class SchiriConfiguration {
                 }
             }
         }
+
+        @JsonIgnore
+        public boolean isComplete() {
+            return Email != null &&
+                    Vorname != null &&
+                    Nachname != null &&
+                    Adresse != null &&
+                    Längengrad != null &&
+                    Breitengrad != null;
+        }
     }
 
     @ToString
@@ -91,6 +109,17 @@ public class SchiriConfiguration {
             }
         }
 
+        @JsonIgnore
+        public boolean isComplete() {
+            if(TechnischeBesprechung == null){
+                return false;
+            }
+            return UmziehenVorSpiel != null &&
+                    PapierKramNachSpiel != null &&
+                    UmziehenNachSpiel != null &&
+                    TechnischeBesprechung.isComplete();
+        }
+
         @ToString
         @EqualsAndHashCode
         public static class TechnischeBesprechung{
@@ -100,6 +129,32 @@ public class SchiriConfiguration {
             public void updateWith(TechnischeBesprechung other) {
                 if(other.StandardDauerInMinuten != null) {StandardDauerInMinuten = other.StandardDauerInMinuten;                }
                 if(other.Abweichungen != null){Abweichungen.putAll(other.Abweichungen);}
+            }
+
+
+            public int getForLiga(String ligaBezeichnungAusEmail) {
+                String ligaName = findLigaName(ligaBezeichnungAusEmail);
+
+                if(Abweichungen.containsKey(ligaName)){
+                    return Abweichungen.get(ligaName);
+                }
+                return StandardDauerInMinuten;
+            }
+
+            public static String findLigaName(String ligaBezeichnungAusEmail){
+                String[] ligaParts = ligaBezeichnungAusEmail.split(" ");
+                for(String ligaPart:ligaParts){
+                    String lowerCaseliga = ligaPart.toLowerCase();
+                    if(lowerCaseliga.contains("liga") || lowerCaseliga.contains("klasse")){
+                        return ligaPart;
+                    }
+                }
+                throw new IllegalArgumentException("Aus der Liga-Bezeichung \""+ligaBezeichnungAusEmail+"\" konnte nicht die Liga oder Klasse extrahiert werden");
+            }
+
+            @JsonIgnore
+            public boolean isComplete() {
+                return StandardDauerInMinuten != null;
             }
         }
     }

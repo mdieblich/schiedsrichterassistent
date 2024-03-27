@@ -53,14 +53,6 @@ public class EmailServerRead implements AutoCloseable {
         return new EmailFolder(folder);
     }
 
-    public UserConfiguration loadUserConfiguration(String emailAddress) throws IOException, MessagingException {
-        Optional<Email> email = findConfigEmail(emailAddress);
-        if(email.isEmpty()){
-            return UserConfiguration.DEFAULT(emailAddress);
-        } else {
-            return new UserConfiguration(emailAddress, email.get().getContent());
-        }
-    }
     public SchiriConfiguration loadSchiriConfiguration(String emailAddress) throws IOException, MessagingException {
         Optional<Email> email = findConfigEmail(emailAddress);
         if(email.isEmpty()){
@@ -81,20 +73,6 @@ public class EmailServerRead implements AutoCloseable {
         return Optional.empty();
     }
 
-    public void overwriteUserConfiguration(UserConfiguration userConfig) throws MessagingException {
-
-        // first, lets search for an old config
-        Optional<Email> oldConfig = findConfigEmail(userConfig.getEmail());
-
-        // then, update
-        saveUserConfig(userConfig);
-
-        // last - delete the old one
-        if(oldConfig.isPresent()){
-            Email oldConfig2 = oldConfig.get();
-            oldConfig2.deleteImmediately();
-        }
-    }
     public void overwriteSchiriConfiguration(SchiriConfiguration config) throws MessagingException, JsonProcessingException {
 
         // first, lets search for an old config
@@ -110,11 +88,6 @@ public class EmailServerRead implements AutoCloseable {
         }
     }
 
-    private void saveUserConfig(UserConfiguration userConfig) throws MessagingException {
-        EmailFolder schiedsrichter = getFolder("SCHIEDSRICHTER");
-        Email configAsEmail = userConfig.toEmail(session);
-        schiedsrichter.upload(configAsEmail);
-    }
     private void saveSchiriConfig(SchiriConfiguration config) throws MessagingException, JsonProcessingException {
         EmailFolder schiedsrichter = getFolder("SCHIEDSRICHTER");
         SchiriConfigEmail configEmail = new SchiriConfigEmail(config, session);
@@ -128,11 +101,19 @@ public class EmailServerRead implements AutoCloseable {
         }
     }
 
-    public Optional<UserConfiguration> findConfig(String emailAddress) throws MessagingException, IOException {
+//    public Optional<UserConfiguration> findConfig(String emailAddress) throws MessagingException, IOException {
+//        Optional<Email> optionalConfigEmail = findConfigEmail(emailAddress);
+//        if(optionalConfigEmail.isPresent()){
+//            Email configEmail = optionalConfigEmail.get();
+//            return Optional.of(new UserConfiguration(emailAddress, configEmail.getContent()));
+//        }
+//        return Optional.empty();
+//    }
+    public Optional<SchiriConfiguration> findConfig(String emailAddress) throws MessagingException, IOException {
         Optional<Email> optionalConfigEmail = findConfigEmail(emailAddress);
         if(optionalConfigEmail.isPresent()){
             Email configEmail = optionalConfigEmail.get();
-            return Optional.of(new UserConfiguration(emailAddress, configEmail.getContent()));
+            return Optional.of(SchiriConfiguration.fromJSON(configEmail.getContent()));
         }
         return Optional.empty();
     }
