@@ -28,6 +28,7 @@ public class SpielAblauf{
     }
 
     public LocalDateTime getAnkunft() {
-        return getTechnischBesprechung();
+        return getTechnischBesprechung()
+                .minusMinutes(config.Spielablauf.UmziehenVorSpiel);
     }
 }
