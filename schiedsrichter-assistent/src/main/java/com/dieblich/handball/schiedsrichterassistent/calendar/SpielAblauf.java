@@ -24,7 +24,7 @@ public class SpielAblauf{
 
     public LocalDateTime getTechnischBesprechung() {
         return anwurf
-                .minusMinutes(config.Spielablauf.TechnischeBesprechung.getForLiga(ligaBezeichnungAusEmail));
+                .minusMinutes(config.Spielablauf.TechnischeBesprechung.getVorlaufProLiga(ligaBezeichnungAusEmail));
     }
 
     public LocalDateTime getAnkunft() {
