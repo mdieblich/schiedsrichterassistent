@@ -22,6 +22,15 @@ public class GeoService {
         return geoCodeService.getPointForAddress(address).map(Koordinaten::new);
     }
 
+    public Optional<Fahrt> calculateFahrt(Koordinaten start, Koordinaten ende){
+        Optional<Directions> directions = directionService.getDirections(start.toPoint(), ende.toPoint());
+
+        return directions
+                .flatMap(Directions::firstRoute)
+                .flatMap(Route::firstSegment)
+                .map(Fahrt::new);
+    }
+
     public Optional<Distance> getTestDistance(){
 
         String startAddress = "Arnimstr. 108, 50825 Köln";
