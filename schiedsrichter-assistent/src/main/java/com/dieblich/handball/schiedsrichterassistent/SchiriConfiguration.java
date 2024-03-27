@@ -95,12 +95,14 @@ public class SchiriConfiguration {
     @EqualsAndHashCode
     public static class Spielablauf{
         public Integer UmziehenVorSpiel;
+        public Integer EffektiveSpielDauer;
         public Integer PapierKramNachSpiel;
         public Integer UmziehenNachSpiel;
         public TechnischeBesprechung TechnischeBesprechung = new TechnischeBesprechung();
 
         public void updateWith(Spielablauf other) {
             if(other.UmziehenVorSpiel != null) {UmziehenVorSpiel = other.UmziehenVorSpiel;}
+            if(other.EffektiveSpielDauer != null) {EffektiveSpielDauer = other.EffektiveSpielDauer;}
             if(other.PapierKramNachSpiel != null) {PapierKramNachSpiel = other.PapierKramNachSpiel;}
             if(other.UmziehenNachSpiel != null) {UmziehenNachSpiel = other.UmziehenNachSpiel;}
             if(other.TechnischeBesprechung != null) {
@@ -114,6 +116,7 @@ public class SchiriConfiguration {
                 return false;
             }
             return UmziehenVorSpiel != null &&
+                    EffektiveSpielDauer != null &&
                     PapierKramNachSpiel != null &&
                     UmziehenNachSpiel != null &&
                     TechnischeBesprechung.isComplete();
@@ -165,6 +168,7 @@ public class SchiriConfiguration {
         config.Benutzerdaten.Nachname = "Mustermann";
         config.Benutzerdaten.Adresse = "Musterstr. 17, 54321 Köln";
         config.Spielablauf.UmziehenVorSpiel = 15;
+        config.Spielablauf.EffektiveSpielDauer = 90;
         config.Spielablauf.PapierKramNachSpiel = 15;
         config.Spielablauf.UmziehenNachSpiel = 15;
         config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten = 30;

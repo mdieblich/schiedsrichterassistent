@@ -38,6 +38,7 @@ class SchiriConfigurationTest {
           },
           "Spielablauf" : {
             "PapierKramNachSpiel" : 15,
+            "EffektiveSpielDauer" : 90,
             "UmziehenVorSpiel" : 15,
             "UmziehenNachSpiel" : 15,
             "TechnischeBesprechung" : {
@@ -72,8 +73,9 @@ class SchiriConfigurationTest {
             "Adresse" : "Musterstr. 17, 54321 Köln"
           },
           "Spielablauf" : {
-            "PapierKramNachSpiel" : 15,
             "UmziehenVorSpiel" : 15,
+            "EffektiveSpielDauer" : 90,
+            "PapierKramNachSpiel" : 15,
             "UmziehenNachSpiel" : 15,
             "TechnischeBesprechung" : {
               "StandardDauerInMinuten" : 30,
@@ -104,6 +106,7 @@ class SchiriConfigurationTest {
           },
           "Spielablauf" : {
             "PapierKramNachSpiel" : 15,
+            "EffektiveSpielDauer" : 90,
             "UmziehenVorSpiel" : 15,
             "UmziehenNachSpiel" : 15,
             "TechnischeBesprechung" : {
@@ -135,6 +138,7 @@ class SchiriConfigurationTest {
         config.Benutzerdaten.Längengrad = 5.0;
         config.Benutzerdaten.Breitengrad = 6.0;
         config.Spielablauf.UmziehenVorSpiel = 20;
+        config.Spielablauf.EffektiveSpielDauer = 99;
         config.Spielablauf.PapierKramNachSpiel = 5;
         config.Spielablauf.UmziehenNachSpiel = 25;
         config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten = 90;
@@ -153,6 +157,7 @@ class SchiriConfigurationTest {
         assertEquals(5.0, config.Benutzerdaten.Längengrad);
         assertEquals(6.0, config.Benutzerdaten.Breitengrad);
         assertEquals(20, config.Spielablauf.UmziehenVorSpiel);
+        assertEquals(99, config.Spielablauf.EffektiveSpielDauer);
         assertEquals(5, config.Spielablauf.PapierKramNachSpiel );
         assertEquals(25, config.Spielablauf.UmziehenNachSpiel );
         assertEquals(90, config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten);
