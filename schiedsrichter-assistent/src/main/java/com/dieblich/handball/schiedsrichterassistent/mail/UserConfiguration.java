@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
 
+@Deprecated
 public class UserConfiguration{
 
     // TODO in Sub-Record-Klassen auslagern

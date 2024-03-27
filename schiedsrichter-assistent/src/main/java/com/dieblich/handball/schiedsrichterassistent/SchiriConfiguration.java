@@ -130,7 +130,7 @@ public class SchiriConfiguration {
         }
     }
 
-    private void updateWith(SchiriConfiguration other, Function<String, Optional<double[]>> addressToGeoLocation, Consumer<String> log) {
+    public void updateWith(SchiriConfiguration other, Function<String, Optional<double[]>> addressToGeoLocation, Consumer<String> log) {
         if(other.Benutzerdaten != null){
             Benutzerdaten.updateWith(other.Benutzerdaten, addressToGeoLocation, log);
         }

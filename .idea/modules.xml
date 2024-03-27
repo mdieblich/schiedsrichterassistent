@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.dieblich.handball.schiedsrichter-assistent.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.dieblich.handball.schiedsrichter-assistent.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.dieblich.handball.schiedsrichter-assistent.test.iml" filepath="$PROJECT_DIR$/.idea/modules/com.dieblich.handball.schiedsrichter-assistent.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/schiedsrichter-assistent.iml" filepath="$PROJECT_DIR$/.idea/schiedsrichter-assistent.iml" />
     </modules>

@@ -1,7 +1,9 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
+import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.geo.DistanceService;
+import com.dieblich.handball.schiedsrichterassistent.geo.openroute.Point;
 import com.dieblich.handball.schiedsrichterassistent.mail.received.AnsetzungsEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.AskForConfigurationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.ConfigConfirmationEmail;
@@ -16,8 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @RestController
@@ -58,22 +60,28 @@ public class MailController {
         }
         return "VORHER:\n" + vorher + "\n================\nNachher:\n" + nachher;
     }
+
     @GetMapping("/configuration/{email}")
-    public String getConfiguration(@PathVariable(value="email") String email) throws IOException, MessagingException {
-        UserConfiguration config = stratoRead.loadUserConfiguration(email);
-        return config.toString();
+    public SchiriConfiguration getConfiguration(@PathVariable(value="email") String email) throws IOException, MessagingException {
+        return stratoRead.loadSchiriConfiguration(email);
     }
 
     @PatchMapping("/configuration/{email}")
-    public String updateConfiguration(@PathVariable(value="email") String emailAddress, @RequestBody Map<String, String> propertiesUpdate) throws MessagingException, IOException {
-        UserConfiguration config = stratoRead.loadUserConfiguration(emailAddress);
-        String vorher = config.toString();
+    public String updateConfiguration(@PathVariable(value="email") String emailAddress, @RequestBody SchiriConfiguration configUpdate) throws MessagingException, IOException {
+        SchiriConfiguration config = stratoRead.loadSchiriConfiguration(emailAddress);
+        String vorher = config.toJSON();
 
-        config.updateWith(propertiesUpdate);
-        stratoRead.overwriteUserConfiguration(config);
+        List<String> log = new ArrayList<>();
 
-        String nachher = config.toString();
-        return "VORHER:\n" + vorher + "\n================\nNachher:\n" + nachher;
+        config.updateWith(configUpdate, distanceService::addressToPoint, log::add);
+        stratoRead.overwriteSchiriConfiguration(config);
+
+        String nachher = config.toJSON();
+        return "VORHER:\n" + vorher + "\n" +
+                "================\n" +
+                "Nachher:\n" + nachher + "\n" +
+                "================\n" +
+                "Log:\n" + String.join("\n", log);
     }
 
     @PostMapping("/tasks/checkInbox")

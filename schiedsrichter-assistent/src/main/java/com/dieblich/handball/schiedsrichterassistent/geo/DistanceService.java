@@ -22,6 +22,10 @@ public class DistanceService {
         return location.map(p -> p.coordinates()[0] + "," + p.coordinates()[1]);
     }
 
+    public Optional<double[]> addressToPoint(String address){
+        return geoCodeService.getPointForAddress(address).map(Point::coordinates);
+    }
+
     public Optional<Distance> getTestDistance(){
 
         String startAddress = "Arnimstr. 108, 50825 Köln";

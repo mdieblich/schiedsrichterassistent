@@ -1,5 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
+import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.mail.*;
 
 import java.io.IOException;
@@ -59,6 +61,14 @@ public class EmailServerRead implements AutoCloseable {
             return new UserConfiguration(emailAddress, email.get().getContent());
         }
     }
+    public SchiriConfiguration loadSchiriConfiguration(String emailAddress) throws IOException, MessagingException {
+        Optional<Email> email = findConfigEmail(emailAddress);
+        if(email.isEmpty()){
+            return SchiriConfiguration.NEW_DEFAULT(emailAddress);
+        } else {
+            return SchiriConfiguration.fromJSON(email.get().getContent());
+        }
+    }
 
     private Optional<Email> findConfigEmail(String emailAddress) throws MessagingException {
         EmailFolder schiedsrichter = getFolder("SCHIEDSRICHTER");
@@ -85,11 +95,30 @@ public class EmailServerRead implements AutoCloseable {
             oldConfig2.deleteImmediately();
         }
     }
+    public void overwriteSchiriConfiguration(SchiriConfiguration config) throws MessagingException, JsonProcessingException {
+
+        // first, lets search for an old config
+        Optional<Email> oldConfigEmail = findConfigEmail(config.Benutzerdaten.Email);
+
+        // then, update
+        saveSchiriConfig(config);
+
+        // last - delete the old one
+        if(oldConfigEmail.isPresent()){
+            Email oldConfig2 = oldConfigEmail.get();
+            oldConfig2.deleteImmediately();
+        }
+    }
 
     private void saveUserConfig(UserConfiguration userConfig) throws MessagingException {
         EmailFolder schiedsrichter = getFolder("SCHIEDSRICHTER");
         Email configAsEmail = userConfig.toEmail(session);
         schiedsrichter.upload(configAsEmail);
+    }
+    private void saveSchiriConfig(SchiriConfiguration config) throws MessagingException, JsonProcessingException {
+        EmailFolder schiedsrichter = getFolder("SCHIEDSRICHTER");
+        SchiriConfigEmail configEmail = new SchiriConfigEmail(config, session);
+        schiedsrichter.upload(configEmail.getEmail());
     }
 
     @Override
