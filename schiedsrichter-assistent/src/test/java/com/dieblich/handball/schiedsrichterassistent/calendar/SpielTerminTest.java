@@ -23,6 +23,7 @@ class SpielTerminTest {
         assertEntryIs("SUMMARY", "Schiri: Kreisliga Herren", calendarEvent);
     }
 
+    @SuppressWarnings("NonAsciiCharacters")
     private SpielTermin prepareDefaultTermin(){
         LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
         SchiriEinsatz einsatz = new SchiriEinsatz(anwurf, "Am Sportzentrum, 50259 Pulheim", "Kreisliga Herren", null, null);
