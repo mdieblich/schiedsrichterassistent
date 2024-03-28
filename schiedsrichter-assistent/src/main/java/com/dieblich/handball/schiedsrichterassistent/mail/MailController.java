@@ -115,7 +115,7 @@ public class MailController {
                 askForRegistration(unknownSender);
             }
         } finally {
-//            inbox.deleteAll();
+            inbox.deleteAll();
         }
     }
 

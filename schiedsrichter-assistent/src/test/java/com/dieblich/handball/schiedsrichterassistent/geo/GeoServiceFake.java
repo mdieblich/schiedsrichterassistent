@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public class GeoServiceFake implements GeoService{
 
-    private Map<String, Koordinaten> koordinaten = new HashMap<>();
-    private Map<AbstractMap.SimpleImmutableEntry<Koordinaten, Koordinaten>, Fahrt> fahrten = new HashMap<>();
+    private final Map<String, Koordinaten> koordinaten = new HashMap<>();
+    private final Map<AbstractMap.SimpleImmutableEntry<Koordinaten, Koordinaten>, Fahrt> fahrten = new HashMap<>();
 
     public void addFahrt(String startAddress, String endAddress, int dauerInSekunden, int distanzInMetern){
         Koordinaten startCoords = addKoordinaten(startAddress);
