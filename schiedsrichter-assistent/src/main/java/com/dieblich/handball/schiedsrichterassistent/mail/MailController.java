@@ -3,6 +3,7 @@ package com.dieblich.handball.schiedsrichterassistent.mail;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoService;
+import com.dieblich.handball.schiedsrichterassistent.geo.GeoServiceImpl;
 import com.dieblich.handball.schiedsrichterassistent.mail.received.AnsetzungsEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.AskForConfigurationEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.ConfigConfirmationEmail;
@@ -42,7 +43,7 @@ public class MailController {
     public void init() {
         stratoRead = new EmailServerRead(imapHost,993,botUsername,botPassword);
         stratoSend = new EmailServerSend(smtpHost,587,botUsername,botPassword);
-        geoService = new GeoService(openRouteApikey);
+        geoService = new GeoServiceImpl(openRouteApikey);
     }
 
     @PostMapping("/checkFolderStructure")

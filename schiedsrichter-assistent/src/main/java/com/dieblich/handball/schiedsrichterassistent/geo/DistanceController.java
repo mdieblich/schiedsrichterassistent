@@ -14,7 +14,7 @@ public class DistanceController {
     @GetMapping("/testroute")
     public Optional<Distance> testDistance() {
 
-        GeoService geoService = new GeoService(apikey);
+        GeoServiceImpl geoService = new GeoServiceImpl(apikey);
         return geoService.getTestDistance();
     }
 }
