@@ -1,41 +1,90 @@
 package com.dieblich.handball.schiedsrichterassistent.calendar;
 
-import biweekly.ICalendar;
+import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
+import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
+import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
+import com.dieblich.handball.schiedsrichterassistent.geo.GeoServiceFake;
+import com.dieblich.handball.schiedsrichterassistent.geo.Koordinaten;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SpielTerminTest {
 
     @Test
-    public void spielTerminHasSummary(){
-        SchiriEinsatz einsatz = new SchiriEinsatz(null, null, "Kreisliga Herren", null, null);
-        SpielTermin termin = new SpielTermin(einsatz, null, null);
+    public void spielTerminHasSummary() throws GeoException, MissingConfigException {
+        SpielTermin termin = prepareDefaultTermin();
 
-        ICalendar ical = termin.extractCalendarEvent();
-        assertEquals("Schiri: Kreisliga Herren", ical.getEvents().get(0).getSummary().getValue());
+        String calendarEvent = termin.extractCalendarEvent();
+        assertEntryIs("SUMMARY", "Schiri: Kreisliga Herren", calendarEvent);
     }
 
-    @Test
-    public void spielTerminHasLocation(){
-        SchiriEinsatz einsatz = new SchiriEinsatz(null, "Am Sportzentrum, 50259 Pulheim", null, null, null);
-        SpielTermin termin = new SpielTermin(einsatz, null, null);
-
-        ICalendar ical = termin.extractCalendarEvent();
-        assertEquals("Am Sportzentrum, 50259 Pulheim", ical.getEvents().get(0).getLocation().getValue());
-    }
-
-    @Test
-    public void spielTerminStartTime(){
+    private SpielTermin prepareDefaultTermin(){
         LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
-        SchiriEinsatz einsatz = new SchiriEinsatz(anwurf, "Am Sportzentrum, 50259 Pulheim", null, null, null);
-        SpielTermin termin = new SpielTermin(einsatz, null, null);
+        SchiriEinsatz einsatz = new SchiriEinsatz(anwurf, "Am Sportzentrum, 50259 Pulheim", "Kreisliga Herren", null, null);
 
-        ICalendar ical = termin.extractCalendarEvent();
-        // TODO implement
+        SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
+        Koordinaten coordsSchiri = new Koordinaten(18.0, 17.0);
+        config.Benutzerdaten.Längengrad = coordsSchiri.längengrad();
+        config.Benutzerdaten.Breitengrad = coordsSchiri.breitengrad();
+        config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten = 30;
+        config.Spielablauf.UmziehenVorSpiel = 15;
+
+        GeoServiceFake fakeGeoService = new GeoServiceFake();
+        Koordinaten coordsHalle = fakeGeoService.addKoordinaten("Am Sportzentrum, 50259 Pulheim");
+        fakeGeoService.addFahrt(coordsSchiri, coordsHalle, 30*60, 0);
+
+        // act
+        return new SpielTermin(einsatz, config, fakeGeoService);
+    }
+
+    @Test
+    public void spielTerminHasLocation() throws GeoException, MissingConfigException {
+        SpielTermin termin = prepareDefaultTermin();
+
+        String calendarEvent = termin.extractCalendarEvent();
+        // commas are escaped, see https://www.rfc-editor.org/rfc/rfc5545#section-3.3.11
+        assertEntryIs("LOCATION", "Am Sportzentrum\\, 50259 Pulheim", calendarEvent);
+    }
+
+    @Test
+    public void spielTerminStartTime() throws GeoException, MissingConfigException {
+        SpielTermin termin = prepareDefaultTermin();
+
+        // act
+        String calendarEvent = termin.extractCalendarEvent();
+
+        // assert
+        String day = "2024"+"04"+"13";
+        /* 15:30 Uhr: Anwurf
+         * 15:00 Uhr: technische Besprechung
+         * 14:45 Uhr: Ankunft / Umziehen
+         *  (30 Minuten Fahrtzeit)
+         * 14:15 Uhr: Abfahrt
+         * in UTC: 12:15 */
+        String time = "121500";
+        assertEntryIs("DTSTART", day+"T"+time+"Z", calendarEvent);
+    }
+
+    private void assertEntryIs(String entry, String expected, String calendarEvent){
+        Optional<String> actualValue = findValueOf(entry, calendarEvent);
+        assertTrue(actualValue.isPresent(), "Entry <"+entry+"> not found in <"+calendarEvent+">");
+        assertEquals(expected, actualValue.get(), "Full Event: "+ calendarEvent);
+    }
+
+    private Optional<String> findValueOf(String entry, String calendarEvent){
+        String[] lines = calendarEvent.split(System.lineSeparator());
+        for(String line:lines){
+            if(line.startsWith(entry+":")){
+                String value = line.substring(entry.length()+1);
+                return Optional.of(value);
+            }
+        }
+        return Optional.empty();
     }
 
 }
