@@ -82,6 +82,14 @@ public class SchiriConfiguration {
         }
 
         @JsonIgnore
+        public Koordinaten getCoords() throws MissingConfigException {
+            if(Längengrad == null || Breitengrad == null){
+                throw new MissingConfigException("Längen- oder Breitengrad fehlt");
+            }
+            return new Koordinaten(Breitengrad, Längengrad);
+        }
+
+        @JsonIgnore
         public boolean isComplete() {
             return Email != null &&
                     Vorname != null &&
