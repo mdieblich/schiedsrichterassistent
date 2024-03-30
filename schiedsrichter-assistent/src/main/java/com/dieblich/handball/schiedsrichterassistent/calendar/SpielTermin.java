@@ -14,7 +14,6 @@ import com.dieblich.handball.schiedsrichterassistent.geo.Koordinaten;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 public class SpielTermin {
