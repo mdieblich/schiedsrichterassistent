@@ -36,7 +36,7 @@ public class SpielTermin {
         event.setSummary("Schiri: " + einsatz.ligaBezeichnungAusEmail());
         event.setLocation(einsatz.hallenAdresse());
 
-        SpielAblauf ablauf = createSpielablauf();
+        SchirieinsatzAblauf ablauf = createSpielablauf();
         event.setDateStart(asDate(ablauf.getAbfahrt()));
         event.setDateEnd(asDate(ablauf.getHeimkehr()));
 
@@ -63,7 +63,7 @@ public class SpielTermin {
         return localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 
-    private SpielAblauf createSpielablauf() throws MissingConfigException, GeoException {
+    private SchirieinsatzAblauf createSpielablauf() throws MissingConfigException, GeoException {
         Koordinaten coordsSchiri = config.Benutzerdaten.getCoords();
         Optional<Koordinaten> optionalCoordsHalle = geoService.findKoordinaten(einsatz.hallenAdresse());
         if(optionalCoordsHalle.isEmpty()){
@@ -74,7 +74,7 @@ public class SpielTermin {
             throw new GeoException("Fahrt von Schiri ("+coordsSchiri+") zur Halle ("+optionalCoordsHalle.get()+") konnte nicht bestimmt werden.");
         }
 
-        return new SpielAblauf(
+        return new SchirieinsatzAblauf(
                 einsatz.anwurf(),
                 einsatz.ligaBezeichnungAusEmail(),
                 optionalHinfahrt.get().dauerInSekunden()/60,

@@ -5,14 +5,14 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-public class SpielAblauf{
+public class SchirieinsatzAblauf {
     @Getter
     private final LocalDateTime anwurf;
     private final String ligaBezeichnungAusEmail;
     private final int fahrtzeit;
     private final SchiriConfiguration config;
 
-    public SpielAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, int fahrtzeit, SchiriConfiguration config) {
+    public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, int fahrtzeit, SchiriConfiguration config) {
         this.anwurf = anwurf;
         this.ligaBezeichnungAusEmail = ligaBezeichnungAusEmail;
         this.fahrtzeit = fahrtzeit;
