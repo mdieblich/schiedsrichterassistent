@@ -34,6 +34,9 @@ class SpielTerminTest {
         config.Benutzerdaten.Breitengrad = coordsSchiri.breitengrad();
         config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten = 30;
         config.Spielablauf.UmziehenVorSpiel = 15;
+        config.Spielablauf.EffektiveSpielDauer = 90;
+        config.Spielablauf.PapierKramNachSpiel = 15;
+        config.Spielablauf.UmziehenNachSpiel = 15;
 
         GeoServiceFake fakeGeoService = new GeoServiceFake();
         Koordinaten coordsHalle = fakeGeoService.addKoordinaten("Am Sportzentrum, 50259 Pulheim");
@@ -69,6 +72,25 @@ class SpielTerminTest {
          * in UTC: 12:15 */
         String time = "121500";
         assertEntryIs("DTSTART", day+"T"+time+"Z", calendarEvent);
+    }
+    @Test
+    public void spielTerminEndTime() throws GeoException, MissingConfigException {
+        SpielTermin termin = prepareDefaultTermin();
+
+        // act
+        String calendarEvent = termin.extractCalendarEvent();
+
+        // assert
+        String day = "2024"+"04"+"13";
+        /* 15:30 Uhr: Anwurf
+         * 17:00 Uhr: Spielende, Papierkram beginnt
+         * 17:15 Uhr: Umziehen
+         * 17:30 Uhr: Abfahrt
+         *  (30 Minuten Fahrtzeit)
+         * 18:00 Uhr: Heimkehr
+         * in UTC: 16:00 */
+        String time = "160000";
+        assertEntryIs("DTEND", day+"T"+time+"Z", calendarEvent);
     }
 
     private void assertEntryIs(String entry, String expected, String calendarEvent){

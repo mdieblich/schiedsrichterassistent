@@ -35,12 +35,16 @@ public class SpielTermin {
         event.setLocation(einsatz.hallenAdresse());
 
         SpielAblauf ablauf = createSpielablauf();
-        LocalDateTime abfahrt = ablauf.getAbfahrt();
-        Instant abfahrtInstant = abfahrt.atZone(ZoneId.systemDefault()).toInstant();
-        event.setDateStart(Date.from(abfahrtInstant));
+        event.setDateStart(asDate(ablauf.getAbfahrt()));
+        event.setDateEnd(asDate(ablauf.getHeimkehr()));
 
         ical.addEvent(event);
         return Biweekly.write(ical).go();
+    }
+
+    private static Date asDate(LocalDateTime localDateTime){
+        Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+        return Date.from(instant);
     }
 
     private SpielAblauf createSpielablauf() throws MissingConfigException, GeoException {
