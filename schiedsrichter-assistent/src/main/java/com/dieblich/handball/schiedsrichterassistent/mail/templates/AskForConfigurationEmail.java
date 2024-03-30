@@ -11,9 +11,7 @@ public class AskForConfigurationEmail extends Email {
 
     public static final String SUBJECT = "Konfiguration nicht vollständig";
     public AskForConfigurationEmail(String botEmailAddress, String schiriEmailAddress, Session session) throws MessagingException {
-        super(session);
-        setFrom(botEmailAddress);
-        setTo(schiriEmailAddress);
+        super(botEmailAddress, schiriEmailAddress, session);
         setSubject(SUBJECT);
         setContent("""
             Hallo!

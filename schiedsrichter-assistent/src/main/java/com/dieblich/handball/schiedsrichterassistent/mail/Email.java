@@ -22,6 +22,11 @@ public class Email {
     public Email(Session session) {
         this.message = new MimeMessage(session);
     }
+    public Email(String botEmailAddress, String schiriEmailAddress, Session session) throws MessagingException {
+        this.message = new MimeMessage(session);
+        setFrom(botEmailAddress);
+        setTo(schiriEmailAddress);
+    }
 
     Message getJakartaMessage() {
         return message;

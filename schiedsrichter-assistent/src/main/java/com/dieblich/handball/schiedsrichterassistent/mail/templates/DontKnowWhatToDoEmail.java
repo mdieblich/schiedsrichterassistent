@@ -7,9 +7,7 @@ import jakarta.mail.Session;
 public class DontKnowWhatToDoEmail extends Email{
     public static final String SUBJECT = "Unbekannte Email erhalten";
     public DontKnowWhatToDoEmail(String botEmailAddress, String schiriEmailAddress, Email unknownEmail, Session session) throws MessagingException {
-        super(session);
-        setFrom(botEmailAddress);
-        setTo(schiriEmailAddress);
+        super(botEmailAddress, schiriEmailAddress, session);
         setSubject(SUBJECT);
         setContent("""
         Hey,

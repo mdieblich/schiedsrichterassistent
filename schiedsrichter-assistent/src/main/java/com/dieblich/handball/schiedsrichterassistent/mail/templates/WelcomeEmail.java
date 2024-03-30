@@ -7,10 +7,8 @@ import jakarta.mail.Session;
 public class WelcomeEmail extends Email {
 
     public static final String SUBJECT = "Willkommen beim Schiribot!";
-    public WelcomeEmail(String sender, String receiver, Session session) throws MessagingException {
-        super(session);
-        setFrom(sender);
-        setTo(receiver);
+    public WelcomeEmail(String botEmailAddress, String schiriEmailAddress, Session session) throws MessagingException {
+        super(botEmailAddress, schiriEmailAddress, session);
         setSubject(SUBJECT);
         setContent("""
                 Hallo beim Schiribot!
