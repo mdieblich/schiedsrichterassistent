@@ -26,7 +26,11 @@ class SpielTerminTest {
     @SuppressWarnings("NonAsciiCharacters")
     private SpielTermin prepareDefaultTermin(){
         LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
-        SchiriEinsatz einsatz = new SchiriEinsatz(anwurf, "Am Sportzentrum, 50259 Pulheim", "Kreisliga Herren", null, null);
+        SchiriEinsatz einsatz = new SchiriEinsatz(anwurf,
+                "Am Sportzentrum, 50259 Pulheim",
+                "Kreisliga Herren",
+                "SC Pulheim 3",
+                "Fortuna Köln 4");
 
         SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
         Koordinaten coordsSchiri = new Koordinaten(18.0, 17.0);
@@ -85,12 +89,32 @@ class SpielTerminTest {
         /* 15:30 Uhr: Anwurf
          * 17:00 Uhr: Spielende, Papierkram beginnt
          * 17:15 Uhr: Umziehen
-         * 17:30 Uhr: Abfahrt
+         * 17:30 Uhr: Rückfahrt
          *  (30 Minuten Fahrtzeit)
          * 18:00 Uhr: Heimkehr
          * in UTC: 16:00 */
         String time = "160000";
         assertEntryIs("DTEND", day+"T"+time+"Z", calendarEvent);
+    }
+    @Test
+    public void description() throws GeoException, MissingConfigException {
+        SpielTermin termin = prepareDefaultTermin();
+
+        // act
+        String calendarEvent = termin.extractCalendarEvent();
+
+        // assert
+        String beauftifulDescription = """
+                SC Pulheim 3 vs. Fortuna Köln 4
+                
+                Abfahrt:   14:15
+                Ankunft:   15:00
+                Anwurf:    15:30
+                Spielende: 17:00
+                Rückfahrt: 17:30
+                Heimkehr:  18:00""";
+        String expectedDescription = beauftifulDescription.replace("\n", "\\n");
+        assertEntryIs("DESCRIPTION", expectedDescription, calendarEvent);
     }
 
     private void assertEntryIs(String entry, String expected, String calendarEvent){
@@ -99,15 +123,21 @@ class SpielTerminTest {
         assertEquals(expected, actualValue.get(), "Full Event: "+ calendarEvent);
     }
 
-    private Optional<String> findValueOf(String entry, String calendarEvent){
+    private Optional<String> findValueOf(String keyWord, String calendarEvent){
         String[] lines = calendarEvent.split(System.lineSeparator());
-        for(String line:lines){
-            if(line.startsWith(entry+":")){
-                String value = line.substring(entry.length()+1);
-                return Optional.of(value);
+        for(int i=0; i<lines.length; i++){
+            String line = lines[i];
+            if(line.startsWith(keyWord+":")){
+                StringBuilder value = new StringBuilder(line.substring(keyWord.length() + 1));
+                while(i+1<lines.length && lines[i+1].startsWith(" ")){
+                    // A value con continue in the next lines
+                    i++;
+                    // but remove the preceding space
+                    value.append(lines[i].substring(1));
+                }
+                return Optional.of(value.toString());
             }
         }
         return Optional.empty();
     }
-
 }

@@ -12,10 +12,13 @@ import com.dieblich.handball.schiedsrichterassistent.geo.GeoService;
 import com.dieblich.handball.schiedsrichterassistent.geo.Koordinaten;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public class SpielTermin {
+
     private final SchiriEinsatz einsatz;
     private final SchiriConfiguration config;
     private final GeoService geoService;
@@ -38,6 +41,16 @@ public class SpielTermin {
         event.setDateStart(asDate(ablauf.getAbfahrt()));
         event.setDateEnd(asDate(ablauf.getHeimkehr()));
 
+        String description = einsatz.heimMannschaft() + " vs. " + einsatz.gastMannschaft() + "\n";
+        description += "\n";
+        description += "Abfahrt:   " + asTimeOfDay(ablauf.getAbfahrt()) + "\n";
+        description += "Ankunft:   " + asTimeOfDay(ablauf.getTechnischBesprechung()) + "\n";
+        description += "Anwurf:    " + asTimeOfDay(ablauf.getAnwurf()) + "\n";
+        description += "Spielende: " + asTimeOfDay(ablauf.getSpielEnde()) + "\n";
+        description += "Rückfahrt: " + asTimeOfDay(ablauf.getRueckfahrt()) + "\n";
+        description += "Heimkehr:  " + asTimeOfDay(ablauf.getHeimkehr());
+        event.setDescription(description);
+
         ical.addEvent(event);
         return Biweekly.write(ical).go();
     }
@@ -45,6 +58,10 @@ public class SpielTermin {
     private static Date asDate(LocalDateTime localDateTime){
         Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
         return Date.from(instant);
+    }
+
+    private static String asTimeOfDay(LocalDateTime localDateTime){
+        return localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 
     private SpielAblauf createSpielablauf() throws MissingConfigException, GeoException {
