@@ -14,7 +14,7 @@ public class CalendarResponseEmail extends Email {
     public CalendarResponseEmail(String botEmailAddress, String schiriEmailAddress, SpielTermin spielTermin, Session session) throws MessagingException, GeoException, IOException, MissingConfigException {
         super(botEmailAddress, schiriEmailAddress, session);
         setSubject("Termine für deine Ansetzung");
-        setContent("Anbei deine Ansetzung.");
+        setContent("Anbei deine Ansetzung.\n\n" + spielTermin.getDescription());
         File calendarInviteFile = saveToFile(spielTermin);
         attachFile(calendarInviteFile);
     }

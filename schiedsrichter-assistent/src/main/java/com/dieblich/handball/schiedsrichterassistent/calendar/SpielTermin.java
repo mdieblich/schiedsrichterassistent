@@ -22,6 +22,9 @@ public class SpielTermin {
     private final SchiriConfiguration config;
     private final GeoService geoService;
 
+    private SchirieinsatzAblauf spielAblauf;
+    private String description;
+
     public SpielTermin(SchiriEinsatz einsatz, SchiriConfiguration config, GeoService geoService) {
         this.einsatz = einsatz;
         this.config = config;
@@ -36,22 +39,10 @@ public class SpielTermin {
         event.setSummary("Schiri: " + einsatz.ligaBezeichnungAusEmail());
         event.setLocation(einsatz.hallenAdresse());
 
-        SchirieinsatzAblauf ablauf = createSpielablauf();
+        SchirieinsatzAblauf ablauf = getSpielAblauf();
         event.setDateStart(asDate(ablauf.getAbfahrt()));
         event.setDateEnd(asDate(ablauf.getHeimkehr()));
-
-        String description = einsatz.heimMannschaft() + " vs. " + einsatz.gastMannschaft() + "\n";
-        description += "\n";
-        description += "Berechnete Fahrtzeit: "+ablauf.getFahrtzeit()+" Min\n";
-        description += "Berechnete Strecke: "+ablauf.getDistanz()+" km\n";
-        description += "\n";
-        description += "Abfahrt:   " + asTimeOfDay(ablauf.getAbfahrt()) + "\n";
-        description += "Ankunft:   " + asTimeOfDay(ablauf.getTechnischBesprechung()) + "\n";
-        description += "Anwurf:    " + asTimeOfDay(ablauf.getAnwurf()) + "\n";
-        description += "Spielende: " + asTimeOfDay(ablauf.getSpielEnde()) + "\n";
-        description += "Rückfahrt: " + asTimeOfDay(ablauf.getRueckfahrt()) + "\n";
-        description += "Heimkehr:  " + asTimeOfDay(ablauf.getHeimkehr());
-        event.setDescription(description);
+        event.setDescription(getDescription());
 
         ical.addEvent(event);
         return Biweekly.write(ical).go();
@@ -64,6 +55,13 @@ public class SpielTermin {
 
     private static String asTimeOfDay(LocalDateTime localDateTime){
         return localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+    }
+
+    public SchirieinsatzAblauf getSpielAblauf() throws GeoException, MissingConfigException {
+        if(spielAblauf == null){
+            spielAblauf = createSpielablauf();
+        }
+        return spielAblauf;
     }
 
     private SchirieinsatzAblauf createSpielablauf() throws MissingConfigException, GeoException {
@@ -84,5 +82,23 @@ public class SpielTermin {
                 optionalHinfahrt.get().distanzInMetern()/1000,
                 config
         );
+    }
+
+    public String getDescription() throws GeoException, MissingConfigException {
+        if(description == null){
+            SchirieinsatzAblauf ablauf = getSpielAblauf();
+            description = einsatz.heimMannschaft() + " vs. " + einsatz.gastMannschaft() + "\n";
+            description += "\n";
+            description += "Berechnete Fahrtzeit: "+ablauf.getFahrtzeit()+" Min\n";
+            description += "Berechnete Strecke: "+ablauf.getDistanz()+" km\n";
+            description += "\n";
+            description += "Abfahrt:   " + asTimeOfDay(ablauf.getAbfahrt()) + "\n";
+            description += "Ankunft:   " + asTimeOfDay(ablauf.getTechnischBesprechung()) + "\n";
+            description += "Anwurf:    " + asTimeOfDay(ablauf.getAnwurf()) + "\n";
+            description += "Spielende: " + asTimeOfDay(ablauf.getSpielEnde()) + "\n";
+            description += "Rückfahrt: " + asTimeOfDay(ablauf.getRueckfahrt()) + "\n";
+            description += "Heimkehr:  " + asTimeOfDay(ablauf.getHeimkehr());
+        }
+        return description;
     }
 }
