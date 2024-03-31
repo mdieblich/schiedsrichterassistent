@@ -17,7 +17,7 @@ public class AskForConfigurationEmail extends Email {
             Hallo!
             
             Ich habe eine Email von dir erhalten (vermutlich mit einer Ansetzung). Deine Konfiguration ist aber noch
-            nicht vollständig. Bitte schick mir daher zuerst eine Email mit dem Betreff "Konfiguration", in der 
+            nicht vollständig. Bitte schick mir daher zuerst eine Email mit dem Betreff "Konfiguration", in der
             folgendes steht:
             
             {

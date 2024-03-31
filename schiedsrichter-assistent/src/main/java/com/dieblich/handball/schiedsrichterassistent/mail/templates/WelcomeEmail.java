@@ -25,16 +25,22 @@ public class WelcomeEmail extends Email {
                         "Vorname": "Max",
                         "Nachname": "Mustermann",
                         "Adresse": "Musterstr. 17, 54321 Köln"
-                    }
+                    },
+                    "Gespannpartner": [
+                        "annette.stunde@handball.net",
+                        "o.schmitz@hsg-oberpal.de
+                    ]
                 }
-                Dabei gibst du bitte deinen richtigen Namen + Adresse an.
+                Dabei gibst du bitte deinen richtigen Namen + Adresse an, sowie die Email-Adressen deiner Gespannpartner.
+                Gespannpartner, die du hier angibst, sind autorisiert mir Ansetzungen von euch beiden zuzuschicken.
                 
                 Darüber hinaus speichere ich mir dann von dir:
                 * deine Emailadresse
+                * Längen- und Breitengrad deiner Adresse
                 * deine Änderungen an der Konfiguration (z.B. längerer Puffer vor'm Spiel).
                 
-                Aktuell kannst du deine gespeicherten Daten nicht selbst löschen, bitte wende dich dafür an den
-                Administrator des Schiribots.
+                Aktuell kannst du deine gespeicherten Daten nicht selbst löschen, aber überschreiben. Zum Löschen wendest
+                du dich bitte an den Administrator des Schiribots.
                 
                 Ich speichere grundsätzlich keine Emails. ICH LÖSCHE ALLE EMAILS, die du mir zuschickst.
                 Falls du mir also schon eine Ansetzungsemail zugeschickt hast, so musst du das erneut tun, nachdem du
