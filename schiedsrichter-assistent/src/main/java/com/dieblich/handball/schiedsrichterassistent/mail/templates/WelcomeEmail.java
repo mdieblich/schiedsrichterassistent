@@ -32,7 +32,10 @@ public class WelcomeEmail extends Email {
                     ]
                 }
                 Dabei gibst du bitte deinen richtigen Namen + Adresse an, sowie die Email-Adressen deiner Gespannpartner
-                und Gespannpartnerinnen. Alle, die du hier angibst, sind autorisiert mir Ansetzungen von euch beiden
+                und Gespannpartnerinnen.
+                Dein Name muss so angegeben werden, wie er in NuLiga hinterlegt ist (Bzgl. Akzentzeichen, Bindestrichen,
+                weiterer Vornamen, etc.). Das kannst du am besten aus einer Ansetzungs-Email entnehmen.
+                Alle, die du hier bei "Gespannpartner" angibst, sind autorisiert mir Ansetzungen von euch beiden
                 zuzuschicken. Dein Gespannpartner oder deine Gespannpartnerin muss sich daher genau wie du hier
                 registrieren und deine Emailadresse in der Liste der Gespannpartner hinterlegen.
                 
