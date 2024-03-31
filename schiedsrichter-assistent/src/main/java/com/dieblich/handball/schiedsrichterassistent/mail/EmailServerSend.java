@@ -1,6 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
+import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTermin;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
@@ -50,5 +51,9 @@ public class EmailServerSend {
 
     public CalendarResponseEmail createCalendarResponse(String schiriEmailAddress, SpielTermin spielTermin) throws MessagingException, GeoException, MissingConfigException, IOException {
         return new CalendarResponseEmail(botEmailAddress, schiriEmailAddress, spielTermin, session);
+    }
+
+    public SecondSchiriMissingEmail createSecondSchiriMissingEmail(String schiriEmailAddress, Schiedsrichter otherSchiri) throws MessagingException {
+        return new SecondSchiriMissingEmail(botEmailAddress, schiriEmailAddress, otherSchiri, session);
     }
 }

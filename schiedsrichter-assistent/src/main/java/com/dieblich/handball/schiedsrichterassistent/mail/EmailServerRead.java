@@ -1,5 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
+import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.mail.*;
@@ -73,6 +74,20 @@ public class EmailServerRead implements AutoCloseable {
         return Optional.empty();
     }
 
+
+    private Optional<Email> findConfigEmail(Schiedsrichter schiedsrichter) throws MessagingException {
+        EmailFolder schiedsrichterFolder = getFolder("SCHIEDSRICHTER");
+        String emailSubject = schiedsrichter.nachname()+ ", " + schiedsrichter.vorname();
+
+        for(Email email:schiedsrichterFolder.getEmails()){
+            if(email.hasSubject(emailSubject)){
+                return Optional.of(email);
+            }
+        }
+        return Optional.empty();
+
+    }
+
     public void overwriteSchiriConfiguration(SchiriConfiguration config) throws MessagingException, JsonProcessingException {
 
         // first, lets search for an old config
@@ -101,8 +116,17 @@ public class EmailServerRead implements AutoCloseable {
         }
     }
 
-    public Optional<SchiriConfiguration> findConfig(String emailAddress) throws MessagingException, IOException {
+    public Optional<SchiriConfiguration> findConfigByEmail(String emailAddress) throws MessagingException, IOException {
         Optional<Email> optionalConfigEmail = findConfigEmail(emailAddress);
+        if(optionalConfigEmail.isPresent()){
+            Email configEmail = optionalConfigEmail.get();
+            return Optional.of(SchiriConfiguration.fromJSON(configEmail.getContent()));
+        }
+        return Optional.empty();
+    }
+
+    public Optional<SchiriConfiguration> findConfigByName(Schiedsrichter schiedsrichter) throws MessagingException, IOException {
+        Optional<Email> optionalConfigEmail = findConfigEmail(schiedsrichter);
         if(optionalConfigEmail.isPresent()){
             Email configEmail = optionalConfigEmail.get();
             return Optional.of(SchiriConfiguration.fromJSON(configEmail.getContent()));

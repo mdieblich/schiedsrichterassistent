@@ -9,10 +9,16 @@ public record SchiriEinsatz(
     String heimMannschaft,
     String gastMannschaft,
     Schiedsrichter schiriA,
-    Schiedsrichter schirirB){
+    Schiedsrichter schiriB){
 
     public boolean mitGespannspartner(){
-        return schirirB != null;
+        return schiriB != null;
     }
 
+    public Schiedsrichter otherSchiri(Schiedsrichter schiedsrichter) {
+        if(schiedsrichter.equals(schiriB)){
+            return schiriA;
+        }
+        return schiriB;
+    }
 }

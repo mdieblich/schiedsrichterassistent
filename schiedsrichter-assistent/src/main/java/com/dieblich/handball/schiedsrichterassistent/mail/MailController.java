@@ -1,6 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
+import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTermin;
@@ -97,11 +98,11 @@ public class MailController {
                         handleConfigUpdate(email);
                         // TODO if the config update was successful, all other Emails of that sender should be handled - instead of discarded
                     } else if(!unknownSenders.contains(sender)){
-                        Optional<SchiriConfiguration> optionalSchiriConfig = stratoRead.findConfig(sender);
+                        Optional<SchiriConfiguration> optionalSchiriConfig = stratoRead.findConfigByEmail(sender);
                         if(optionalSchiriConfig.isPresent()){
                             SchiriConfiguration schiriConfiguration = optionalSchiriConfig.get();
                             if(schiriConfiguration.isComplete()){
-                                handleEmail(sender, email, schiriConfiguration);
+                                handleEmail(email, schiriConfiguration);
                             } else{
                                 askForMissingConfig(sender);
                             }
@@ -148,21 +149,41 @@ public class MailController {
         welcomeEmail.send();
     }
 
-    private void handleEmail(String sender, Email email, SchiriConfiguration config) {
+    private void handleEmail(Email email, SchiriConfiguration config) {
         try{
             if(isAnsetzung(email)){
                 AnsetzungsEmail ansetzungsEmail = new AnsetzungsEmail(email);
                 SchiriEinsatz schiriEinsatz = ansetzungsEmail.extractSchiriEinsatz();
-                SpielTermin spielTermin = new SpielTermin(schiriEinsatz, config, geoService);
-                CalendarResponseEmail response = stratoSend.createCalendarResponse(sender, spielTermin);
-                response.send();
+                if(schiriEinsatz.mitGespannspartner()){
+                    Schiedsrichter otherSchiri = schiriEinsatz.otherSchiri(config.Benutzerdaten.getSchiedsrichter());
 
+                    // TODO refactor: extract method
+                    Optional<SchiriConfiguration> optionalSchiriBConfig = stratoRead.findConfigByName(otherSchiri);
+                    if(optionalSchiriBConfig.isEmpty()){
+                        SecondSchiriMissingEmail schiriMissingEmail = stratoSend.createSecondSchiriMissingEmail(config.Benutzerdaten.Email, otherSchiri);
+                        schiriMissingEmail.send();
+                        return;
+                        // TODO testen!
+                    }
+                    // TODO Checken, ob man in der "Whitelist" des anderen Schiris steht
+                    // TODO SpielTermin für zwei Schiris berechnen
+                    // TODO Zwei Emails rausschicken
+                } else {
+                    sendCalendarEventForOneSchiedsrichter(schiriEinsatz, config);
+                }
             } else {
-                DontKnowWhatToDoEmail response = stratoSend.createResponseForUnknownEmail(sender, email);
+                DontKnowWhatToDoEmail response = stratoSend.createResponseForUnknownEmail(config.Benutzerdaten.Email, email);
                 response.send();
             }
         } catch(Exception e){
             e.printStackTrace(System.out);
+        }
+    }
+
+    private void sendCalendarEventForOneSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration config) throws MessagingException, GeoException, MissingConfigException, IOException {
+        SpielTermin spielTermin = new SpielTermin(schiriEinsatz, config, geoService);
+        try (CalendarResponseEmail response = stratoSend.createCalendarResponse(config.Benutzerdaten.Email, spielTermin)) {
+            response.send();
         }
     }
 

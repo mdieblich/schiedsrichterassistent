@@ -111,6 +111,11 @@ public class SchiriConfiguration {
             }
             return Nachname +", " + Vorname;
         }
+
+        @JsonIgnore
+        public Schiedsrichter getSchiedsrichter() {
+            return new Schiedsrichter(Vorname, Nachname);
+        }
     }
 
     @ToString

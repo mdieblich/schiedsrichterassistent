@@ -45,6 +45,10 @@ public class Email {
                 .anyMatch(sender::equals);
     }
 
+    public boolean hasSubject(String emailSubject) throws MessagingException {
+        return getSubject().equals(emailSubject);
+    }
+
     private List<String> getAllSenders() throws MessagingException {
         return Arrays.stream(message.getFrom())
                 .filter(address -> address instanceof InternetAddress)
@@ -129,4 +133,5 @@ public class Email {
         attachmentPart.attachFile(calendarInviteFile);
         mulitPart.addBodyPart(attachmentPart);
     }
+
 }
