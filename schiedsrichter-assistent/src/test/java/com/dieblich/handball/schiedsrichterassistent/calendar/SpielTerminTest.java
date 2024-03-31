@@ -44,7 +44,7 @@ class SpielTerminTest {
 
         GeoServiceFake fakeGeoService = new GeoServiceFake();
         Koordinaten coordsHalle = fakeGeoService.addKoordinaten("Am Sportzentrum, 50259 Pulheim");
-        fakeGeoService.addFahrt(coordsSchiri, coordsHalle, 30*60, 0);
+        fakeGeoService.addFahrt(coordsSchiri, coordsHalle, 30*60, 34*1000);
 
         // act
         return new SpielTermin(einsatz, config, fakeGeoService);
@@ -106,6 +106,9 @@ class SpielTerminTest {
         // assert
         String beauftifulDescription = """
                 SC Pulheim 3 vs. Fortuna Köln 4
+                
+                Berechnete Fahrtzeit: 30 Min
+                Berechnete Strecke: 34 km
                 
                 Abfahrt:   14:15
                 Ankunft:   15:00

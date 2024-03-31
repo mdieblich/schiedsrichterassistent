@@ -42,6 +42,9 @@ public class SpielTermin {
 
         String description = einsatz.heimMannschaft() + " vs. " + einsatz.gastMannschaft() + "\n";
         description += "\n";
+        description += "Berechnete Fahrtzeit: "+ablauf.getFahrtzeit()+" Min\n";
+        description += "Berechnete Strecke: "+ablauf.getDistanz()+" km\n";
+        description += "\n";
         description += "Abfahrt:   " + asTimeOfDay(ablauf.getAbfahrt()) + "\n";
         description += "Ankunft:   " + asTimeOfDay(ablauf.getTechnischBesprechung()) + "\n";
         description += "Anwurf:    " + asTimeOfDay(ablauf.getAnwurf()) + "\n";
@@ -66,18 +69,19 @@ public class SpielTermin {
     private SchirieinsatzAblauf createSpielablauf() throws MissingConfigException, GeoException {
         Koordinaten coordsSchiri = config.Benutzerdaten.getCoords();
         Optional<Koordinaten> optionalCoordsHalle = geoService.findKoordinaten(einsatz.hallenAdresse());
-        if(optionalCoordsHalle.isEmpty()){
-            throw new GeoException("Koordinaten der Halle ("+einsatz.hallenAdresse()+") konnten nicht bestimmt werden.");
+        if (optionalCoordsHalle.isEmpty()) {
+            throw new GeoException("Koordinaten der Halle (" + einsatz.hallenAdresse() + ") konnten nicht bestimmt werden.");
         }
         Optional<Fahrt> optionalHinfahrt = geoService.calculateFahrt(coordsSchiri, optionalCoordsHalle.get());
-        if(optionalHinfahrt.isEmpty()){
-            throw new GeoException("Fahrt von Schiri ("+coordsSchiri+") zur Halle ("+optionalCoordsHalle.get()+") konnte nicht bestimmt werden.");
+        if (optionalHinfahrt.isEmpty()) {
+            throw new GeoException("Fahrt von Schiri (" + coordsSchiri + ") zur Halle (" + optionalCoordsHalle.get() + ") konnte nicht bestimmt werden.");
         }
 
         return new SchirieinsatzAblauf(
                 einsatz.anwurf(),
                 einsatz.ligaBezeichnungAusEmail(),
-                optionalHinfahrt.get().dauerInSekunden()/60,
+                optionalHinfahrt.get().dauerInSekunden() / 60,
+                optionalHinfahrt.get().distanzInMetern()/1000,
                 config
         );
     }

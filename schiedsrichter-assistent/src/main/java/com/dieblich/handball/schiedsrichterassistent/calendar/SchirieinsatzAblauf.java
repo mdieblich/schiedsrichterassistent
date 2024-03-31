@@ -9,13 +9,17 @@ public class SchirieinsatzAblauf {
     @Getter
     private final LocalDateTime anwurf;
     private final String ligaBezeichnungAusEmail;
+    @Getter
     private final int fahrtzeit;
+    @Getter
+    private final int distanz;
     private final SchiriConfiguration config;
 
-    public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, int fahrtzeit, SchiriConfiguration config) {
+    public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, int fahrtzeit, int distanz, SchiriConfiguration config) {
         this.anwurf = anwurf;
         this.ligaBezeichnungAusEmail = ligaBezeichnungAusEmail;
         this.fahrtzeit = fahrtzeit;
+        this.distanz = distanz;
         this.config = config;
     }
 
