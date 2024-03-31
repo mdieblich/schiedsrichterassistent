@@ -1,14 +1,14 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
+import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
+import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTermin;
+import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoService;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoServiceImpl;
 import com.dieblich.handball.schiedsrichterassistent.mail.received.AnsetzungsEmail;
-import com.dieblich.handball.schiedsrichterassistent.mail.templates.AskForConfigurationEmail;
-import com.dieblich.handball.schiedsrichterassistent.mail.templates.ConfigConfirmationEmail;
-import com.dieblich.handball.schiedsrichterassistent.mail.templates.DontKnowWhatToDoEmail;
-import com.dieblich.handball.schiedsrichterassistent.mail.templates.WelcomeEmail;
+import com.dieblich.handball.schiedsrichterassistent.mail.templates.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.Folder;
 import jakarta.mail.MessagingException;
@@ -148,16 +148,21 @@ public class MailController {
         welcomeEmail.send();
     }
 
-    private void handleEmail(String sender, Email email, SchiriConfiguration config) throws MessagingException, IOException {
-        if(isAnsetzung(email)){
-            AnsetzungsEmail ansetzungsEmail = new AnsetzungsEmail(email);
-            SchiriEinsatz schiriEinsatz = ansetzungsEmail.extractSchiriEinsatz();
-            // TODO Termin daraus erstellen und zuschicken
-            System.out.println(schiriEinsatz);
+    private void handleEmail(String sender, Email email, SchiriConfiguration config) {
+        try{
+            if(isAnsetzung(email)){
+                AnsetzungsEmail ansetzungsEmail = new AnsetzungsEmail(email);
+                SchiriEinsatz schiriEinsatz = ansetzungsEmail.extractSchiriEinsatz();
+                SpielTermin spielTermin = new SpielTermin(schiriEinsatz, config, geoService);
+                CalendarResponseEmail response = stratoSend.createCalendarResponse(sender, spielTermin);
+                response.send();
 
-        } else {
-            DontKnowWhatToDoEmail response = stratoSend.createResponseForUnknownEmail(sender, email);
-            response.send();
+            } else {
+                DontKnowWhatToDoEmail response = stratoSend.createResponseForUnknownEmail(sender, email);
+                response.send();
+            }
+        } catch(Exception e){
+            e.printStackTrace(System.out);
         }
     }
 

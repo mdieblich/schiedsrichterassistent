@@ -1,13 +1,14 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
+import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
-import com.dieblich.handball.schiedsrichterassistent.mail.templates.AskForConfigurationEmail;
-import com.dieblich.handball.schiedsrichterassistent.mail.templates.ConfigConfirmationEmail;
-import com.dieblich.handball.schiedsrichterassistent.mail.templates.DontKnowWhatToDoEmail;
-import com.dieblich.handball.schiedsrichterassistent.mail.templates.WelcomeEmail;
+import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTermin;
+import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
+import com.dieblich.handball.schiedsrichterassistent.mail.templates.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.mail.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
@@ -45,5 +46,9 @@ public class EmailServerSend {
 
     public DontKnowWhatToDoEmail createResponseForUnknownEmail(String schiriEmailAddress, Email unknownEmail) throws MessagingException {
         return new DontKnowWhatToDoEmail(botEmailAddress, schiriEmailAddress, unknownEmail, session);
+    }
+
+    public CalendarResponseEmail createCalendarResponse(String schiriEmailAddress, SpielTermin spielTermin) throws MessagingException, GeoException, MissingConfigException, IOException {
+        return new CalendarResponseEmail(botEmailAddress, schiriEmailAddress, spielTermin, session);
     }
 }

@@ -2,9 +2,11 @@ package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -14,16 +16,22 @@ import java.util.stream.Collectors;
 public class Email {
 
     private final Message message;
+    private Multipart mulitPart;
+    private BodyPart messageBodyPart;
 
     public Email(Message message){
         this.message = message;
     }
 
-    public Email(Session session) {
+    public Email(Session session) throws MessagingException {
         this.message = new MimeMessage(session);
+        mulitPart = new MimeMultipart();
+        message.setContent(mulitPart);
+        messageBodyPart = new MimeBodyPart();
+        mulitPart.addBodyPart(messageBodyPart);
     }
     public Email(String botEmailAddress, String schiriEmailAddress, Session session) throws MessagingException {
-        this.message = new MimeMessage(session);
+        this(session);
         setFrom(botEmailAddress);
         setTo(schiriEmailAddress);
     }
@@ -102,7 +110,7 @@ public class Email {
     }
 
     public void setContent(String content) throws MessagingException {
-        message.setText(content);
+        messageBodyPart.setText(content);
     }
 
     public Optional<String> getFrom() throws MessagingException {
@@ -116,4 +124,9 @@ public class Email {
         Transport.send(message);
     }
 
+    protected void attachFile(File calendarInviteFile) throws MessagingException, IOException {
+        MimeBodyPart attachmentPart = new MimeBodyPart();
+        attachmentPart.attachFile(calendarInviteFile);
+        mulitPart.addBodyPart(attachmentPart);
+    }
 }
