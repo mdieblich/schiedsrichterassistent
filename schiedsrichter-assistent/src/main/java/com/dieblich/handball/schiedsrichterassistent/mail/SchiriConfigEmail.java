@@ -41,9 +41,4 @@ public class SchiriConfigEmail{
         }
         return config;
     }
-
-    private static String now(){
-        Date now = new Date();
-        return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(now);
-    }
 }
