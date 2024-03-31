@@ -31,8 +31,10 @@ public class WelcomeEmail extends Email {
                         "o.schmitz@hsg-oberpal.de
                     ]
                 }
-                Dabei gibst du bitte deinen richtigen Namen + Adresse an, sowie die Email-Adressen deiner Gespannpartner.
-                Gespannpartner, die du hier angibst, sind autorisiert mir Ansetzungen von euch beiden zuzuschicken.
+                Dabei gibst du bitte deinen richtigen Namen + Adresse an, sowie die Email-Adressen deiner Gespannpartner
+                und Gespannpartnerinnen. Alle, die du hier angibst, sind autorisiert mir Ansetzungen von euch beiden
+                zuzuschicken. Dein Gespannpartner oder deine Gespannpartnerin muss sich daher genau wie du hier
+                registrieren und deine Emailadresse in der Liste der Gespannpartner hinterlegen.
                 
                 Darüber hinaus speichere ich mir dann von dir:
                 * deine Emailadresse
