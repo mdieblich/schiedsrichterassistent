@@ -47,8 +47,8 @@ public class AnsetzungsEmail {
                     String anwurfString = nextLine.substring(0,16);
                     anwurf = LocalDateTime.parse(anwurfString, FORMATTER);
                     String begegnung = nextLine.substring(16);
-                    String[] gegner = begegnung.split("-");
-                    if(gegner.length==2){
+                    String[] gegner = begegnung.split(" - ");
+                    if(gegner.length>=2){
                         heimMannschaft = gegner[0].trim();
                         gastMannschaft = gegner[1].trim();
                     }

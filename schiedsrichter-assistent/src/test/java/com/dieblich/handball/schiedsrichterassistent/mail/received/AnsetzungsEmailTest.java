@@ -38,4 +38,41 @@ class AnsetzungsEmailTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    public void checkNameDetection(){
+        String emailContent = """
+                Gesendet von Mail für Windows
+                                
+                Von: nuLiga Handball
+                Gesendet: Dienstag, 20. Februar 2024 10:40
+                An: max@muster.de
+                Betreff: Info-Mail: Spielansetzung Schiedsrichter bzw. Beobachter
+                                
+                Sehr geehrte Damen und Herren,
+                                
+                für die folgenden Begegnungen sind Schiedsrichter bzw. Beobachter eingeteilt worden:
+                                
+                Gerd Hummel: g.hummel@dhb.de
+                Änderung: Gespann // g.hummel@dhb.de
+                Liga: Kreisliga Männer
+                Staffel:\s
+                Kreisliga Männer
+                Spiel-Nr: 1137
+                02.03.2024 18:00 Brühler TV - TV Jahn Köln-Wahn II
+                Ort: 06076 BTV-Sportzentrum, von-Wied-Straße 2, 50321 Brühl
+                SR-Gespann: Mustermann Max
+                SR-Gespann alt: Klowni Carsten / Lümmel Dominik
+                """;
+
+        SchiriEinsatz actual = AnsetzungsEmail.extractSchiriEinsatz(emailContent);
+        SchiriEinsatz expected = new SchiriEinsatz(
+                LocalDateTime.of(2024, 3, 2, 18, 0),
+                "von-Wied-Straße 2, 50321 Brühl",
+                "Kreisliga Männer",
+                "Brühler TV",
+                "TV Jahn Köln-Wahn II"
+        );
+        assertEquals(expected, actual);
+    }
+
 }
