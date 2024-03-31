@@ -101,14 +101,6 @@ public class EmailServerRead implements AutoCloseable {
         }
     }
 
-//    public Optional<UserConfiguration> findConfig(String emailAddress) throws MessagingException, IOException {
-//        Optional<Email> optionalConfigEmail = findConfigEmail(emailAddress);
-//        if(optionalConfigEmail.isPresent()){
-//            Email configEmail = optionalConfigEmail.get();
-//            return Optional.of(new UserConfiguration(emailAddress, configEmail.getContent()));
-//        }
-//        return Optional.empty();
-//    }
     public Optional<SchiriConfiguration> findConfig(String emailAddress) throws MessagingException, IOException {
         Optional<Email> optionalConfigEmail = findConfigEmail(emailAddress);
         if(optionalConfigEmail.isPresent()){
