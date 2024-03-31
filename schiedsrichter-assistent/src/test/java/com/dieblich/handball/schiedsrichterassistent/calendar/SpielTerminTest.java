@@ -1,6 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.calendar;
 
 import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
+import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
@@ -30,7 +31,9 @@ class SpielTerminTest {
                 "Am Sportzentrum, 50259 Pulheim",
                 "Kreisliga Herren",
                 "SC Pulheim 3",
-                "Fortuna Köln 4");
+                "Fortuna Köln 4",
+                new Schiedsrichter("Martin", "Witz"),
+                new Schiedsrichter("Andre", "Kohlenfluss"));
 
         SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
         Koordinaten coordsSchiri = new Koordinaten(18.0, 17.0);

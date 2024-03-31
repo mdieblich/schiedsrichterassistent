@@ -7,5 +7,8 @@ public record SchiriEinsatz(
     String hallenAdresse,
     String ligaBezeichnungAusEmail,
     String heimMannschaft,
-    String gastMannschaft){
+    String gastMannschaft,
+    Schiedsrichter schiriA,
+    Schiedsrichter schirirB){
+
 }

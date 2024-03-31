@@ -1,5 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.mail.received;
 
+import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.mail.Email;
 import jakarta.mail.MessagingException;
@@ -29,6 +30,9 @@ public class AnsetzungsEmail {
         String heimMannschaft = null;
         String gastMannschaft = null;
 
+        Schiedsrichter schiriA = null;
+        Schiedsrichter schiriB = null;
+
         String[] allLines = emailContent.split("\\r?\\n|\\r");
         for(int i=0; i<allLines.length; i++){
             String line = allLines[i].trim();
@@ -53,10 +57,19 @@ public class AnsetzungsEmail {
                         gastMannschaft = gegner[1].trim();
                     }
                 }
+            } else if(line.startsWith("SR-Gespann:")){
+                String gespann = line.substring("SR-Gespann:".length()).trim();
+                String[] schiris = gespann.split("/");
+                if(schiris.length >= 1){
+                    schiriA = Schiedsrichter.fromNachnameVorname(schiris[0].trim());
+                }
+                if(schiris.length >= 2){
+                    schiriB = Schiedsrichter.fromNachnameVorname(schiris[1].trim());
+                }
             }
         }
 
-        return new SchiriEinsatz(anwurf, hallenAdresse, liga, heimMannschaft, gastMannschaft);
+        return new SchiriEinsatz(anwurf, hallenAdresse, liga, heimMannschaft, gastMannschaft, schiriA, schiriB);
     }
 
 }
