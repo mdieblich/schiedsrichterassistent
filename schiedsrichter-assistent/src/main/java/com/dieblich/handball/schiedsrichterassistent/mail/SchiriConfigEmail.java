@@ -28,7 +28,7 @@ public class SchiriConfigEmail{
     public Email getEmail() throws MessagingException, JsonProcessingException {
         if(email == null){
             email = new Email(session);
-            email.setSubject("Konfiguration vom " + now());
+            email.setSubject(config.Benutzerdaten.getAnzeigeName());
             email.setFrom(config.Benutzerdaten.Email);
             email.setContent(config.toJSON());
         }

@@ -98,6 +98,18 @@ public class SchiriConfiguration {
                     Längengrad != null &&
                     Breitengrad != null;
         }
+
+        @JsonIgnore
+        public String getAnzeigeName() {
+            if(Vorname == null & Nachname == null){
+                return "Ohne Name - " + Email;
+            } else if (Vorname == null) {
+                return Nachname;
+            } else if (Nachname == null) {
+                return Vorname;
+            }
+            return Nachname +", " + Vorname;
+        }
     }
 
     @ToString
