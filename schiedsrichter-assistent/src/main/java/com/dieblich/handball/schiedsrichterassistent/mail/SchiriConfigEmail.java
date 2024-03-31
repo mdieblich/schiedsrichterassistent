@@ -6,8 +6,6 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class SchiriConfigEmail{
 
