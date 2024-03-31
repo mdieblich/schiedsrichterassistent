@@ -11,4 +11,8 @@ public record SchiriEinsatz(
     Schiedsrichter schiriA,
     Schiedsrichter schirirB){
 
+    public boolean mitGespannspartner(){
+        return schirirB != null;
+    }
+
 }

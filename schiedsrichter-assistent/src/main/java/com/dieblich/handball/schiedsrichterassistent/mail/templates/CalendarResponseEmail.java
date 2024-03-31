@@ -10,12 +10,15 @@ import jakarta.mail.Session;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class CalendarResponseEmail extends Email {
+public class CalendarResponseEmail extends Email implements AutoCloseable{
+
+    private final File calendarInviteFile;
+
     public CalendarResponseEmail(String botEmailAddress, String schiriEmailAddress, SpielTermin spielTermin, Session session) throws MessagingException, GeoException, IOException, MissingConfigException {
         super(botEmailAddress, schiriEmailAddress, session);
         setSubject("Termine für deine Ansetzung");
         setContent("Anbei deine Ansetzung.\n\n" + spielTermin.getDescription());
-        File calendarInviteFile = saveToFile(spielTermin);
+        calendarInviteFile = saveToFile(spielTermin);
         attachFile(calendarInviteFile);
     }
 
@@ -27,5 +30,10 @@ public class CalendarResponseEmail extends Email {
             writer.append(spielTermin.extractCalendarEvent());
         }
         return new File(uniqueID+".ics");
+    }
+
+    @Override
+    public void close() {
+        calendarInviteFile.delete();
     }
 }
