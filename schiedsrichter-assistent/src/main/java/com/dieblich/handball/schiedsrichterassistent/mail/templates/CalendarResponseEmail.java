@@ -7,10 +7,8 @@ import com.dieblich.handball.schiedsrichterassistent.mail.Email;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class CalendarResponseEmail extends Email {
     public CalendarResponseEmail(String botEmailAddress, String schiriEmailAddress, SpielTermin spielTermin, Session session) throws MessagingException, GeoException, IOException, MissingConfigException {
@@ -21,11 +19,12 @@ public class CalendarResponseEmail extends Email {
         attachFile(calendarInviteFile);
     }
 
-    private File saveToFile(SpielTermin spielTermin) throws FileNotFoundException, GeoException, MissingConfigException {
+    private File saveToFile(SpielTermin spielTermin) throws IOException, GeoException, MissingConfigException {
         long uniqueID = System.currentTimeMillis();
         String fileName = uniqueID+".ics";
-        try(PrintWriter fileWriter = new PrintWriter(fileName)){
-            fileWriter.println(spielTermin.extractCalendarEvent());
+
+        try(OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8)){
+            writer.append(spielTermin.extractCalendarEvent());
         }
         return new File(uniqueID+".ics");
     }
