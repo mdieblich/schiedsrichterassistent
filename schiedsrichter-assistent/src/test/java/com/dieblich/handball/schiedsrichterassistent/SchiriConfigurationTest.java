@@ -23,6 +23,7 @@ class SchiriConfigurationTest {
         SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("muster@max.de");
         config.Benutzerdaten.Längengrad  = 1.23456;
         config.Benutzerdaten.Breitengrad = 5.67891;
+        config.Gespannpartner.add("mike.blind@loser.com");
 
         String json = config.toJSON();
 
@@ -38,9 +39,9 @@ class SchiriConfigurationTest {
             "Breitengrad" : 5.67891
           },
           "Spielablauf" : {
-            "PapierKramNachSpiel" : 15,
             "EffektiveSpielDauer" : 90,
             "UmziehenVorSpiel" : 15,
+            "PapierKramNachSpiel" : 15,
             "UmziehenNachSpiel" : 15,
             "TechnischeBesprechung" : {
               "StandardDauerInMinuten" : 30,
@@ -49,7 +50,10 @@ class SchiriConfigurationTest {
                 "Regionalliga" : 45
               }
             }
-          }
+          },
+          "Gespannpartner": [
+            "mike.blind@loser.com"
+          ]
         }
         """);
 
@@ -85,7 +89,8 @@ class SchiriConfigurationTest {
                 "Regionalliga" : 45
               }
             }
-          }
+          },
+          "Gespannpartner": []
         }
         """);
 

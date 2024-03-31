@@ -22,6 +22,7 @@ import java.util.function.Function;
 public class SchiriConfiguration {
     public Benutzerdaten Benutzerdaten = new Benutzerdaten();
     public Spielablauf Spielablauf = new Spielablauf();
+    public List<String> Gespannpartner = new ArrayList<>();
 
     public SchiriConfiguration(String email){
         Benutzerdaten = new Benutzerdaten(email);
