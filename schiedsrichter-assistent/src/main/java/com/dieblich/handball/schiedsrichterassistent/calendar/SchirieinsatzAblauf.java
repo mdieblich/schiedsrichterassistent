@@ -13,14 +13,15 @@ public class SchirieinsatzAblauf {
 
     @Getter
     private final Fahrt fahrtZurHalle;
-    private final Fahrt fahrtZumBeifahrer;
+    @Getter
+    private final Fahrt fahrtZumPartner;
     private final SchiriConfiguration config;
 
-    public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, Fahrt fahrtZurHalle, Fahrt fahrtZumBeifahrer, SchiriConfiguration config) {
+    public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, Fahrt fahrtZurHalle, Fahrt fahrtZumPartner, SchiriConfiguration config) {
         this.anwurf = anwurf;
         this.ligaBezeichnungAusEmail = ligaBezeichnungAusEmail;
         this.fahrtZurHalle = fahrtZurHalle;
-        this.fahrtZumBeifahrer = fahrtZumBeifahrer;
+        this.fahrtZumPartner = fahrtZumPartner;
         this.config = config;
     }
     public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, Fahrt fahrtZurHalle, SchiriConfiguration config) {
@@ -45,11 +46,11 @@ public class SchirieinsatzAblauf {
         }
 
         return getPartnerAbholen()
-                .minusMinutes(fahrtZumBeifahrer.dauerInSekunden()/60);
+                .minusMinutes(fahrtZumPartner.dauerInSekunden()/60);
     }
 
     private boolean isEinzelSchiri() {
-        return fahrtZumBeifahrer == null;
+        return fahrtZumPartner == null;
     }
 
     public LocalDateTime getPartnerAbholen() {
@@ -77,7 +78,7 @@ public class SchirieinsatzAblauf {
                     .plusMinutes(fahrtZurHalle.dauerInSekunden() / 60);
         }
         return getZurueckbringenPartner()
-                .plusMinutes(fahrtZumBeifahrer.dauerInSekunden() / 60);
+                .plusMinutes(fahrtZumPartner.dauerInSekunden() / 60);
 
     }
 }
