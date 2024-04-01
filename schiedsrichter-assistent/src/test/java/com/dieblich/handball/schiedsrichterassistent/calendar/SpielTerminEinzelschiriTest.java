@@ -10,14 +10,11 @@ import com.dieblich.handball.schiedsrichterassistent.geo.Koordinaten;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class SpielTerminEinzelschiriTest {
+class SpielTerminEinzelschiriTest extends SpielTerminTest{
 
     @Test
-    public void SpielTerminEinzelschiriHasSummary() throws GeoException, MissingConfigException {
+    public void summary() throws GeoException, MissingConfigException {
         SpielTerminEinzelschiri termin = prepareDefaultTermin();
 
         String calendarEvent = termin.extractCalendarEvent();
@@ -54,7 +51,7 @@ class SpielTerminEinzelschiriTest {
     }
 
     @Test
-    public void SpielTerminEinzelschiriHasLocation() throws GeoException, MissingConfigException {
+    public void location() throws GeoException, MissingConfigException {
         SpielTerminEinzelschiri termin = prepareDefaultTermin();
 
         String calendarEvent = termin.extractCalendarEvent();
@@ -63,7 +60,7 @@ class SpielTerminEinzelschiriTest {
     }
 
     @Test
-    public void SpielTerminEinzelschiriStartTime() throws GeoException, MissingConfigException {
+    public void startTime() throws GeoException, MissingConfigException {
         SpielTerminEinzelschiri termin = prepareDefaultTermin();
 
         // act
@@ -81,7 +78,7 @@ class SpielTerminEinzelschiriTest {
         assertEntryIs("DTSTART", day+"T"+time+"Z", calendarEvent);
     }
     @Test
-    public void SpielTerminEinzelschiriEndTime() throws GeoException, MissingConfigException {
+    public void endTime() throws GeoException, MissingConfigException {
         SpielTerminEinzelschiri termin = prepareDefaultTermin();
 
         // act
@@ -121,29 +118,5 @@ class SpielTerminEinzelschiriTest {
                 Heimkehr:  18:00""";
         String expectedDescription = beauftifulDescription.replace("\n", "\\n");
         assertEntryIs("DESCRIPTION", expectedDescription, calendarEvent);
-    }
-
-    private void assertEntryIs(String entry, String expected, String calendarEvent){
-        Optional<String> actualValue = findValueOf(entry, calendarEvent);
-        assertTrue(actualValue.isPresent(), "Entry <"+entry+"> not found in <"+calendarEvent+">");
-        assertEquals(expected, actualValue.get(), "Full Event: "+ calendarEvent);
-    }
-
-    private Optional<String> findValueOf(String keyWord, String calendarEvent){
-        String[] lines = calendarEvent.split(System.lineSeparator());
-        for(int i=0; i<lines.length; i++){
-            String line = lines[i];
-            if(line.startsWith(keyWord+":")){
-                StringBuilder value = new StringBuilder(line.substring(keyWord.length() + 1));
-                while(i+1<lines.length && lines[i+1].startsWith(" ")){
-                    // A value con continue in the next lines
-                    i++;
-                    // but remove the preceding space
-                    value.append(lines[i].substring(1));
-                }
-                return Optional.of(value.toString());
-            }
-        }
-        return Optional.empty();
     }
 }
