@@ -67,8 +67,7 @@ public class SpielTerminEinzelschiri implements SpielTermin {
         return new SchirieinsatzAblauf(
                 einsatz.anwurf(),
                 einsatz.ligaBezeichnungAusEmail(),
-                optionalHinfahrt.get().dauerInSekunden() / 60,
-                optionalHinfahrt.get().distanzInMetern()/1000,
+                optionalHinfahrt.get(),
                 config
         );
     }
@@ -79,8 +78,8 @@ public class SpielTerminEinzelschiri implements SpielTermin {
             SchirieinsatzAblauf ablauf = getSpielAblauf();
             description = einsatz.heimMannschaft() + " vs. " + einsatz.gastMannschaft() + "\n";
             description += "\n";
-            description += "Berechnete Fahrtzeit: "+ablauf.getFahrtzeit()+" Min\n";
-            description += "Berechnete Strecke: "+ablauf.getDistanz()+" km\n";
+            description += "Berechnete Fahrtzeit: "+(ablauf.getHinfahrt().dauerInSekunden()/60)+" Min\n";
+            description += "Berechnete Strecke: "+(ablauf.getHinfahrt().distanzInMetern()/1000)+" km\n";
             description += "\n";
             description += "Abfahrt:   " + SpielTermin.asTimeOfDay(ablauf.getAbfahrt()) + "\n";
             description += "Ankunft:   " + SpielTermin.asTimeOfDay(ablauf.getTechnischBesprechung()) + "\n";

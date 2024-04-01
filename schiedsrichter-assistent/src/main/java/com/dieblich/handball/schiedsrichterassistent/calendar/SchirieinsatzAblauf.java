@@ -1,6 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.calendar;
 
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
+import com.dieblich.handball.schiedsrichterassistent.geo.Fahrt;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -9,17 +10,15 @@ public class SchirieinsatzAblauf {
     @Getter
     private final LocalDateTime anwurf;
     private final String ligaBezeichnungAusEmail;
+
     @Getter
-    private final int fahrtzeit;
-    @Getter
-    private final int distanz;
+    private final Fahrt hinfahrt;
     private final SchiriConfiguration config;
 
-    public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, int fahrtzeit, int distanz, SchiriConfiguration config) {
+    public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, Fahrt hinfahrt, SchiriConfiguration config) {
         this.anwurf = anwurf;
         this.ligaBezeichnungAusEmail = ligaBezeichnungAusEmail;
-        this.fahrtzeit = fahrtzeit;
-        this.distanz = distanz;
+        this.hinfahrt = hinfahrt;
         this.config = config;
     }
 
@@ -36,7 +35,7 @@ public class SchirieinsatzAblauf {
 
     public LocalDateTime getAbfahrt() {
         return getAnkunftHalle()
-                .minusMinutes(fahrtzeit);
+                .minusMinutes(hinfahrt.dauerInSekunden()/60);
     }
 
     public LocalDateTime getSpielEnde() {
@@ -51,6 +50,6 @@ public class SchirieinsatzAblauf {
     }
 
     public LocalDateTime getHeimkehr() {
-        return getRueckfahrt().plusMinutes(fahrtzeit);
+        return getRueckfahrt().plusMinutes(hinfahrt.dauerInSekunden()/60);
     }
 }
