@@ -155,16 +155,23 @@ public class MailController {
                 AnsetzungsEmail ansetzungsEmail = new AnsetzungsEmail(email);
                 SchiriEinsatz schiriEinsatz = ansetzungsEmail.extractSchiriEinsatz();
                 if(schiriEinsatz.mitGespannspartner()){
+                    String emailSchiriA = config.Benutzerdaten.Email;
                     Schiedsrichter otherSchiri = schiriEinsatz.otherSchiri(config.Benutzerdaten.getSchiedsrichter());
 
                     // TODO refactor: extract method
                     Optional<SchiriConfiguration> optionalSchiriBConfig = stratoRead.findConfigByName(otherSchiri);
                     if(optionalSchiriBConfig.isEmpty()){
-                        SecondSchiriMissingEmail schiriMissingEmail = stratoSend.createSecondSchiriMissingEmail(config.Benutzerdaten.Email, otherSchiri);
+                        SecondSchiriMissingEmail schiriMissingEmail = stratoSend.createSecondSchiriMissingEmail(emailSchiriA, otherSchiri);
                         schiriMissingEmail.send();
                         return;
                     }
-                    // TODO Checken, ob man in der "Whitelist" des anderen Schiris steht
+                    SchiriConfiguration schiriConfigB = optionalSchiriBConfig.get();
+                    if(!schiriConfigB.hasGespannpartner(config)){
+                        YouAreNotWhitelistedEmail notInWhitelist = stratoSend.createYouAreNotWhitelistedEmail(emailSchiriA, otherSchiri);
+                        notInWhitelist.send();
+                        ExtendWhitelistEmail extendWhitelist = stratoSend.createExtendWhitelistEmail(schiriConfigB, config.Benutzerdaten);
+                        extendWhitelist.send();
+                    }
                     // TODO SpielTermin für zwei Schiris berechnen
                     // TODO Zwei Emails rausschicken
                 } else {

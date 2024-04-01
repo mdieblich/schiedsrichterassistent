@@ -36,6 +36,10 @@ public class SchiriConfiguration {
         return Benutzerdaten.isComplete() && Spielablauf.isComplete();
     }
 
+    public boolean hasGespannpartner(SchiriConfiguration configOtherSchiri) {
+        return Gespannpartner.contains(configOtherSchiri.Benutzerdaten.Email);
+    }
+
     @ToString
     @EqualsAndHashCode
     @NoArgsConstructor
