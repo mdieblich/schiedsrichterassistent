@@ -56,4 +56,12 @@ public class EmailServerSend {
     public SecondSchiriMissingEmail createSecondSchiriMissingEmail(String schiriEmailAddress, Schiedsrichter otherSchiri) throws MessagingException {
         return new SecondSchiriMissingEmail(botEmailAddress, schiriEmailAddress, otherSchiri, session);
     }
+
+    public YouAreNotWhitelistedEmail createYouAreNotWhitelistedEmail(String emailSchiriA, Schiedsrichter otherSchiri) throws MessagingException {
+        return new YouAreNotWhitelistedEmail(botEmailAddress, emailSchiriA, otherSchiri, session);
+    }
+
+    public ExtendWhitelistEmail createExtendWhitelistEmail(SchiriConfiguration schiriConfigB, SchiriConfiguration.Benutzerdaten otherSchiri) throws MessagingException {
+        return new ExtendWhitelistEmail(botEmailAddress, schiriConfigB, otherSchiri, session);
+    }
 }
