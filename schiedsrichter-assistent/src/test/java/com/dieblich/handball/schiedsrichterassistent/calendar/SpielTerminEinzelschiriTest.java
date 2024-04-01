@@ -33,6 +33,8 @@ class SpielTerminEinzelschiriTest extends SpielTerminTest{
                 new Schiedsrichter("Andre", "Kohlenfluss"));
 
         SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
+        config.Benutzerdaten.Vorname = "Martin";
+        config.Benutzerdaten.Nachname = "Witz";
         Koordinaten coordsSchiri = new Koordinaten(18.0, 17.0);
         config.Benutzerdaten.Längengrad = coordsSchiri.längengrad();
         config.Benutzerdaten.Breitengrad = coordsSchiri.breitengrad();
@@ -110,12 +112,12 @@ class SpielTerminEinzelschiriTest extends SpielTerminTest{
                 Berechnete Fahrtzeit: 30 Min
                 Berechnete Strecke: 34 km
                 
-                Abfahrt:   14:15
-                Ankunft:   15:00
-                Anwurf:    15:30
-                Spielende: 17:00
-                Rückfahrt: 17:30
-                Heimkehr:  18:00""";
+                14:15 Uhr Abfahrt
+                15:00 Uhr Ankunft
+                15:30 Uhr Anwurf
+                17:00 Uhr Spielende
+                17:30 Uhr Rückfahrt
+                18:00 Uhr Heimkehr""";
         String expectedDescription = beauftifulDescription.replace("\n", "\\n");
         assertEntryIs("DESCRIPTION", expectedDescription, calendarEvent);
     }

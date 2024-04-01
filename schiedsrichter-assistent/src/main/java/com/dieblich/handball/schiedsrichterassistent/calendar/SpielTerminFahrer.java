@@ -80,22 +80,24 @@ public class SpielTerminFahrer implements SpielTermin{
     @Override
     public String getDescription() throws GeoException, MissingConfigException {
         if(description == null){
+            String nameFahrer = schiriConfigFahrer.Benutzerdaten.Vorname;
+            String nameBeifahrer = schiriConfigBeifahrer.Benutzerdaten.Vorname;
             SchirieinsatzAblauf ablauf = getSpielAblauf();
             description = einsatz.heimMannschaft() + " vs. " + einsatz.gastMannschaft() + "\n";
             description += "\n";
-            description += "Berechnete Fahrtzeit: "+(ablauf.getFahrtZumPartner().dauerInSekunden()/60)  +" Min zum Partner\n";
+            description += "Berechnete Fahrtzeit: "+(ablauf.getFahrtZumPartner().dauerInSekunden()/60)  +" Min zu "+nameBeifahrer+"\n";
             description += "                      "+(ablauf.getFahrtZurHalle().dauerInSekunden()/60)    +" Min zur Halle\n";
-            description += "Berechnete Strecke:   "+(ablauf.getFahrtZumPartner().distanzInMetern()/1000)+" km  zum Partner\n";
+            description += "Berechnete Strecke:   "+(ablauf.getFahrtZumPartner().distanzInMetern()/1000)+" km  zu "+nameBeifahrer+"\n";
             description += "                      "+(ablauf.getFahrtZurHalle().distanzInMetern()/1000)  +" km  zur Halle\n";
             description += "\n";
-            description += "Abfahrt:         " + SpielTermin.asTimeOfDay(ablauf.getAbfahrt())               + "\n";
-            description += "Partner abholen: " + SpielTermin.asTimeOfDay(ablauf.getPartnerAbholen())        + "\n";
-            description += "Ankunft:         " + SpielTermin.asTimeOfDay(ablauf.getTechnischBesprechung())  + "\n";
-            description += "Anwurf:          " + SpielTermin.asTimeOfDay(ablauf.getAnwurf())                + "\n";
-            description += "Spielende:       " + SpielTermin.asTimeOfDay(ablauf.getSpielEnde())             + "\n";
-            description += "Rückfahrt:       " + SpielTermin.asTimeOfDay(ablauf.getRueckfahrt())            + "\n";
-            description += "Partner zurück:  " + SpielTermin.asTimeOfDay(ablauf.getZurueckbringenPartner()) + "\n";
-            description += "Heimkehr:        " + SpielTermin.asTimeOfDay(ablauf.getHeimkehr());
+            description += SpielTermin.asTimeOfDay(ablauf.getAbfahrt())               + " Uhr Abfahrt " + nameFahrer                + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getPartnerAbholen())        + " Uhr " + nameBeifahrer + " abholen"        + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getTechnischBesprechung())  + " Uhr Ankunft"                              + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getAnwurf())                + " Uhr Anwurf"                               + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getSpielEnde())             + " Uhr Spielende"                            + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getRueckfahrt())            + " Uhr Rückfahrt"                            + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getZurueckbringenPartner()) + " Uhr " + nameBeifahrer + " zurückbringen"  + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getHeimkehr())              + " Uhr Heimkehr " + nameFahrer;
         }
         return description;
     }

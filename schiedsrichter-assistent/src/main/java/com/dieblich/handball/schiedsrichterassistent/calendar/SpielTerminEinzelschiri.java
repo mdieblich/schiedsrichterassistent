@@ -81,12 +81,12 @@ public class SpielTerminEinzelschiri implements SpielTermin {
             description += "Berechnete Fahrtzeit: "+(ablauf.getFahrtZurHalle().dauerInSekunden()/60)+" Min\n";
             description += "Berechnete Strecke: "+(ablauf.getFahrtZurHalle().distanzInMetern()/1000)+" km\n";
             description += "\n";
-            description += "Abfahrt:   " + SpielTermin.asTimeOfDay(ablauf.getAbfahrt()) + "\n";
-            description += "Ankunft:   " + SpielTermin.asTimeOfDay(ablauf.getTechnischBesprechung()) + "\n";
-            description += "Anwurf:    " + SpielTermin.asTimeOfDay(ablauf.getAnwurf()) + "\n";
-            description += "Spielende: " + SpielTermin.asTimeOfDay(ablauf.getSpielEnde()) + "\n";
-            description += "Rückfahrt: " + SpielTermin.asTimeOfDay(ablauf.getRueckfahrt()) + "\n";
-            description += "Heimkehr:  " + SpielTermin.asTimeOfDay(ablauf.getHeimkehr());
+            description += SpielTermin.asTimeOfDay(ablauf.getAbfahrt())              + " Uhr Abfahrt" + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getTechnischBesprechung()) + " Uhr Ankunft" + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getAnwurf())               + " Uhr Anwurf" + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getSpielEnde())            + " Uhr Spielende" + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getRueckfahrt())           + " Uhr Rückfahrt" + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getHeimkehr())             + " Uhr Heimkehr";
         }
         return description;
     }

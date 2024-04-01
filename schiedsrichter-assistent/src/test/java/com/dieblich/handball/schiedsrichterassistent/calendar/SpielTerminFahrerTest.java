@@ -32,6 +32,8 @@ class SpielTerminFahrerTest extends SpielTerminTest {
                 new Schiedsrichter("Andre", "Kohlenfluss"));
 
         SchiriConfiguration configFahrer = SchiriConfiguration.NEW_DEFAULT("");
+        configFahrer.Benutzerdaten.Vorname = "Martin";
+        configFahrer.Benutzerdaten.Nachname = "Witz";
         Koordinaten coordsFahrer = new Koordinaten(18.0, 17.0);
         configFahrer.Benutzerdaten.Längengrad = coordsFahrer.längengrad();
         configFahrer.Benutzerdaten.Breitengrad = coordsFahrer.breitengrad();
@@ -43,6 +45,8 @@ class SpielTerminFahrerTest extends SpielTerminTest {
 
 
         SchiriConfiguration configBeifahrer = SchiriConfiguration.NEW_DEFAULT("");
+        configBeifahrer.Benutzerdaten.Vorname = "Andre";
+        configBeifahrer.Benutzerdaten.Nachname = "Kohlenfluss";
         Koordinaten coordsBeifahrer = new Koordinaten(20.0, 19.0);
         configBeifahrer.Benutzerdaten.Längengrad = coordsBeifahrer.längengrad();
         configBeifahrer.Benutzerdaten.Breitengrad = coordsBeifahrer.breitengrad();
@@ -100,7 +104,7 @@ class SpielTerminFahrerTest extends SpielTerminTest {
          *  (30 Minuten Fahrtzeit von Halle zum Beifahrer)
          * 18:00 Uhr: Zurückbringen Beifahrer
          *  (15 Minuten Fahrtzeit vom Beifahrer nach Hause)
-         * 18:15 Uhr: Zurückbringen Beifahrer
+         * 18:15 Uhr: Rückkehr
          * in UTC: 16:15 */
         String time = "161500";
         assertEntryIs("DTEND", day+"T"+time+"Z", calendarEvent);
@@ -114,23 +118,23 @@ class SpielTerminFahrerTest extends SpielTerminTest {
         String calendarEvent = termin.extractCalendarEvent();
 
         // assert
-        String beauftifulDescription = """
+        String beautifulDescription = """
                 SC Pulheim 3 vs. Fortuna Köln 4
                 
-                Berechnete Fahrtzeit: 15 Min zum Partner
+                Berechnete Fahrtzeit: 15 Min zu Andre
                                       30 Min zur Halle
-                Berechnete Strecke:   10 km  zum Partner
+                Berechnete Strecke:   10 km  zu Andre
                                       34 km  zur Halle
                 
-                Abfahrt:         14:00
-                Partner abholen: 14:15
-                Ankunft:         15:00
-                Anwurf:          15:30
-                Spielende:       17:00
-                Rückfahrt:       17:30
-                Partner zurück:  18:00
-                Heimkehr:        18:15""";
-        String expectedDescription = beauftifulDescription.replace("\n", "\\n");
+                14:00 Uhr Abfahrt Martin
+                14:15 Uhr Andre abholen
+                15:00 Uhr Ankunft
+                15:30 Uhr Anwurf
+                17:00 Uhr Spielende
+                17:30 Uhr Rückfahrt
+                18:00 Uhr Andre zurückbringen
+                18:15 Uhr Heimkehr Martin""";
+        String expectedDescription = beautifulDescription.replace("\n", "\\n");
         assertEntryIs("DESCRIPTION", expectedDescription, calendarEvent);
     }
 }
