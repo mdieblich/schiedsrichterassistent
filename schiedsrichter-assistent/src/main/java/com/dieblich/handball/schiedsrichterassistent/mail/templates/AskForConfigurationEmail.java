@@ -4,9 +4,6 @@ import com.dieblich.handball.schiedsrichterassistent.mail.Email;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class AskForConfigurationEmail extends Email {
 
     public static final String SUBJECT = "Konfiguration nicht vollständig";
