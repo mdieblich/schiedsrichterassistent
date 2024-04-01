@@ -221,6 +221,9 @@ public class SchiriConfiguration {
         if(other.Spielablauf != null){
             Spielablauf.updateWith(other.Spielablauf);
         }
+        if(other.Gespannpartner != null){
+            Gespannpartner = other.Gespannpartner;
+        }
     }
 
     /// JSON serialization and deserialization
