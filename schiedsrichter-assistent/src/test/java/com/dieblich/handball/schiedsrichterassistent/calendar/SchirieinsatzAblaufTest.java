@@ -40,15 +40,42 @@ class SchirieinsatzAblaufTest {
     }
 
     @Test
-    public void abfahrt() {
+    public void abfahrtBeiEinemSchiri() {
         SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
         config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten = 30;
         config.Spielablauf.UmziehenVorSpiel = 15;
         String liga = "Landesliga Männer";
         LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
-        SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(anwurf, liga, new Fahrt(45*60, 0), config);
+        Fahrt zurHalle = new Fahrt(45*60, 0);
+        SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(anwurf, liga, zurHalle, config);
 
         assertEquals(LocalDateTime.parse("2024-04-13T14:00:00"), ablauf.getAbfahrt());
+    }
+    @Test
+    public void abholenPartner() {
+        SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
+        config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten = 30;
+        config.Spielablauf.UmziehenVorSpiel = 15;
+        String liga = "Landesliga Männer";
+        LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
+        Fahrt zurHalle = new Fahrt(45*60, 0);
+        Fahrt zumPartner = new Fahrt(15*60, 0);
+        SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(anwurf, liga, zurHalle, zumPartner, config);
+
+        assertEquals(LocalDateTime.parse("2024-04-13T14:00:00"), ablauf.getPartnerAbholen());
+    }
+    @Test
+    public void abfahrtBeiZweiSchiris() {
+        SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
+        config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten = 30;
+        config.Spielablauf.UmziehenVorSpiel = 15;
+        String liga = "Landesliga Männer";
+        LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
+        Fahrt zurHalle = new Fahrt(45*60, 0);
+        Fahrt zumPartner = new Fahrt(15*60, 0);
+        SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(anwurf, liga, zurHalle, zumPartner, config);
+
+        assertEquals(LocalDateTime.parse("2024-04-13T13:45:00"), ablauf.getAbfahrt());
     }
 
     @Test
@@ -74,15 +101,42 @@ class SchirieinsatzAblaufTest {
     }
 
     @Test
-    public void heimkehr() {
+    public void heimkehrEinSchiri() {
         SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
         config.Spielablauf.EffektiveSpielDauer = 90;
         config.Spielablauf.PapierKramNachSpiel = 15;
         config.Spielablauf.UmziehenNachSpiel = 15;
         LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
-        SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(anwurf, "", new Fahrt(45*60, 0), config);
+        Fahrt zurHalle = new Fahrt(45*60, 0);
+        SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(anwurf, "", zurHalle, config);
 
         assertEquals(LocalDateTime.parse("2024-04-13T18:15:00"), ablauf.getHeimkehr());
+    }
+    @Test
+    public void zurückbringenPartner() {
+        SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
+        config.Spielablauf.EffektiveSpielDauer = 90;
+        config.Spielablauf.PapierKramNachSpiel = 15;
+        config.Spielablauf.UmziehenNachSpiel = 15;
+        LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
+        Fahrt zurHalle = new Fahrt(45*60, 0);
+        Fahrt zumPartner = new Fahrt(15*60, 0);
+        SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(anwurf, "", zurHalle, zumPartner, config);
+
+        assertEquals(LocalDateTime.parse("2024-04-13T18:15:00"), ablauf.getZurueckbringenPartner());
+    }
+    @Test
+    public void heimkehrZweiSchiris() {
+        SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
+        config.Spielablauf.EffektiveSpielDauer = 90;
+        config.Spielablauf.PapierKramNachSpiel = 15;
+        config.Spielablauf.UmziehenNachSpiel = 15;
+        LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
+        Fahrt zurHalle = new Fahrt(45*60, 0);
+        Fahrt zumPartner = new Fahrt(15*60, 0);
+        SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(anwurf, "", zurHalle, zumPartner, config);
+
+        assertEquals(LocalDateTime.parse("2024-04-13T18:30:00"), ablauf.getHeimkehr());
     }
 
 }

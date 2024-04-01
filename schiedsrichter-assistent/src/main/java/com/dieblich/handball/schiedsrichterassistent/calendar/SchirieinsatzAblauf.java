@@ -12,14 +12,19 @@ public class SchirieinsatzAblauf {
     private final String ligaBezeichnungAusEmail;
 
     @Getter
-    private final Fahrt hinfahrt;
+    private final Fahrt fahrtZurHalle;
+    private final Fahrt fahrtZumBeifahrer;
     private final SchiriConfiguration config;
 
-    public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, Fahrt hinfahrt, SchiriConfiguration config) {
+    public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, Fahrt fahrtZurHalle, Fahrt fahrtZumBeifahrer, SchiriConfiguration config) {
         this.anwurf = anwurf;
         this.ligaBezeichnungAusEmail = ligaBezeichnungAusEmail;
-        this.hinfahrt = hinfahrt;
+        this.fahrtZurHalle = fahrtZurHalle;
+        this.fahrtZumBeifahrer = fahrtZumBeifahrer;
         this.config = config;
+    }
+    public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, Fahrt fahrtZurHalle, SchiriConfiguration config) {
+        this(anwurf, ligaBezeichnungAusEmail, fahrtZurHalle, null, config);
     }
 
 
@@ -34,8 +39,22 @@ public class SchirieinsatzAblauf {
     }
 
     public LocalDateTime getAbfahrt() {
+        if(isEinzelSchiri()){
+            return getAnkunftHalle()
+                    .minusMinutes(fahrtZurHalle.dauerInSekunden()/60);
+        }
+
+        return getPartnerAbholen()
+                .minusMinutes(fahrtZumBeifahrer.dauerInSekunden()/60);
+    }
+
+    private boolean isEinzelSchiri() {
+        return fahrtZumBeifahrer == null;
+    }
+
+    public LocalDateTime getPartnerAbholen() {
         return getAnkunftHalle()
-                .minusMinutes(hinfahrt.dauerInSekunden()/60);
+                .minusMinutes(fahrtZurHalle.dauerInSekunden()/60);
     }
 
     public LocalDateTime getSpielEnde() {
@@ -48,8 +67,17 @@ public class SchirieinsatzAblauf {
                 .plusMinutes(config.Spielablauf.PapierKramNachSpiel)
                 .plusMinutes(config.Spielablauf.UmziehenNachSpiel);
     }
-
+    public LocalDateTime getZurueckbringenPartner() {
+        return getRueckfahrt()
+                .plusMinutes(fahrtZurHalle.dauerInSekunden()/60);
+    }
     public LocalDateTime getHeimkehr() {
-        return getRueckfahrt().plusMinutes(hinfahrt.dauerInSekunden()/60);
+        if(isEinzelSchiri()) {
+            return getRueckfahrt()
+                    .plusMinutes(fahrtZurHalle.dauerInSekunden() / 60);
+        }
+        return getZurueckbringenPartner()
+                .plusMinutes(fahrtZumBeifahrer.dauerInSekunden() / 60);
+
     }
 }
