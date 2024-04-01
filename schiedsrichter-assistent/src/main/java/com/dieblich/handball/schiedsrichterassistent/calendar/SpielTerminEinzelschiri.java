@@ -11,9 +11,6 @@ import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoService;
 import com.dieblich.handball.schiedsrichterassistent.geo.Koordinaten;
 
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Optional;
 
 public class SpielTerminEinzelschiri implements SpielTermin {
@@ -41,21 +38,12 @@ public class SpielTerminEinzelschiri implements SpielTermin {
         event.setLocation(einsatz.hallenAdresse());
 
         SchirieinsatzAblauf ablauf = getSpielAblauf();
-        event.setDateStart(asDate(ablauf.getAbfahrt()));
-        event.setDateEnd(asDate(ablauf.getHeimkehr()));
+        event.setDateStart(SpielTermin.asDate(ablauf.getAbfahrt()));
+        event.setDateEnd(SpielTermin.asDate(ablauf.getHeimkehr()));
         event.setDescription(getDescription());
 
         ical.addEvent(event);
         return Biweekly.write(ical).go();
-    }
-
-    private static Date asDate(LocalDateTime localDateTime){
-        Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-        return Date.from(instant);
-    }
-
-    private static String asTimeOfDay(LocalDateTime localDateTime){
-        return localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 
     public SchirieinsatzAblauf getSpielAblauf() throws GeoException, MissingConfigException {
@@ -94,12 +82,12 @@ public class SpielTerminEinzelschiri implements SpielTermin {
             description += "Berechnete Fahrtzeit: "+ablauf.getFahrtzeit()+" Min\n";
             description += "Berechnete Strecke: "+ablauf.getDistanz()+" km\n";
             description += "\n";
-            description += "Abfahrt:   " + asTimeOfDay(ablauf.getAbfahrt()) + "\n";
-            description += "Ankunft:   " + asTimeOfDay(ablauf.getTechnischBesprechung()) + "\n";
-            description += "Anwurf:    " + asTimeOfDay(ablauf.getAnwurf()) + "\n";
-            description += "Spielende: " + asTimeOfDay(ablauf.getSpielEnde()) + "\n";
-            description += "Rückfahrt: " + asTimeOfDay(ablauf.getRueckfahrt()) + "\n";
-            description += "Heimkehr:  " + asTimeOfDay(ablauf.getHeimkehr());
+            description += "Abfahrt:   " + SpielTermin.asTimeOfDay(ablauf.getAbfahrt()) + "\n";
+            description += "Ankunft:   " + SpielTermin.asTimeOfDay(ablauf.getTechnischBesprechung()) + "\n";
+            description += "Anwurf:    " + SpielTermin.asTimeOfDay(ablauf.getAnwurf()) + "\n";
+            description += "Spielende: " + SpielTermin.asTimeOfDay(ablauf.getSpielEnde()) + "\n";
+            description += "Rückfahrt: " + SpielTermin.asTimeOfDay(ablauf.getRueckfahrt()) + "\n";
+            description += "Heimkehr:  " + SpielTermin.asTimeOfDay(ablauf.getHeimkehr());
         }
         return description;
     }
