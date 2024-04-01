@@ -172,6 +172,7 @@ public class MailController {
                         ExtendWhitelistEmail extendWhitelist = stratoSend.createExtendWhitelistEmail(schiriConfigB, config.Benutzerdaten);
                         extendWhitelist.send();
                     }
+                    sendCalendarEventForTwoSchiedsrichter(schiriEinsatz, config, schiriConfigB);
                     // TODO SpielTermin für zwei Schiris berechnen
                     // TODO Zwei Emails rausschicken
                 } else {
@@ -186,11 +187,16 @@ public class MailController {
         }
     }
 
+
     private void sendCalendarEventForOneSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration config) throws MessagingException, GeoException, MissingConfigException, IOException {
         SpielTermin spielTermin = new SpielTermin(schiriEinsatz, config, geoService);
         try (CalendarResponseEmail response = stratoSend.createCalendarResponse(config.Benutzerdaten.Email, spielTermin)) {
             response.send();
         }
+    }
+    private void sendCalendarEventForTwoSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration schiriConfigA, SchiriConfiguration schiriConfigB) {
+        SpielTermin spielTermin = new SpielTermin(schiriEinsatz, schiriConfigA, schiriConfigB, geoService);
+        hier weiter
     }
 
     private boolean isAnsetzung(Email email) throws MessagingException {
