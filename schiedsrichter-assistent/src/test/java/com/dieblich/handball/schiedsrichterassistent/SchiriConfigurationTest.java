@@ -21,6 +21,9 @@ class SchiriConfigurationTest {
     @Test
     public void hasNiceJSON() throws JsonProcessingException {
         SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("muster@max.de");
+        config.Benutzerdaten.Vorname = "Max";
+        config.Benutzerdaten.Nachname = "Mustermann";
+        config.Benutzerdaten.Adresse = "Musterstr. 17, 54321 Köln";
         config.Benutzerdaten.Längengrad  = 1.23456;
         config.Benutzerdaten.Breitengrad = 5.67891;
         config.Gespannpartner.add("mike.blind@loser.com");
@@ -63,6 +66,9 @@ class SchiriConfigurationTest {
     @Test
     public void jsonLeavesOutLongitudeAndLatitude() throws JsonProcessingException {
         SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("muster@max.de");
+        config.Benutzerdaten.Vorname = "Max";
+        config.Benutzerdaten.Nachname = "Mustermann";
+        config.Benutzerdaten.Adresse = "Musterstr. 17, 54321 Köln";
         config.Benutzerdaten.Längengrad  = null;
         config.Benutzerdaten.Breitengrad = null;
 
@@ -129,6 +135,9 @@ class SchiriConfigurationTest {
         SchiriConfiguration actual = SchiriConfiguration.fromJSON(json);
 
         SchiriConfiguration expected = SchiriConfiguration.NEW_DEFAULT("muster@max.de");
+        expected.Benutzerdaten.Vorname = "Max";
+        expected.Benutzerdaten.Nachname = "Mustermann";
+        expected.Benutzerdaten.Adresse = "Musterstr. 17, 54321 Köln";
         expected.Benutzerdaten.Längengrad  = 1.23456;
         expected.Benutzerdaten.Breitengrad = 5.67891;
 

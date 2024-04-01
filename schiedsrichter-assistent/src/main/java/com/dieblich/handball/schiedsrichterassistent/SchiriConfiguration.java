@@ -191,9 +191,6 @@ public class SchiriConfiguration {
     public static SchiriConfiguration NEW_DEFAULT(String email){
         SchiriConfiguration config = new SchiriConfiguration();
         config.Benutzerdaten.Email = email;
-        config.Benutzerdaten.Vorname = "Max";
-        config.Benutzerdaten.Nachname = "Mustermann";
-        config.Benutzerdaten.Adresse = "Musterstr. 17, 54321 Köln";
         config.Spielablauf.UmziehenVorSpiel = 15;
         config.Spielablauf.EffektiveSpielDauer = 90;
         config.Spielablauf.PapierKramNachSpiel = 15;
