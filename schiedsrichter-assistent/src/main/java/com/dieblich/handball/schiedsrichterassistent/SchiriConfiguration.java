@@ -205,6 +205,8 @@ public class SchiriConfiguration {
     }
     public void updateWith(String configUpdate, Function<String, Optional<Koordinaten>> addressToKoordinaten, Consumer<String> log) {
         try {
+            // Remove NBSP first
+            configUpdate = configUpdate.replace("\u00a0","");
             SchiriConfiguration newConfig = mapper.readValue(configUpdate, SchiriConfiguration.class);
             updateWith(newConfig, addressToKoordinaten, log);
         } catch (JsonProcessingException e) {
