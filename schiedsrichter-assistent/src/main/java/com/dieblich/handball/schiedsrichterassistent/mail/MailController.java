@@ -163,7 +163,6 @@ public class MailController {
                         SecondSchiriMissingEmail schiriMissingEmail = stratoSend.createSecondSchiriMissingEmail(config.Benutzerdaten.Email, otherSchiri);
                         schiriMissingEmail.send();
                         return;
-                        // TODO testen!
                     }
                     // TODO Checken, ob man in der "Whitelist" des anderen Schiris steht
                     // TODO SpielTermin für zwei Schiris berechnen
