@@ -34,7 +34,7 @@ public class ConfigConfirmationEmail extends Email {
                 
                 Eine Kreation von Martin Fritz
                 ---------- FEHLERPROTOKOLL START -----------------------------
-                """ + String.join("\n", log) + """
+                """ + String.join("\n", log) + "\n" + """
                 ---------- FEHLERPROTOKOLL ENDE ------------------------------
                 """
         );
