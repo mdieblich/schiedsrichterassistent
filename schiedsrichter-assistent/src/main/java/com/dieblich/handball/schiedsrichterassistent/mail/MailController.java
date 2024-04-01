@@ -5,6 +5,7 @@ import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTermin;
+import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTerminEinzelschiri;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoService;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoServiceImpl;
@@ -189,7 +190,7 @@ public class MailController {
 
 
     private void sendCalendarEventForOneSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration config) throws MessagingException, GeoException, MissingConfigException, IOException {
-        SpielTermin spielTermin = new SpielTermin(schiriEinsatz, config, geoService);
+        SpielTerminEinzelschiri spielTermin = new SpielTerminEinzelschiri(schiriEinsatz, config, geoService);
         try (CalendarResponseEmail response = stratoSend.createCalendarResponse(config.Benutzerdaten.Email, spielTermin)) {
             response.send();
         }

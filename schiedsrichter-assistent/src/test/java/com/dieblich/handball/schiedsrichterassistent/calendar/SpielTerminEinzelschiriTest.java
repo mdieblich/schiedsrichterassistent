@@ -14,18 +14,18 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SpielTerminTest {
+class SpielTerminEinzelschiriTest {
 
     @Test
-    public void spielTerminHasSummary() throws GeoException, MissingConfigException {
-        SpielTermin termin = prepareDefaultTermin();
+    public void SpielTerminEinzelschiriHasSummary() throws GeoException, MissingConfigException {
+        SpielTerminEinzelschiri termin = prepareDefaultTermin();
 
         String calendarEvent = termin.extractCalendarEvent();
         assertEntryIs("SUMMARY", "Schiri: Kreisliga Herren", calendarEvent);
     }
 
     @SuppressWarnings("NonAsciiCharacters")
-    private SpielTermin prepareDefaultTermin(){
+    private SpielTerminEinzelschiri prepareDefaultTermin(){
         LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
         SchiriEinsatz einsatz = new SchiriEinsatz(anwurf,
                 "Am Sportzentrum, 50259 Pulheim",
@@ -50,12 +50,12 @@ class SpielTerminTest {
         fakeGeoService.addFahrt(coordsSchiri, coordsHalle, 30*60, 34*1000);
 
         // act
-        return new SpielTermin(einsatz, config, fakeGeoService);
+        return new SpielTerminEinzelschiri(einsatz, config, fakeGeoService);
     }
 
     @Test
-    public void spielTerminHasLocation() throws GeoException, MissingConfigException {
-        SpielTermin termin = prepareDefaultTermin();
+    public void SpielTerminEinzelschiriHasLocation() throws GeoException, MissingConfigException {
+        SpielTerminEinzelschiri termin = prepareDefaultTermin();
 
         String calendarEvent = termin.extractCalendarEvent();
         // commas are escaped, see https://www.rfc-editor.org/rfc/rfc5545#section-3.3.11
@@ -63,8 +63,8 @@ class SpielTerminTest {
     }
 
     @Test
-    public void spielTerminStartTime() throws GeoException, MissingConfigException {
-        SpielTermin termin = prepareDefaultTermin();
+    public void SpielTerminEinzelschiriStartTime() throws GeoException, MissingConfigException {
+        SpielTerminEinzelschiri termin = prepareDefaultTermin();
 
         // act
         String calendarEvent = termin.extractCalendarEvent();
@@ -81,8 +81,8 @@ class SpielTerminTest {
         assertEntryIs("DTSTART", day+"T"+time+"Z", calendarEvent);
     }
     @Test
-    public void spielTerminEndTime() throws GeoException, MissingConfigException {
-        SpielTermin termin = prepareDefaultTermin();
+    public void SpielTerminEinzelschiriEndTime() throws GeoException, MissingConfigException {
+        SpielTerminEinzelschiri termin = prepareDefaultTermin();
 
         // act
         String calendarEvent = termin.extractCalendarEvent();
@@ -101,7 +101,7 @@ class SpielTerminTest {
     }
     @Test
     public void description() throws GeoException, MissingConfigException {
-        SpielTermin termin = prepareDefaultTermin();
+        SpielTerminEinzelschiri termin = prepareDefaultTermin();
 
         // act
         String calendarEvent = termin.extractCalendarEvent();

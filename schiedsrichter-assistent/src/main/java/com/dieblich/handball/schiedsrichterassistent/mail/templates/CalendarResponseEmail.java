@@ -34,6 +34,7 @@ public class CalendarResponseEmail extends Email implements AutoCloseable{
 
     @Override
     public void close() {
+        //noinspection ResultOfMethodCallIgnored
         calendarInviteFile.delete();
     }
 }
