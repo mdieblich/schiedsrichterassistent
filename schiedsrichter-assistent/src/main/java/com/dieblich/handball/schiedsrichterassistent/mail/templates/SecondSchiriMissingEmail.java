@@ -21,6 +21,8 @@ public class SecondSchiriMissingEmail extends Email {
                 sich auch beim Schiribot registriert hat und exakt den Namen verwendet, wie er hier angegeben ist
                 (das betrifft Akzentzeichen, Bindestriche, weiterer Vornamen, etc.).
                 
+                Die Ansetzungsemail habe ich ignoriert & gelöscht.
+                
                 Viele Grüße,
                 der Schiribot
                 """);

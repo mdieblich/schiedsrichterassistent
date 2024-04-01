@@ -32,6 +32,8 @@ public class AskForConfigurationEmail extends Email {
             - Vor- & Nachname um dich in den Ansetzungsemails zu identifieren
             - Adresse um die Route zur Halle zu berechnen
             
+            Deine Email an mich wurde gelöscht.
+            
             Viele Grüße,
             der Schiribot
             
