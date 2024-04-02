@@ -34,8 +34,8 @@ public class SpielTerminFahrer implements SpielTermin{
         ICalendar ical = new ICalendar();
         VEvent event = new VEvent();
 
-        event.setSummary("Schiri: " + einsatz.ligaBezeichnungAusEmail());
-        event.setLocation(einsatz.hallenAdresse());
+        event.setSummary(getSummary());
+        event.setLocation(getLocation());
 
         SchirieinsatzAblauf ablauf = getSpielAblauf();
         event.setDateStart(SpielTermin.asDate(ablauf.getAbfahrt()));
@@ -46,7 +46,15 @@ public class SpielTerminFahrer implements SpielTermin{
         return Biweekly.write(ical).go();
     }
 
-    private SchirieinsatzAblauf getSpielAblauf() throws GeoException, MissingConfigException {
+    public String getSummary() {
+        return "Schiri: " + einsatz.ligaBezeichnungAusEmail();
+    }
+
+    public String getLocation() {
+        return einsatz.hallenAdresse();
+    }
+
+    SchirieinsatzAblauf getSpielAblauf() throws GeoException, MissingConfigException {
         if(spielAblauf == null){
             spielAblauf = createSpielablauf();
         }
@@ -103,6 +111,6 @@ public class SpielTerminFahrer implements SpielTermin{
     }
 
     public SpielTerminBeifahrer createBeifahrerTermin() {
-        throw new RuntimeException("Not implemented yet");
+        return new SpielTerminBeifahrer(this);
     }
 }
