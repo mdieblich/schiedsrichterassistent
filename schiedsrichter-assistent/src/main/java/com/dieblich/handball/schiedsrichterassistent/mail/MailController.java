@@ -162,6 +162,7 @@ public class MailController {
 
                     // TODO refactor: extract method
                     Optional<SchiriConfiguration> optionalSchiriBConfig = stratoRead.findConfigByName(otherSchiri);
+                    // TODO We could find multiple Schiris with the same name. Better check the Email as well
                     if(optionalSchiriBConfig.isEmpty()){
                         SecondSchiriMissingEmail schiriMissingEmail = stratoSend.createSecondSchiriMissingEmail(emailSchiriA, otherSchiri);
                         schiriMissingEmail.send();
@@ -196,9 +197,15 @@ public class MailController {
             response.send();
         }
     }
-    private void sendCalendarEventForTwoSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration schiriConfigA, SchiriConfiguration schiriConfigB) {
-        SpielTermin spielTermin = new SpielTermin(schiriEinsatz, schiriConfigA, schiriConfigB, geoService);
-        hier weiter
+    private void sendCalendarEventForTwoSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration fahrer, SchiriConfiguration beifahrer) throws MessagingException, GeoException, MissingConfigException, IOException {
+        SpielTerminFahrer spielTerminFahrer = new SpielTerminFahrer(schiriEinsatz, fahrer, beifahrer, geoService);
+        try (CalendarResponseEmail response = stratoSend.createCalendarResponse(fahrer.Benutzerdaten.Email, spielTerminFahrer)) {
+            response.send();
+        }
+        SpielTerminBeifahrer spielTerminBeifahrer = spielTerminFahrer.createBeifahrerTermin();
+        try (CalendarResponseEmail response = stratoSend.createCalendarResponse(beifahrer.Benutzerdaten.Email, spielTerminBeifahrer)) {
+            response.send();
+        }
     }
 
     private boolean isAnsetzung(Email email) throws MessagingException {
