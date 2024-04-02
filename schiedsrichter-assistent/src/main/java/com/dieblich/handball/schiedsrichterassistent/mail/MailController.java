@@ -15,6 +15,7 @@ import com.dieblich.handball.schiedsrichterassistent.mail.templates.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.Folder;
 import jakarta.mail.MessagingException;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
@@ -157,27 +158,10 @@ public class MailController {
                 AnsetzungsEmail ansetzungsEmail = new AnsetzungsEmail(email);
                 SchiriEinsatz schiriEinsatz = ansetzungsEmail.extractSchiriEinsatz();
                 if(schiriEinsatz.mitGespannspartner()){
-                    String emailSchiriA = config.Benutzerdaten.Email;
-                    Schiedsrichter otherSchiri = schiriEinsatz.otherSchiri(config.Benutzerdaten.getSchiedsrichter());
-
-                    // TODO refactor: extract method
-                    Optional<SchiriConfiguration> optionalSchiriBConfig = stratoRead.findConfigByName(otherSchiri);
-                    // TODO We could find multiple Schiris with the same name. Better check the Email as well
-                    if(optionalSchiriBConfig.isEmpty()){
-                        SecondSchiriMissingEmail schiriMissingEmail = stratoSend.createSecondSchiriMissingEmail(emailSchiriA, otherSchiri);
-                        schiriMissingEmail.send();
-                        return;
+                    SchiriConfiguration schiriConfigB = findGespannpartner(config, schiriEinsatz);
+                    if (schiriConfigB != null){
+                        sendCalendarEventForTwoSchiedsrichter(schiriEinsatz, config, schiriConfigB);
                     }
-                    SchiriConfiguration schiriConfigB = optionalSchiriBConfig.get();
-                    if(!schiriConfigB.hasGespannpartner(config)){
-                        YouAreNotWhitelistedEmail notInWhitelist = stratoSend.createYouAreNotWhitelistedEmail(emailSchiriA, otherSchiri);
-                        notInWhitelist.send();
-                        ExtendWhitelistEmail extendWhitelist = stratoSend.createExtendWhitelistEmail(schiriConfigB, config.Benutzerdaten);
-                        extendWhitelist.send();
-                    }
-                    sendCalendarEventForTwoSchiedsrichter(schiriEinsatz, config, schiriConfigB);
-                    // TODO SpielTermin für zwei Schiris berechnen
-                    // TODO Zwei Emails rausschicken
                 } else {
                     sendCalendarEventForOneSchiedsrichter(schiriEinsatz, config);
                 }
@@ -188,6 +172,28 @@ public class MailController {
         } catch(Exception e){
             e.printStackTrace(System.out);
         }
+    }
+
+    @Nullable
+    private SchiriConfiguration findGespannpartner(SchiriConfiguration config, SchiriEinsatz schiriEinsatz) throws MessagingException, IOException {
+        String emailSchiriA = config.Benutzerdaten.Email;
+        Schiedsrichter otherSchiri = schiriEinsatz.otherSchiri(config.Benutzerdaten.getSchiedsrichter());
+
+        Optional<SchiriConfiguration> optionalSchiriBConfig = stratoRead.findConfigByName(otherSchiri);
+        // TODO We could find multiple Schiris with the same name. Better check the Email as well
+        if(optionalSchiriBConfig.isEmpty()){
+            SecondSchiriMissingEmail schiriMissingEmail = stratoSend.createSecondSchiriMissingEmail(emailSchiriA, otherSchiri);
+            schiriMissingEmail.send();
+            return null;
+        }
+        SchiriConfiguration schiriConfigB = optionalSchiriBConfig.get();
+        if(!schiriConfigB.hasGespannpartner(config)){
+            YouAreNotWhitelistedEmail notInWhitelist = stratoSend.createYouAreNotWhitelistedEmail(emailSchiriA, otherSchiri);
+            notInWhitelist.send();
+            ExtendWhitelistEmail extendWhitelist = stratoSend.createExtendWhitelistEmail(schiriConfigB, config.Benutzerdaten);
+            extendWhitelist.send();
+        }
+        return schiriConfigB;
     }
 
 
