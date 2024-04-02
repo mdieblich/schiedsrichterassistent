@@ -64,29 +64,6 @@ public class MailController {
         return "VORHER:\n" + vorher + "\n================\nNachher:\n" + nachher;
     }
 
-    @GetMapping("/configuration/{email}")
-    public SchiriConfiguration getConfiguration(@PathVariable(value="email") String email) throws IOException, MessagingException {
-        return stratoRead.loadSchiriConfiguration(email);
-    }
-
-    @PatchMapping("/configuration/{email}")
-    public String updateConfiguration(@PathVariable(value="email") String emailAddress, @RequestBody SchiriConfiguration configUpdate) throws MessagingException, IOException {
-        SchiriConfiguration config = stratoRead.loadSchiriConfiguration(emailAddress);
-        String vorher = config.toJSON();
-
-        List<String> log = new ArrayList<>();
-
-        config.updateWith(configUpdate, geoService::findKoordinaten, log::add);
-        stratoRead.overwriteSchiriConfiguration(config);
-
-        String nachher = config.toJSON();
-        return "VORHER:\n" + vorher + "\n" +
-                "================\n" +
-                "Nachher:\n" + nachher + "\n" +
-                "================\n" +
-                "Log:\n" + String.join("\n", log);
-    }
-
     @PostMapping("/tasks/checkInbox")
     public void checkInbox() throws MessagingException, IOException {
         EmailFolder inbox = stratoRead.getFolder("INBOX");
