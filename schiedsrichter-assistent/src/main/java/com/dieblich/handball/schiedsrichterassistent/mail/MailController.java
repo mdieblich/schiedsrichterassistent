@@ -13,19 +13,21 @@ import com.dieblich.handball.schiedsrichterassistent.geo.GeoServiceImpl;
 import com.dieblich.handball.schiedsrichterassistent.mail.received.AnsetzungsEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.*;
 import jakarta.annotation.PostConstruct;
-import jakarta.mail.Folder;
 import jakarta.mail.MessagingException;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.time.LocalDateTime;
 import java.util.*;
 
+
 @SuppressWarnings("unused")
-@RestController
+@Configuration
+@EnableScheduling
 public class MailController {
     @Value("${openrouteservice.apikey}")
     private String openRouteApikey;
@@ -50,22 +52,9 @@ public class MailController {
         geoService = new GeoServiceImpl(openRouteApikey);
     }
 
-    @PostMapping("/checkFolderStructure")
-    public String checkFolderStructure() throws MessagingException {
-        StringBuilder vorher = new StringBuilder();
-        for (Folder folder: stratoRead.listFolders()) {
-            vorher.append(folder.getFullName()).append("\n");
-        }
-        stratoRead.getFolder("SCHIEDSRICHTER");
-        StringBuilder nachher = new StringBuilder();
-        for (Folder folder: stratoRead.listFolders()) {
-            nachher.append(folder.getFullName()).append("\n");
-        }
-        return "VORHER:\n" + vorher + "\n================\nNachher:\n" + nachher;
-    }
-
-    @PostMapping("/tasks/checkInbox")
+    @Scheduled(fixedDelay = 15*1000)
     public void checkInbox() throws MessagingException, IOException {
+        System.out.println("Check the inbox " + LocalDateTime.now());
         EmailFolder inbox = stratoRead.getFolder("INBOX");
         Set<String> unknownSenders = new HashSet<>();
         try {
@@ -195,10 +184,4 @@ public class MailController {
         return email.getSubject().contains("Spielansetzung");
     }
 
-    private String returnErrorAsString(Exception ex) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        ex.printStackTrace(pw);
-        return "Error: " + ex.getMessage() + "\nStacktrace:\n" + sw;
-    }
 }
