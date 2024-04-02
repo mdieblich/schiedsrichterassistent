@@ -121,9 +121,9 @@ class SpielTerminFahrerTest extends SpielTerminTest {
         String beautifulDescription = """
                 SC Pulheim 3 vs. Fortuna Köln 4
                 
-                Berechnete Fahrtzeit: 15 Min zu Andre
+                Berechnete Fahrtzeit: 15 Min Martin zu Andre
                                       30 Min zur Halle
-                Berechnete Strecke:   10 km  zu Andre
+                Berechnete Strecke:   10 km  Martin zu Andre
                                       34 km  zur Halle
                 
                 14:00 Uhr Abfahrt Martin

@@ -85,9 +85,9 @@ public class SpielTerminFahrer implements SpielTermin{
             SchirieinsatzAblauf ablauf = getSpielAblauf();
             description = einsatz.heimMannschaft() + " vs. " + einsatz.gastMannschaft() + "\n";
             description += "\n";
-            description += "Berechnete Fahrtzeit: "+(ablauf.getFahrtZumPartner().dauerInSekunden()/60)  +" Min zu "+nameBeifahrer+"\n";
+            description += "Berechnete Fahrtzeit: "+(ablauf.getFahrtZumPartner().dauerInSekunden()/60)  +" Min "+nameFahrer+" zu "+nameBeifahrer+"\n";
             description += "                      "+(ablauf.getFahrtZurHalle().dauerInSekunden()/60)    +" Min zur Halle\n";
-            description += "Berechnete Strecke:   "+(ablauf.getFahrtZumPartner().distanzInMetern()/1000)+" km  zu "+nameBeifahrer+"\n";
+            description += "Berechnete Strecke:   "+(ablauf.getFahrtZumPartner().distanzInMetern()/1000)+" km  "+nameFahrer+" zu "+nameBeifahrer+"\n";
             description += "                      "+(ablauf.getFahrtZurHalle().distanzInMetern()/1000)  +" km  zur Halle\n";
             description += "\n";
             description += SpielTermin.asTimeOfDay(ablauf.getAbfahrt())               + " Uhr Abfahrt " + nameFahrer                + "\n";
