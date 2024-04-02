@@ -100,7 +100,8 @@ public class SpielTerminFahrer implements SpielTermin{
             description += "\n";
             description += SpielTermin.asTimeOfDay(ablauf.getAbfahrt())               + " Uhr Abfahrt " + nameFahrer                + "\n";
             description += SpielTermin.asTimeOfDay(ablauf.getPartnerAbholen())        + " Uhr " + nameBeifahrer + " abholen"        + "\n";
-            description += SpielTermin.asTimeOfDay(ablauf.getTechnischBesprechung())  + " Uhr Ankunft"                              + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getAnkunftHalle())          + " Uhr Ankunft"                              + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getTechnischBesprechung())  + " Uhr Technische Besprechung"               + "\n";
             description += SpielTermin.asTimeOfDay(ablauf.getAnwurf())                + " Uhr Anwurf"                               + "\n";
             description += SpielTermin.asTimeOfDay(ablauf.getSpielEnde())             + " Uhr Spielende"                            + "\n";
             description += SpielTermin.asTimeOfDay(ablauf.getRueckfahrt())            + " Uhr Rückfahrt"                            + "\n";

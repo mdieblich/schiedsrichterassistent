@@ -128,7 +128,8 @@ class SpielTerminFahrerTest extends SpielTerminTest {
                 
                 14:00 Uhr Abfahrt Martin
                 14:15 Uhr Andre abholen
-                15:00 Uhr Ankunft
+                14:45 Uhr Ankunft
+                15:00 Uhr Technische Besprechung
                 15:30 Uhr Anwurf
                 17:00 Uhr Spielende
                 17:30 Uhr Rückfahrt
