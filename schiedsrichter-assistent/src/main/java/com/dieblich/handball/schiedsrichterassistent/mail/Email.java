@@ -14,7 +14,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Email {
-
     private final Message message;
     private Multipart mulitPart;
     private BodyPart messageBodyPart;
