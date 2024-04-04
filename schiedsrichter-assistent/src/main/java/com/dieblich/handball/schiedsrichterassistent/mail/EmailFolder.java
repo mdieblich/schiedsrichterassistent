@@ -10,4 +10,6 @@ public interface EmailFolder {
     void upload(Email email) throws MessagingException;
 
     void deleteAll() throws MessagingException;
+
+    Email prepareEmailForUpload() throws MessagingException;
 }

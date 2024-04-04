@@ -48,7 +48,7 @@ public class Email {
         return getSubject().equals(emailSubject);
     }
 
-    private List<String> getAllSenders() throws MessagingException {
+    List<String> getAllSenders() throws MessagingException {
         return Arrays.stream(message.getFrom())
                 .filter(address -> address instanceof InternetAddress)
                 .map(address -> (InternetAddress) address)

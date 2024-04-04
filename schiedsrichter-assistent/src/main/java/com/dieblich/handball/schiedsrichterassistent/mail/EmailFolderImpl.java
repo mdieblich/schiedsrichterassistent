@@ -1,9 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
-import jakarta.mail.Flags;
-import jakarta.mail.Folder;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
+import jakarta.mail.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,9 +8,11 @@ import java.util.stream.Collectors;
 
 public class EmailFolderImpl implements EmailFolder {
     private final Folder folder;
+    private final Session session;
 
-    public EmailFolderImpl(Folder folder){
+    public EmailFolderImpl(Folder folder, Session session){
         this.folder = folder;
+        this.session = session;
     }
 
     @Override
@@ -36,5 +35,10 @@ public class EmailFolderImpl implements EmailFolder {
         folder.close();
         // Later: Really delete
         // folder.expunge();
+    }
+
+    @Override
+    public Email prepareEmailForUpload() throws MessagingException {
+        return new Email(session);
     }
 }

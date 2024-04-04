@@ -47,7 +47,7 @@ public class EmailServerReadImpl implements AutoCloseable, EmailServerRead {
             folder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES);
         }
         folder.open(Folder.READ_WRITE);
-        return new EmailFolderImpl(folder);
+        return new EmailFolderImpl(folder, session);
     }
 
     public SchiriConfiguration loadSchiriConfiguration(String emailAddress) throws IOException, MessagingException {
