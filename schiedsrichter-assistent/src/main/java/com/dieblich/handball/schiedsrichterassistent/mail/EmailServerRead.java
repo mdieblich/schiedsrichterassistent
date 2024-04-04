@@ -38,11 +38,6 @@ public class EmailServerRead implements AutoCloseable {
 
     }
 
-    public Folder[] listFolders() throws MessagingException {
-        ensureConnection();
-        return store.getDefaultFolder().list();
-    }
-
     public EmailFolder getFolder(String name) throws MessagingException {
         ensureConnection();
         Folder defaultFolder = store.getDefaultFolder();
