@@ -9,10 +9,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EmailFolderSMTP implements EmailFolder {
+public class EmailFolderImpl implements EmailFolder {
     private final Folder folder;
 
-    public EmailFolderSMTP(Folder folder){
+    public EmailFolderImpl(Folder folder){
         this.folder = folder;
     }
 
