@@ -136,4 +136,76 @@ class SchiriRepoEmailTest {
                   "Gespannpartner" : null
                 }""", firstEmail.getContent().replace("\r", ""));
     }
+
+    @Test
+    public void configStatusNEW() throws SchiriRepo.SchiriRepoException {
+
+        // arrange
+        EmailServerReadFake fakeEmailServer = new EmailServerReadFake();
+        fakeEmailServer.createFolder("SCHIEDSRICHTER");
+        // empty folder
+        SchiriRepoEmail repo = new SchiriRepoEmail(fakeEmailServer);
+
+        // act
+        SchiriRepo.ConfigurationStatus configSatus = repo.getConfigurationStatus("max@mustermann.com");
+
+        // assert
+        assertEquals(SchiriRepo.ConfigurationStatus.NEW, configSatus);
+    }
+    @Test
+    public void configStatusINCOMPLETE() throws SchiriRepo.SchiriRepoException {
+
+        // arrange
+        EmailServerReadFake fakeEmailServer = new EmailServerReadFake();
+        EmailFolderFake schiedsrichterFolder = fakeEmailServer.createFolder("SCHIEDSRICHTER");
+        schiedsrichterFolder.createEmail("max@mustermann.com", "Mustermann, Max", "{\"Benutzerdaten\":{\"Adresse\":\"irgendwo\"}}");
+        SchiriRepoEmail repo = new SchiriRepoEmail(fakeEmailServer);
+
+        // act
+        SchiriRepo.ConfigurationStatus configSatus = repo.getConfigurationStatus("max@mustermann.com");
+
+        // assert
+        assertEquals(SchiriRepo.ConfigurationStatus.INCOMPLETE, configSatus);
+    }
+    @Test
+    public void configStatusCOMPLETE() throws SchiriRepo.SchiriRepoException {
+
+        // arrange
+        EmailServerReadFake fakeEmailServer = new EmailServerReadFake();
+        EmailFolderFake schiedsrichterFolder = fakeEmailServer.createFolder("SCHIEDSRICHTER");
+        schiedsrichterFolder.createEmail("max@mustermann.com", "Mustermann, Max", """
+        {
+          "Benutzerdaten" : {
+            "Email" : "max@mustermann.com",
+            "Vorname" : "Max",
+            "Nachname" : "Mustermann",
+            "Adresse" : "Musterstr. 17, 54321 Köln",
+            "Längengrad" : 1.23456,
+            "Breitengrad" : 5.67891
+          },
+          "Spielablauf" : {
+            "EffektiveSpielDauer" : 90,
+            "UmziehenVorSpiel" : 15,
+            "PapierKramNachSpiel" : 15,
+            "UmziehenNachSpiel" : 15,
+            "TechnischeBesprechung" : {
+              "StandardDauerInMinuten" : 30,
+              "Abweichungen" : {
+                "Oberliga" : 45,
+                "Regionalliga" : 45
+              }
+            }
+          },
+          "Gespannpartner": [
+            "mike.blind@loser.com"
+          ]
+        }""");
+        SchiriRepoEmail repo = new SchiriRepoEmail(fakeEmailServer);
+
+        // act
+        SchiriRepo.ConfigurationStatus configSatus = repo.getConfigurationStatus("max@mustermann.com");
+
+        // assert
+        assertEquals(SchiriRepo.ConfigurationStatus.COMPLETE, configSatus);
+    }
 }
