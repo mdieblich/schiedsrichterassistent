@@ -6,11 +6,8 @@ import jakarta.mail.Session;
 
 public class AskForConfigurationEmail extends Email {
 
-    public static final String SUBJECT = "Konfiguration nicht vollständig";
-    public AskForConfigurationEmail(String botEmailAddress, String schiriEmailAddress, Session session) throws MessagingException {
-        super(botEmailAddress, schiriEmailAddress, session);
-        setSubject(SUBJECT);
-        setContent("""
+    public AskForConfigurationEmail(String botEmailAddress, String schiriEmailAddress) {
+        super(botEmailAddress, schiriEmailAddress,"Konfiguration nicht vollständig","""
             Hallo!
             
             Ich habe eine Email von dir erhalten (vermutlich mit einer Ansetzung). Deine Konfiguration ist aber noch

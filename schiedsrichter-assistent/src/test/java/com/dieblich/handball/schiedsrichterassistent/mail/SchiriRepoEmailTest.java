@@ -79,7 +79,7 @@ class SchiriRepoEmailTest {
         repo.overwriteSchiriConfiguration(configuration);
 
         // assert
-        EmailFolder folder = fakeEmailServer.getFolder("SCHIEDSRICHTER");
+        EmailFolder folder = fakeEmailServer.fetchFolder("SCHIEDSRICHTER");
         List<Email> emails = folder.getEmails();
         assertEquals(1, emails.size());
         Email firstEmail = emails.get(0);
@@ -118,7 +118,7 @@ class SchiriRepoEmailTest {
         repo.overwriteSchiriConfiguration(configuration);
 
         // assert
-        EmailFolder folder = fakeEmailServer.getFolder("SCHIEDSRICHTER");
+        EmailFolder folder = fakeEmailServer.fetchFolder("SCHIEDSRICHTER");
         List<Email> emails = folder.getEmails();
         assertEquals(1, emails.size());
         Email firstEmail = emails.get(0);

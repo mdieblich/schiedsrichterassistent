@@ -5,11 +5,9 @@ import jakarta.mail.MessagingException;
 import java.util.List;
 
 public interface EmailFolder {
-    List<Email> getEmails() throws MessagingException;
+    List<Email> getEmails();
 
-    void upload(Email email) throws MessagingException;
+    void upload(Email email) throws EmailException;
 
-    void deleteAll() throws MessagingException;
-
-    Email prepareEmailForUpload() throws MessagingException;
+    void deleteAll() throws EmailException;
 }

@@ -12,17 +12,15 @@ import java.nio.charset.StandardCharsets;
 
 public class CalendarResponseEmail extends Email implements AutoCloseable{
 
-    private final File calendarInviteFile;
-
-    public CalendarResponseEmail(String botEmailAddress, String schiriEmailAddress, SpielTermin spielTermin, Session session) throws MessagingException, GeoException, IOException, MissingConfigException {
-        super(botEmailAddress, schiriEmailAddress, session);
-        setSubject("Termine für deine Ansetzung");
-        setContent("Anbei deine Ansetzung.\n\n" + spielTermin.getDescription());
-        calendarInviteFile = saveToFile(spielTermin);
-        attachFile(calendarInviteFile);
+    public CalendarResponseEmail(String botEmailAddress, String schiriEmailAddress, SpielTermin spielTermin) throws GeoException, IOException, MissingConfigException {
+        super(botEmailAddress, schiriEmailAddress,
+                "Termine für deine Ansetzung",
+                "Anbei deine Ansetzung.\n\n" + spielTermin.getDescription(),
+                saveToFile(spielTermin)
+        );
     }
 
-    private File saveToFile(SpielTermin spielTermin) throws IOException, GeoException, MissingConfigException {
+    private static File saveToFile(SpielTermin spielTermin) throws IOException, GeoException, MissingConfigException {
         long uniqueID = System.currentTimeMillis();
         String fileName = uniqueID+".ics";
 
@@ -35,6 +33,6 @@ public class CalendarResponseEmail extends Email implements AutoCloseable{
     @Override
     public void close() {
         //noinspection ResultOfMethodCallIgnored
-        calendarInviteFile.delete();
+        getAttachment().delete();
     }
 }

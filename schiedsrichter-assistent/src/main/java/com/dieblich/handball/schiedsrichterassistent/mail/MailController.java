@@ -1,6 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import com.dieblich.handball.schiedsrichterassistent.*;
+import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTermin;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTerminBeifahrer;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTerminEinzelschiri;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTerminFahrer;
@@ -10,7 +11,6 @@ import com.dieblich.handball.schiedsrichterassistent.geo.GeoServiceImpl;
 import com.dieblich.handball.schiedsrichterassistent.mail.received.AnsetzungsEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.*;
 import jakarta.annotation.PostConstruct;
-import jakarta.mail.MessagingException;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,137 +38,104 @@ public class MailController {
     @Value("${mail.smtp.host}")
     private String smtpHost;
     @Value("${mail.user}")
-    private String botUsername;
+    private String botEmailaddress;
     @Value("${mail.password}")
     private String botPassword;
 
-    private EmailServerReadImpl stratoRead;
-    private EmailServerSend stratoSend;
     private SchiriRepo schiriRepo;
+    private Inbox inbox;
+    private EmailServerSend stratoSend;
     private GeoService geoService;
 
     @PostConstruct
     public void init() {
-        stratoRead = new EmailServerReadImpl(imapHost,993,botUsername,botPassword);
-        stratoSend = new EmailServerSend(smtpHost,587,botUsername,botPassword);
+        EmailServerReadImpl stratoRead = new EmailServerReadImpl(imapHost, 993, botEmailaddress, botPassword);
         schiriRepo = new SchiriRepoEmail(stratoRead);
+        inbox = new Inbox(stratoRead);
+
+        stratoSend = new EmailServerSend(smtpHost,587, botEmailaddress,botPassword);
         geoService = new GeoServiceImpl(openRouteApikey);
     }
 
     @Scheduled(fixedDelay = 15*1000)
     public void checkInbox() {
         System.out.println("Check the inbox " + LocalDateTime.now());
-        EmailFolder inbox = null;
         try{
-            inbox = stratoRead.getFolder("INBOX");
-            List<Email> allEmails = inbox.getEmails();
-
-            Set<String> unknownSenders = new HashSet<>();
-            // TODO First, sort them by sender, i.e. Map<Sender, Email>, then they can be sorted: Config-Update first, others later
-            for (Email email : inbox.getEmails()) {
-
-                Response response = handleEmail(email);
-                if(response == Response.WelcomeEmail){
-
-                }
-
-
-
-
-
-                Optional<String> optionalSender = email.getFrom();
-                if (optionalSender.isEmpty()) {
-                    continue;
-                }
-                String sender = optionalSender.get();
-
-                if (isConfigUpdate(email)) {
-                    handleConfigUpdate(email);
-                    // TODO if the config update was successful, all other Emails of that sender should be handled - instead of discarded
-                } else {
-                    Optional<SchiriConfiguration> optionalSchiriConfig = stratoRead.findConfigByEmail(sender);
-                    if (optionalSchiriConfig.isPresent()) {
-                        SchiriConfiguration schiriConfiguration = optionalSchiriConfig.get();
-                        if (schiriConfiguration.isComplete()) {
-                            handleEmailForRegisteredSchiri(email, schiriConfiguration);
-                        } else {
-                            askForMissingConfig(sender);
-                        }
-                    } else {
-                        unknownSenders.add(sender);
-                    }
-                }
-            }
-            for (String unknownSender : unknownSenders) {
-                askForRegistration(unknownSender);
-            }
-        } catch (Exception e) {
-            logger.error("Error while checking inbox", e);
-        } finally {
-            if(inbox!= null){
-                try {
-                    inbox.deleteAll();
-                } catch (MessagingException e) {
-                    logger.error("Error while purging inbox", e);
-                }
-            }
+            inbox.checkEmails();
+        } catch (EmailException e) {
+            logger.error("Fehler beim Laden der Emails aus der Inbox", e);
         }
-    }
-    public InboxDistinction differentiateEmails(List<Email> emails){
-        InboxDistinction distinction = new InboxDistinction();
-        for(Email email: emails){
+        for(Email configEmail: inbox.getConfigEmails()){
+            handleConfigUpdate(configEmail);
+        }
+
+        Map<String, SchiriConfiguration> fullyConfiguredSchiris = new HashMap<>();
+        List<String> partlyConfiguredSchiris = new ArrayList<>();
+        for(String knownSchiri:inbox.getKnownSchiris()){
             try {
-                Optional<String> optionalSender = email.getFrom();
-                if (optionalSender.isEmpty()) {
-                    continue;
-                }
-                String sender = optionalSender.get();
-                if (isConfigUpdate(email)) {
-                    distinction.addConfigUpdate(sender, email);
+                Optional<SchiriConfiguration> optionalSchiriConfig = schiriRepo.findConfigByEmail(knownSchiri);
+                if (optionalSchiriConfig.isPresent() && optionalSchiriConfig.get().isComplete()) {
+                    fullyConfiguredSchiris.put(knownSchiri, optionalSchiriConfig.get());
                 } else {
-                    if (distinction.isUnknownSender(sender)) {
-                        Optional<SchiriConfiguration> optionalConfig = schiriRepo.findConfigByEmail(sender);
-                        if (optionalConfig.isPresent()) {
-                            distinction.setSenderHasOldConfig(sender);
-                        }
-                    }
-                    distinction.add(sender, email);
+                    partlyConfiguredSchiris.add(knownSchiri);
                 }
-            } catch (Exception e) {
-                logger.error("Fehler beim Verarbeiten der Email " + email, e);
+            } catch (SchiriRepo.SchiriRepoException e) {
+                partlyConfiguredSchiris.add(knownSchiri);
+                inbox.addException(knownSchiri, e);
             }
         }
-        return distinction;
+
+        for(Map.Entry<String, SchiriConfiguration> entry: fullyConfiguredSchiris.entrySet()){
+            for(Email email:inbox.getAllOtherEmailsForSchiri(entry.getKey())){
+                handleEmailForRegisteredSchiri(email, entry.getValue());
+            }
+        }
+
+        for(String schiri:partlyConfiguredSchiris){
+            askForMissingConfig(schiri);
+        }
+
+        for(String unknownSchiri: inbox.getUnknownSchiris()){
+            askForRegistration(unknownSchiri);
+        }
+        for(Map.Entry<String, List<Exception>> exceptions: inbox.getExceptions().entrySet()){
+            sendErrorEmail(exceptions.getKey(), exceptions.getValue());
+        }
+
+        try {
+            inbox.purge();
+        } catch (EmailException e) {
+            logger.error("Fehler beim Löschen der Emails im Posteingang", e);
+        }
     }
 
-    private void askForMissingConfig(String sender) throws MessagingException {
-        AskForConfigurationEmail email = stratoSend.createAskForConfigEmail(sender);
-        email.send();
+    private void handleConfigUpdate(Email email) {
+        String sender = email.getSender();
+        try{
+            Optional<SchiriConfiguration> optionalOldConfig = schiriRepo.findConfigByEmail(sender);
+
+            SchiriConfiguration config = optionalOldConfig.orElse(SchiriConfiguration.NEW_DEFAULT(sender));
+
+            List<String> log = new ArrayList<>();
+            config.updateWith(email.getContent(), geoService::findKoordinaten, log::add);
+            schiriRepo.overwriteSchiriConfiguration(config);
+
+            ConfigConfirmationEmail responseEmail = new ConfigConfirmationEmail(botEmailaddress, sender, config, log);
+            stratoSend.send(responseEmail);
+        } catch (Exception e) {
+            inbox.addException(sender, e);
+        }
     }
 
-    private boolean isConfigUpdate(Email email) throws MessagingException {
-        boolean isAReplyToAWelcomeEmail = email.getSubject().contains(WelcomeEmail.SUBJECT);
-        boolean isRegularConfigUpdate = email.getSubject().contains("Konfiguration");
-        return isAReplyToAWelcomeEmail || isRegularConfigUpdate;
+    private void askForMissingConfig(String sender){
+        AskForConfigurationEmail email = new AskForConfigurationEmail(botEmailaddress, sender);
+        try {
+            stratoSend.send(email);
+        } catch (EmailException e) {
+            logger.error("Konnte keine AskForConfigurationEmail senden an " + sender, e);
+        }
     }
 
-    private void handleConfigUpdate(Email email) throws MessagingException, IOException {
-        if(email.getFrom().isEmpty()){ return; }
-
-        String sender = email.getFrom().get();
-        SchiriConfiguration config = stratoRead.loadSchiriConfiguration(sender);
-
-        List<String> log = new ArrayList<>();
-        config.updateWith(email.getContent(), geoService::findKoordinaten, log::add);
-        stratoRead.overwriteSchiriConfiguration(config);
-        ConfigConfirmationEmail responseEmail = stratoSend.createConfigConfirmationEmail(sender, config, log);
-        responseEmail.send();
-    }
-
-    private void askForRegistration(String newUserEmail) throws MessagingException{
-        WelcomeEmail welcomeEmail = stratoSend.createWelcomeEmail(newUserEmail);
-        welcomeEmail.send();
-    }
 
     private void handleEmailForRegisteredSchiri(Email email, SchiriConfiguration config) {
         try{
@@ -184,105 +151,75 @@ public class MailController {
                     sendCalendarEventForOneSchiedsrichter(schiriEinsatz, config);
                 }
             } else {
-                DontKnowWhatToDoEmail response = stratoSend.createResponseForUnknownEmail(config.Benutzerdaten.Email, email);
-                response.send();
+                DontKnowWhatToDoEmail response = new DontKnowWhatToDoEmail(botEmailaddress, config.Benutzerdaten.Email, email);
+                stratoSend.send(response);
             }
         } catch(Exception e){
-            e.printStackTrace(System.out);
+            inbox.addException(config.Benutzerdaten.Email, e);
+        }
+    }
+
+    private boolean isAnsetzung(Email email) {
+        return email.getSubject().contains("Spielansetzung");
+    }
+
+    private void askForRegistration(String newUserEmail){
+        WelcomeEmail welcomeEmail = new WelcomeEmail(botEmailaddress, newUserEmail);
+        try {
+            stratoSend.send(welcomeEmail);
+        } catch (EmailException e) {
+            logger.error("Konnte keine WelcomeEmail senden an " + newUserEmail, e);
         }
     }
 
     @Nullable
-    private SchiriConfiguration findGespannpartner(SchiriConfiguration config, SchiriEinsatz schiriEinsatz) throws MessagingException, IOException {
+    private SchiriConfiguration findGespannpartner(SchiriConfiguration config, SchiriEinsatz schiriEinsatz) throws SchiriRepo.SchiriRepoException, EmailException {
         String emailSchiriA = config.Benutzerdaten.Email;
         Schiedsrichter otherSchiri = schiriEinsatz.otherSchiri(config.Benutzerdaten.getSchiedsrichter());
 
-        Optional<SchiriConfiguration> optionalSchiriBConfig = stratoRead.findConfigByName(otherSchiri);
+        Optional<SchiriConfiguration> optionalSchiriBConfig = schiriRepo.findConfigByName(otherSchiri);
         // TODO We could find multiple Schiris with the same name. Better check the Email as well
-        if(optionalSchiriBConfig.isEmpty()){
-            SecondSchiriMissingEmail schiriMissingEmail = stratoSend.createSecondSchiriMissingEmail(emailSchiriA, otherSchiri);
-            schiriMissingEmail.send();
+        if (optionalSchiriBConfig.isEmpty()) {
+            SecondSchiriMissingEmail schiriMissingEmail = new SecondSchiriMissingEmail(botEmailaddress, emailSchiriA, otherSchiri);
+            stratoSend.send(schiriMissingEmail);
             return null;
         }
         SchiriConfiguration schiriConfigB = optionalSchiriBConfig.get();
-        if(!schiriConfigB.hasGespannpartner(config)){
-            YouAreNotWhitelistedEmail notInWhitelist = stratoSend.createYouAreNotWhitelistedEmail(emailSchiriA, otherSchiri);
-            notInWhitelist.send();
-            ExtendWhitelistEmail extendWhitelist = stratoSend.createExtendWhitelistEmail(schiriConfigB, config.Benutzerdaten);
-            extendWhitelist.send();
+        if (!schiriConfigB.hasGespannpartner(config)) {
+            YouAreNotWhitelistedEmail notInWhitelist = new YouAreNotWhitelistedEmail(botEmailaddress, emailSchiriA, otherSchiri);
+            stratoSend.send(notInWhitelist);
+            ExtendWhitelistEmail extendWhitelist = new ExtendWhitelistEmail(botEmailaddress, schiriConfigB, config.Benutzerdaten);
+            stratoSend.send(extendWhitelist);
         }
         return schiriConfigB;
     }
 
-
-    private void sendCalendarEventForOneSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration config) throws MessagingException, GeoException, MissingConfigException, IOException {
+    private void sendCalendarEventForOneSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration config) throws GeoException, MissingConfigException, IOException, EmailException {
         SpielTerminEinzelschiri spielTermin = new SpielTerminEinzelschiri(schiriEinsatz, config, geoService);
-        try (CalendarResponseEmail response = stratoSend.createCalendarResponse(config.Benutzerdaten.Email, spielTermin)) {
-            response.send();
-        }
+        sendTermin(spielTermin, config.Benutzerdaten.Email);
     }
-    private void sendCalendarEventForTwoSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration fahrer, SchiriConfiguration beifahrer) throws MessagingException, GeoException, MissingConfigException, IOException {
+    private void sendCalendarEventForTwoSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration fahrer, SchiriConfiguration beifahrer) throws GeoException, MissingConfigException, IOException, EmailException {
         SpielTerminFahrer spielTerminFahrer = new SpielTerminFahrer(schiriEinsatz, fahrer, beifahrer, geoService);
-        try (CalendarResponseEmail response = stratoSend.createCalendarResponse(fahrer.Benutzerdaten.Email, spielTerminFahrer)) {
-            response.send();
-        }
+        sendTermin(spielTerminFahrer, fahrer.Benutzerdaten.Email);
         SpielTerminBeifahrer spielTerminBeifahrer = spielTerminFahrer.createBeifahrerTermin();
-        try (CalendarResponseEmail response = stratoSend.createCalendarResponse(beifahrer.Benutzerdaten.Email, spielTerminBeifahrer)) {
-            response.send();
+        sendTermin(spielTerminBeifahrer, beifahrer.Benutzerdaten.Email);
+    }
+
+    private void sendTermin(SpielTermin termin, String receiver) throws GeoException, MissingConfigException, IOException, EmailException {
+        try (CalendarResponseEmail response = new CalendarResponseEmail(botEmailaddress, receiver, termin)) {
+            stratoSend.send(response);
         }
     }
 
-    private boolean isAnsetzung(Email email) throws MessagingException {
-        return email.getSubject().contains("Spielansetzung");
-    }
-
-    enum Response{
-        WelcomeEmail,
-        other
-    }
-
-    private Response handleEmail(Email email){
-        return Response.other;
-    }
-
-    class InboxDistinction{
-
-        Map<String, EmailDistinction> senderToEmails = new HashMap<>();
-
-        void addConfigUpdate(String sender, Email configUpdateEmail){
-            EmailDistinction distinction = getEmailDistinction(sender);
-            distinction.configEmails.add(configUpdateEmail);
-        }
-
-        private EmailDistinction getEmailDistinction(String sender){
-            if(!senderToEmails.containsKey(sender)){
-                senderToEmails.put(sender, new EmailDistinction());
+    private void sendErrorEmail(String receiver, List<Exception> exceptions){
+        ErrorEmail email = new ErrorEmail(botEmailaddress, receiver, exceptions);
+        try {
+            stratoSend.send(email);
+        } catch (EmailException e) {
+            logger.error("Konnte Fehleremail nicht senden, ", e);
+            for(int i=0; i<exceptions.size(); i++){
+                logger.error("Fehlermeldung " + i, exceptions.get(i));
             }
-            return senderToEmails.get(sender);
-        }
-
-        public boolean isUnknownSender(String sender) {
-            return !getEmailDistinction(sender).isKnown();
-        }
-
-        public void setSenderHasOldConfig(String sender) {
-            EmailDistinction distinction = getEmailDistinction(sender);
-            distinction.hasOldConfig = true;
-        }
-
-        public void add(String sender, Email email) {
-            getEmailDistinction(sender)
-                    .emailsToHandle.add(email);
-        }
-
-        class EmailDistinction{
-            private boolean hasOldConfig = false;
-
-            public boolean isKnown(){
-                return hasOldConfig || !configEmails.isEmpty();
-            }
-            List<Email> configEmails = new ArrayList<>();
-            List<Email> emailsToHandle = new ArrayList<>();
         }
     }
 

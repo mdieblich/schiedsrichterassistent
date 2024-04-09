@@ -7,10 +7,10 @@ import jakarta.mail.Session;
 public class WelcomeEmail extends Email {
 
     public static final String SUBJECT = "Willkommen beim Schiribot!";
-    public WelcomeEmail(String botEmailAddress, String schiriEmailAddress, Session session) throws MessagingException {
-        super(botEmailAddress, schiriEmailAddress, session);
-        setSubject(SUBJECT);
-        setContent("""
+
+    public WelcomeEmail(String botEmailAddress, String schiriEmailAddress){
+        super(botEmailAddress, schiriEmailAddress,
+                SUBJECT, """
                 Hallo beim Schiribot!
                 
                 Grundsätzlich reicht es, wenn du mir Ansetzungsemails zuschickt - ich antworte dir dann in ca. 5 Minuten.

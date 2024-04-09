@@ -7,10 +7,9 @@ import jakarta.mail.Session;
 
 public class SecondSchiriMissingEmail extends Email {
 
-    public SecondSchiriMissingEmail(String botEmailAddress, String schiriEmailAddress, Schiedsrichter otherSchiri, Session session) throws MessagingException {
-        super(botEmailAddress, schiriEmailAddress, session);
-        setSubject("Partner-Konfiguration fehlt.");
-        setContent("""
+    public SecondSchiriMissingEmail(String botEmailAddress, String schiriEmailAddress, Schiedsrichter otherSchiri) {
+        super(botEmailAddress, schiriEmailAddress,
+        "Partner-Konfiguration fehlt.","""
                 Hallo!
                 
                 Ich habe eine Ansetzungsemail von dir bekommen.

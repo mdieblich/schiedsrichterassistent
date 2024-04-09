@@ -14,7 +14,7 @@ public class EmailServerReadFake implements EmailServerRead{
     }
 
     @Override
-    public EmailFolder getFolder(String name) {
+    public EmailFolder fetchFolder(String name) {
         return folders.get(name);
     }
 }

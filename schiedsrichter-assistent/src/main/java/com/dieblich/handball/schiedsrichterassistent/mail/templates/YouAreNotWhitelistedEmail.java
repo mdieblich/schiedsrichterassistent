@@ -6,10 +6,9 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 
 public class YouAreNotWhitelistedEmail extends Email {
-    public YouAreNotWhitelistedEmail(String botEmailAddress, String schiriEmailAddress, Schiedsrichter otherSchiri, Session session) throws MessagingException {
-        super(botEmailAddress, schiriEmailAddress, session);
-        setSubject("Partner hat dich nicht autorisiert");
-        setContent("""
+    public YouAreNotWhitelistedEmail(String botEmailAddress, String schiriEmailAddress, Schiedsrichter otherSchiri){
+        super(botEmailAddress, schiriEmailAddress,
+        "Partner hat dich nicht autorisiert", """
                 Hallo!
                 
                 Ich habe eine Ansetzungsemail von dir bekommen.

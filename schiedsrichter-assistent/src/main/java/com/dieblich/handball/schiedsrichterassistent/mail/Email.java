@@ -1,62 +1,67 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import jakarta.mail.*;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeBodyPart;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.internet.*;
+import lombok.Getter;
+import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
+@ToString
 public class Email {
-    private final Message message;
-    private Multipart mulitPart;
-    private BodyPart messageBodyPart;
+    private Message jakartaMessage;
 
-    public Email(Message message){
-        this.message = message;
+    @Getter
+    private final String sender;
+
+    @Getter
+    private final List<String> receivers;
+
+    @Getter
+    private final String subject;
+
+    @Getter
+    private final String content;
+
+    private File attachment;
+
+    public Email(Message message) throws EmailException {
+        try {
+            jakartaMessage = message;
+            subject = message.getSubject();
+            sender = extractSender(message);
+            content = extractContent(message);
+            receivers = extractReceivers(message);
+        } catch (Exception e) {
+            throw new EmailException("Error reading content of message: " + message, e);
+        }
     }
 
-    public Email(Session session) throws MessagingException {
-        this.message = new MimeMessage(session);
-        mulitPart = new MimeMultipart();
-        message.setContent(mulitPart);
-        messageBodyPart = new MimeBodyPart();
-        mulitPart.addBodyPart(messageBodyPart);
-    }
-    public Email(String botEmailAddress, String schiriEmailAddress, Session session) throws MessagingException {
-        this(session);
-        setFrom(botEmailAddress);
-        setTo(schiriEmailAddress);
+    public Email(String sender, String receiver, String subject, String content, File attachment){
+        this.sender = sender;
+        this.receivers = List.of(receiver);
+        this.subject = subject;
+        this.content = content;
+        this.attachment = attachment;
     }
 
-    Message getJakartaMessage() {
-        return message;
+    public Email(String sender, String receiver, String subject, String content){
+       this(sender, receiver, subject, content, null);
     }
 
-    public boolean isFrom(String sender) throws MessagingException {
-        return getAllSenders().stream()
-                .anyMatch(sender::equals);
-    }
-
-    public boolean hasSubject(String emailSubject) throws MessagingException {
-        return getSubject().equals(emailSubject);
-    }
-
-    List<String> getAllSenders() throws MessagingException {
+    private @NotNull String extractSender(Message message) throws MessagingException, EmailException {
         return Arrays.stream(message.getFrom())
                 .filter(address -> address instanceof InternetAddress)
                 .map(address -> (InternetAddress) address)
                 .map(InternetAddress::getAddress)
-                .collect(Collectors.toList());
+                .findFirst().orElseThrow(() -> new EmailException("Absender konnte nicht bestimmt werden: " + message));
     }
 
-    public String getContent() throws MessagingException, IOException {
+    private String extractContent(Message message) throws MessagingException, IOException {
         if (message.isMimeType("text/plain")) {
             return message.getContent().toString();
         }
@@ -92,45 +97,78 @@ public class Email {
         return "";
     }
 
+    private List<String> extractReceivers(Message message) throws MessagingException {
+        return Arrays.stream(message.getRecipients(Message.RecipientType.TO))
+                .filter(address -> address instanceof InternetAddress)
+                .map(address -> (InternetAddress) address)
+                .map(InternetAddress::getAddress)
+                .toList();
+    }
+
+    public boolean isFrom(String sender){
+        return this.sender.equals(sender);
+    }
+    public boolean hasSubject(String emailSubject) {
+        return subject.equals(emailSubject);
+    }
+
     public void deleteImmediately() throws MessagingException {
-       message.setFlag(Flags.Flag.DELETED, true);
-       message.getFolder().expunge();
+        jakartaMessage.setFlag(Flags.Flag.DELETED, true);
+        jakartaMessage.getFolder().expunge();
     }
 
-    public void setSubject(String subject) throws MessagingException {
+    public Message getJakartaMessage(Session emailSession) throws EmailException {
+        if(jakartaMessage == null){
+            try {
+                jakartaMessage = createJakartaMessage(emailSession);
+            } catch (Exception e) {
+                throw new EmailException("Konnte die Jakarta-Email nicht erstellen, " + this, e);
+            }
+        }
+        return jakartaMessage;
+    }
+
+    private MimeMessage createJakartaMessage(Session emailSession) throws MessagingException, IOException {
+        MimeMessage message = new MimeMessage(emailSession);
+        message.setFrom(new InternetAddress(sender));
+        message.setRecipients(Message.RecipientType.TO,createReceiverArray());
         message.setSubject(subject);
+        message.setContent(createContent());
+        return message;
     }
 
-    public void setFrom(String emailAddress) throws MessagingException {
-        message.setFrom(new InternetAddress(emailAddress));
+    private InternetAddress[] createReceiverArray() throws AddressException {
+        InternetAddress[] receiverAddresses = new InternetAddress[receivers.size()];
+        for(int i=0; i< receivers.size(); i++) {
+            receiverAddresses[i] = new InternetAddress(receivers.get(i));
+        }
+        return receiverAddresses;
     }
 
-    public void setTo(String receiver) throws MessagingException {
-        message.setRecipients(
-                Message.RecipientType.TO,
-                InternetAddress.parse(receiver)
-        );
+    private Multipart createContent() throws MessagingException, IOException {
+        MimeMultipart multiPart = new MimeMultipart();
+
+        multiPart.addBodyPart(createTextContent());
+        if(attachment != null){
+            multiPart.addBodyPart(createFileAttachmentContent());
+        }
+
+        return multiPart;
     }
 
-    public void setContent(String content) throws MessagingException {
+    private BodyPart createTextContent() throws MessagingException {
+        MimeBodyPart messageBodyPart = new MimeBodyPart();
         messageBodyPart.setText(content);
+        return messageBodyPart;
     }
 
-    public Optional<String> getFrom() throws MessagingException {
-        return getAllSenders().stream().findAny();
-    }
-    public String getSubject() throws MessagingException {
-        return message.getSubject();
-    }
-
-    public void send() throws MessagingException {
-        Transport.send(message);
-    }
-
-    protected void attachFile(File calendarInviteFile) throws MessagingException, IOException {
+    private BodyPart createFileAttachmentContent() throws MessagingException, IOException {
         MimeBodyPart attachmentPart = new MimeBodyPart();
-        attachmentPart.attachFile(calendarInviteFile);
-        mulitPart.addBodyPart(attachmentPart);
+        attachmentPart.attachFile(attachment);
+        return attachmentPart;
     }
 
+    protected File getAttachment() {
+        return attachment;
+    }
 }

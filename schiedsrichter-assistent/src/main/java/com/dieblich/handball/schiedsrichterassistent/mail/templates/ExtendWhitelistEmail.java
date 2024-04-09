@@ -2,18 +2,15 @@ package com.dieblich.handball.schiedsrichterassistent.mail.templates;
 
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.mail.Email;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Session;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ExtendWhitelistEmail extends Email {
-    public ExtendWhitelistEmail(String botEmailAddress, SchiriConfiguration schiriConfig, SchiriConfiguration.Benutzerdaten otherSchiri, Session session) throws MessagingException {
-        super(botEmailAddress, schiriConfig.Benutzerdaten.Email, session);
-        setSubject("Du musst deinen Partner autorisieren");
-        setContent("""
+    public ExtendWhitelistEmail(String botEmailAddress, SchiriConfiguration schiriConfig, SchiriConfiguration.Benutzerdaten otherSchiri){
+        super(botEmailAddress, schiriConfig.Benutzerdaten.Email,
+        "Du musst deinen Partner autorisieren","""
                 Hallo!
                 
                 Ich habe eine Ansetzungsemail von \"""" + otherSchiri.Vorname + " " + otherSchiri.Nachname + "\" " + """
@@ -35,7 +32,7 @@ public class ExtendWhitelistEmail extends Email {
                 """);
     }
 
-    private String createUpdatedGespannpartnerListe(List<String> gespannpartner, String otherSchiriEmail){
+    private static String createUpdatedGespannpartnerListe(List<String> gespannpartner, String otherSchiriEmail){
         List<String> extendedList = new ArrayList<>(gespannpartner);
         extendedList.add(otherSchiriEmail);
         return "{\n" +

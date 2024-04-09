@@ -11,12 +11,10 @@ import java.util.List;
 
 public class ConfigConfirmationEmail extends Email {
 
-    public static final String SUBJECT = "RE: Konfiguration";
-
-    public ConfigConfirmationEmail(String botEmailAddress, String schiriEmailAddress, SchiriConfiguration currentConfig, List<String> log, Session session) throws MessagingException, JsonProcessingException {
-        super(botEmailAddress, schiriEmailAddress, session);
-        setSubject(SUBJECT);
-        setContent("""
+    public ConfigConfirmationEmail(String botEmailAddress, String schiriEmailAddress, SchiriConfiguration currentConfig, List<String> log) throws JsonProcessingException {
+        super(botEmailAddress, schiriEmailAddress,
+                "RE: Konfiguration",
+                """
                 Ich habe deine Konfigurationsänderung erhalten. Die vollständige Konfiguration siehst du unten.
                 Solltest du etwas vermissen, so findest du noch weiter unten mein (Fehler-)Protokoll.
                 

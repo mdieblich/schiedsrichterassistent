@@ -4,7 +4,6 @@ import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.mail.MessagingException;
 
 import java.util.Optional;
 
@@ -19,6 +18,7 @@ public class SchiriRepoEmail implements SchiriRepo {
     @Override
     public ConfigurationStatus getConfigurationStatus(String emailAddress) throws SchiriRepoException {
         Optional<SchiriConfiguration> optionalConfig = findConfigByEmail(emailAddress);
+        //noinspection OptionalIsPresent
         if(optionalConfig.isEmpty()){
             return ConfigurationStatus.NEW;
         }
@@ -41,8 +41,8 @@ public class SchiriRepoEmail implements SchiriRepo {
         return Optional.empty();
     }
 
-    private Optional<Email> findConfigEmail(String emailAddress) throws MessagingException {
-        EmailFolder schiedsrichter = emailServer.getFolder("SCHIEDSRICHTER");
+    private Optional<Email> findConfigEmail(String emailAddress) throws EmailException {
+        EmailFolder schiedsrichter = emailServer.fetchFolder("SCHIEDSRICHTER");
 
         for (Email email : schiedsrichter.getEmails()) {
             if (email.isFrom(emailAddress)) {
@@ -66,8 +66,8 @@ public class SchiriRepoEmail implements SchiriRepo {
         return Optional.empty();
     }
 
-    private Optional<Email> findConfigEmail(Schiedsrichter schiedsrichter) throws MessagingException {
-        EmailFolder schiedsrichterFolder = emailServer.getFolder("SCHIEDSRICHTER");
+    private Optional<Email> findConfigEmail(Schiedsrichter schiedsrichter) throws EmailException {
+        EmailFolder schiedsrichterFolder = emailServer.fetchFolder("SCHIEDSRICHTER");
         String emailSubject = schiedsrichter.nachname() + ", " + schiedsrichter.vorname();
 
         for (Email email : schiedsrichterFolder.getEmails()) {
@@ -98,12 +98,15 @@ public class SchiriRepoEmail implements SchiriRepo {
         }
     }
 
-    private void saveSchiriConfig(SchiriConfiguration config) throws MessagingException, JsonProcessingException {
-        EmailFolder schiedsrichter = emailServer.getFolder("SCHIEDSRICHTER");
-        Email configEmail = schiedsrichter.prepareEmailForUpload();
-        configEmail.setSubject(config.Benutzerdaten.getAnzeigeName());
-        configEmail.setFrom(config.Benutzerdaten.Email);
-        configEmail.setContent(config.toJSON());
+    private void saveSchiriConfig(SchiriConfiguration config) throws JsonProcessingException, EmailException {
+        EmailFolder schiedsrichter = emailServer.fetchFolder("SCHIEDSRICHTER");
+        Email configEmail = new Email(
+                config.Benutzerdaten.Email,
+                "",
+                config.Benutzerdaten.getAnzeigeName(),
+                config.toJSON(),
+                null
+                );
         schiedsrichter.upload(configEmail);
     }
 }
