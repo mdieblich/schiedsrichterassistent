@@ -3,10 +3,8 @@ package com.dieblich.handball.schiedsrichterassistent.mail;
 import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriRepo;
-import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,7 +59,7 @@ class SchiriRepoEmailTest {
     }
 
     @Test
-    public void createsNewConfig() throws MessagingException, IOException, SchiriRepo.SchiriRepoException {
+    public void createsNewConfig() throws SchiriRepo.SchiriRepoException {
         // arrange
         EmailServerReadFake fakeEmailServer = new EmailServerReadFake();
         fakeEmailServer.createFolder("SCHIEDSRICHTER");
@@ -83,7 +81,7 @@ class SchiriRepoEmailTest {
         List<Email> emails = folder.getEmails();
         assertEquals(1, emails.size());
         Email firstEmail = emails.get(0);
-        assertEquals(Optional.of("max@mustermann.com"), firstEmail.getFrom());
+        assertEquals("max@mustermann.com", firstEmail.getSender());
         assertEquals("Mustermann, Max", firstEmail.getSubject());
         assertEquals("""
                 {
@@ -98,7 +96,7 @@ class SchiriRepoEmailTest {
                 }""", firstEmail.getContent().replace("\r", ""));
     }
     @Test
-    public void overwritesConfig() throws MessagingException, IOException, SchiriRepo.SchiriRepoException {
+    public void overwritesConfig() throws SchiriRepo.SchiriRepoException {
         // arrange
         EmailServerReadFake fakeEmailServer = new EmailServerReadFake();
         EmailFolderFake schiedsrichterFolder = fakeEmailServer.createFolder("SCHIEDSRICHTER");
@@ -122,7 +120,7 @@ class SchiriRepoEmailTest {
         List<Email> emails = folder.getEmails();
         assertEquals(1, emails.size());
         Email firstEmail = emails.get(0);
-        assertEquals(Optional.of("max@mustermann.com"), firstEmail.getFrom());
+        assertEquals("max@mustermann.com", firstEmail.getSender());
         assertEquals("Mustermann, Max", firstEmail.getSubject());
         assertEquals("""
                 {

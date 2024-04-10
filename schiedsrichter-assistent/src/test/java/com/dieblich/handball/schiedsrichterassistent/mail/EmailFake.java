@@ -18,17 +18,12 @@ public class EmailFake extends Email{
     @Setter
     String content;
 
-    public EmailFake(EmailFolderFake folder, String from, String subject, String content) {
-        super((Message) null);
+    public EmailFake(EmailFolderFake folder, String from, String to, String subject, String content) {
+        super(from, to, subject, content);
         this.folder = folder;
         this.from = from;
         this.subject = subject;
         this.content = content;
-    }
-
-    @Override
-    List<String> getAllSenders() {
-        return List.of(from);
     }
 
     @Override

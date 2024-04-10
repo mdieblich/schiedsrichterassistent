@@ -22,16 +22,11 @@ public class EmailFolderFake implements EmailFolder{
         emails.clear();
     }
 
-    @Override
-    public Email prepareEmailForUpload() {
-        return new EmailFake(this, null, null, null);
-    }
-
     public void createEmail(String from, String subject, String content) {
-        upload(new EmailFake(this, from, subject, content));
+        upload(new EmailFake(this, from, "", subject, content));
     }
 
-    public void delete(EmailFake email) {
+    public void delete(Email email) {
         emails.remove(email);
     }
 }
