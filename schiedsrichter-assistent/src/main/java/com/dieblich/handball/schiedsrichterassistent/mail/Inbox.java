@@ -101,16 +101,21 @@ public class Inbox{
 
     }
     public Map<String, List<Exception>> getExceptions() {
-        Map<String, List<Exception>> exceptions = new HashMap<>();
-        schirisInboxes.entrySet().stream()
-                .forEach(entry ->
-                        exceptions.put(entry.getKey(), entry.getValue().exceptions)
-                );
-        return exceptions;
+        Map<String, List<Exception>> occurredExceptions = new HashMap<>();
+        for(Map.Entry<String, SchiriInbox> inbox:schirisInboxes.entrySet()){
+            String schiriEmail = inbox.getKey();
+            List<Exception> exceptions = inbox.getValue().exceptions;
+            if(!exceptions.isEmpty()){
+                occurredExceptions.put(schiriEmail, exceptions);
+            }
+        }
+        return occurredExceptions;
     }
     public void purge() throws EmailException {
         if(inboxFolder != null){
+            schirisInboxes.clear();
             inboxFolder.deleteAll();
+            inboxFolder = null;
         }
     }
 
