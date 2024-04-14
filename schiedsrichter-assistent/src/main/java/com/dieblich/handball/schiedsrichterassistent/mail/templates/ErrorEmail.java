@@ -37,7 +37,7 @@ public class ErrorEmail extends Email {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             exception.printStackTrace(pw);
-            report.append(pw);
+            report.append(sw);
             report.append("\n\n");
         }
         return report.toString();
