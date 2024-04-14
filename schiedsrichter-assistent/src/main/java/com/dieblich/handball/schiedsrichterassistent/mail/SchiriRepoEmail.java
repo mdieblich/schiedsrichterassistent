@@ -102,7 +102,7 @@ public class SchiriRepoEmail implements SchiriRepo {
         EmailFolder schiedsrichter = emailServer.fetchFolder("SCHIEDSRICHTER");
         Email configEmail = new Email(
                 config.Benutzerdaten.Email,
-                "",
+                "nobody@cares.de",
                 config.Benutzerdaten.getAnzeigeName(),
                 config.toJSON(),
                 null
