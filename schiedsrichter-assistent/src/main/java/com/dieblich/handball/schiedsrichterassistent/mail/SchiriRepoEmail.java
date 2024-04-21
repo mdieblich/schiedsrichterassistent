@@ -16,18 +16,6 @@ public class SchiriRepoEmail implements SchiriRepo {
     }
 
     @Override
-    public ConfigurationStatus getConfigurationStatus(String emailAddress) throws SchiriRepoException {
-        Optional<SchiriConfiguration> optionalConfig = findConfigByEmail(emailAddress);
-        //noinspection OptionalIsPresent
-        if(optionalConfig.isEmpty()){
-            return ConfigurationStatus.NEW;
-        }
-        return optionalConfig.get().isComplete() ?
-                ConfigurationStatus.COMPLETE :
-                ConfigurationStatus.INCOMPLETE;
-    }
-
-    @Override
     public Optional<SchiriConfiguration> findConfigByEmail(String emailAddress) throws SchiriRepoException {
         try {
             Optional<Email> optionalConfigEmail = findConfigEmail(emailAddress);

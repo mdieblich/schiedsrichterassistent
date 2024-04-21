@@ -4,9 +4,6 @@ import java.util.Optional;
 
 public interface SchiriRepo {
 
-    @Deprecated
-    ConfigurationStatus getConfigurationStatus(String emailAddress) throws SchiriRepoException;
-
     Optional<SchiriConfiguration> findConfigByEmail(String emailAddress) throws SchiriRepoException;
 
     Optional<SchiriConfiguration> findConfigByName(Schiedsrichter schiedsrichter) throws SchiriRepoException;
