@@ -11,6 +11,7 @@ import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoService;
 import com.dieblich.handball.schiedsrichterassistent.geo.Koordinaten;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 public class SpielTerminEinzelschiri implements SpielTermin {
@@ -26,6 +27,11 @@ public class SpielTerminEinzelschiri implements SpielTermin {
         this.einsatz = einsatz;
         this.config = config;
         this.geoService = geoService;
+    }
+
+    @Override
+    public LocalDate getDay() {
+        return einsatz.anwurf().toLocalDate();
     }
 
     // TODO test exceptions are thrown
@@ -82,7 +88,8 @@ public class SpielTerminEinzelschiri implements SpielTermin {
             description += "Berechnete Strecke: "+(ablauf.getFahrtZurHalle().distanzInMetern()/1000)+" km\n";
             description += "\n";
             description += SpielTermin.asTimeOfDay(ablauf.getAbfahrt())              + " Uhr Abfahrt" + "\n";
-            description += SpielTermin.asTimeOfDay(ablauf.getTechnischBesprechung()) + " Uhr Ankunft" + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getAnkunftHalle())         + " Uhr Ankunft" + "\n";
+            description += SpielTermin.asTimeOfDay(ablauf.getTechnischBesprechung()) + " Uhr Technische Besprechung" + "\n";
             description += SpielTermin.asTimeOfDay(ablauf.getAnwurf())               + " Uhr Anwurf" + "\n";
             description += SpielTermin.asTimeOfDay(ablauf.getSpielEnde())            + " Uhr Spielende" + "\n";
             description += SpielTermin.asTimeOfDay(ablauf.getRueckfahrt())           + " Uhr Rückfahrt" + "\n";

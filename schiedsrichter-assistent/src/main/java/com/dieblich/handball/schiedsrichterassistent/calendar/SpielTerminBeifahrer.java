@@ -6,6 +6,8 @@ import biweekly.component.VEvent;
 import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 
+import java.time.LocalDate;
+
 public class SpielTerminBeifahrer implements SpielTermin{
     private final SpielTerminFahrer spielTerminFahrer;
 
@@ -28,6 +30,11 @@ public class SpielTerminBeifahrer implements SpielTermin{
 
         ical.addEvent(event);
         return Biweekly.write(ical).go();
+    }
+
+    @Override
+    public LocalDate getDay() {
+        return spielTerminFahrer.getDay();
     }
 
     @Override

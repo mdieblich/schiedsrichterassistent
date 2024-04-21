@@ -11,6 +11,7 @@ import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoService;
 import com.dieblich.handball.schiedsrichterassistent.geo.Koordinaten;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 public class SpielTerminFahrer implements SpielTermin{
@@ -27,6 +28,11 @@ public class SpielTerminFahrer implements SpielTermin{
         this.schiriConfigFahrer = schiriConfigFahrer;
         this.schiriConfigBeifahrer = schiriConfigBeifahrer;
         this.geoService = geoService;
+    }
+
+    @Override
+    public LocalDate getDay() {
+        return einsatz.anwurf().toLocalDate();
     }
 
     @Override

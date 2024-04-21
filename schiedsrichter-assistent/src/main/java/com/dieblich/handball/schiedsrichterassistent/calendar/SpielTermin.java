@@ -4,6 +4,7 @@ import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -12,6 +13,8 @@ import java.util.Date;
 public interface SpielTermin {
     // TODO test exceptions are thrown
     String extractCalendarEvent() throws GeoException, MissingConfigException;
+
+    LocalDate getDay();
 
     static Date asDate(LocalDateTime localDateTime){
         Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
