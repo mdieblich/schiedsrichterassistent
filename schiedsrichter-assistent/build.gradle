@@ -36,6 +36,9 @@ dependencies {
 	testImplementation 'org.projectlombok:lombok:1.18.32'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
 
+	// PDF
+	implementation 'org.apache.pdfbox:pdfbox:3.0.2'
+
 }
 
 tasks.named('test') {
