@@ -113,7 +113,8 @@ class SpielTerminEinzelschiriTest extends SpielTerminTest{
                 Berechnete Strecke: 34 km
                 
                 14:15 Uhr Abfahrt
-                15:00 Uhr Ankunft
+                14:45 Uhr Ankunft
+                15:00 Uhr Technische Besprechung
                 15:30 Uhr Anwurf
                 17:00 Uhr Spielende
                 17:30 Uhr Rückfahrt
