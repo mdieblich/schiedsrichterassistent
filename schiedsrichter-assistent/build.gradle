@@ -16,20 +16,26 @@ repositories {
 }
 
 dependencies {
+	// Basics / Spring
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.jetbrains:annotations:24.0.0'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.jetbrains:annotations:24.0.0'
+
+	// Email
 	implementation 'jakarta.mail:jakarta.mail-api'
 	implementation 'org.eclipse.angus:angus-mail:2.0.2'
+	// JSON
 	implementation 'org.jsoup:jsoup:1.17.2'
+	// Calendar-Invites
 	implementation 'net.sf.biweekly:biweekly:0.6.8'
 
+	// Lombok
 	implementation 'org.projectlombok:lombok:1.18.32'
 	annotationProcessor 'org.projectlombok:lombok:1.18.32'
 	testImplementation 'org.projectlombok:lombok:1.18.32'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
