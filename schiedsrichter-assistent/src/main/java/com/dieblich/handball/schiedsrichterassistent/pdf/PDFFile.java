@@ -116,8 +116,8 @@ public class PDFFile implements AutoCloseable {
                 fahrtkostenRow("Sonstige Auslagen (Belege beifügen)", "€"),
                 fahrtkostenRow("Summe:", "77,10 €", "Summe:", "30,00"),
                 new PDFTableRow(
-                        new PDFTableCell("Gesamtsumme", 5, PDFTableCell.Alignment.LEFT),
-                        new PDFTableCell("107,10 €",    1, PDFTableCell.Alignment.RIGHT)
+                        new PDFTableCell("Gesamtsumme", 5, PDFTableCell.Alignment.LEFT, true),
+                        new PDFTableCell("107,10 €",    1, PDFTableCell.Alignment.RIGHT, true)
                 )
         );
         table(table, 29, 188);
@@ -188,7 +188,7 @@ public class PDFFile implements AutoCloseable {
                             break;
                         }
                     }
-                    text(textLine, (int) textX, textY);
+                    text(textLine, (int) textX, textY, DEFAULT_FONT_SIZE, cell.bold);
                 }
 
                 cellX += cellWidth;
