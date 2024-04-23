@@ -47,7 +47,7 @@ public class PDFFile implements AutoCloseable {
     }
     private void spielinformationen() throws IOException {
         PDFTable table = new PDFTable(
-                new PDFTableRow("Spielinformationen"),
+                tableHeader("Spielinformationen"),
                 new PDFTableRow(
                         "Spiel-Nr.",
                         "Datum",
@@ -65,9 +65,15 @@ public class PDFFile implements AutoCloseable {
         table(table, 29, 637);
     }
 
+    private PDFTableRow tableHeader(String text){
+        return new PDFTableRow(
+          new PDFTableCell(text, 1, PDFTableCell.Alignment.CENTER)
+        );
+    }
+
     private void halleninformationen() throws IOException {
         PDFTable table = new PDFTable(
-                new PDFTableRow("Halleninformationen"),
+                tableHeader("Halleninformationen"),
                 new PDFTableRow(
                         "Name",
                         "Straße",
@@ -83,7 +89,7 @@ public class PDFFile implements AutoCloseable {
 
     private void schiedsrichterInformationen() throws IOException {
         PDFTable table = new PDFTable(
-                new PDFTableRow("Schiedsrichter-Informationen"),
+                tableHeader("Schiedsrichter-Informationen"),
                 new PDFTableRow("SR A", "SR B"),
                 new PDFTableRow("Nachname", "", "Nachname", ""),
                 new PDFTableRow("Vorname", "", "Vorname", ""),
@@ -99,7 +105,7 @@ public class PDFFile implements AutoCloseable {
     }
     private void fahrtkostenInformationen() throws IOException {
         PDFTable table = new PDFTable(
-                new PDFTableRow("Fahrtkosteninformationen"),
+                tableHeader("Fahrtkosteninformationen"),
                 fahrtkostenRow("157 km x 0,30 €", "47,10 €", "  0 km x 0,30 €", "€"),
                 fahrtkostenRow("  0 km x 0,30 €", "€"),
                 fahrtkostenRow("Nahverkehrskosten (Belege beifügen)", "€"),
@@ -181,13 +187,29 @@ public class PDFFile implements AutoCloseable {
             for(int j=0;j<row.cells.size(); j++){
                 PDFTableCell cell = row.cells.get(j);
                 double singleCellWidth = (double)table.width/row.colCount;
+                double cellWidth = singleCellWidth*cell.colspan;
 
                 for(int k=0; k<cell.text.size(); k++){
                     String textLine = cell.text.get(k);
-                    text(textLine, cellX+2, (int) (lineY+table.lineHeight*k+2));
+                    int textX = cellX+2;
+                    int textY = (int) (lineY+table.lineHeight*k+2);
+                    switch (cell.alignment){
+                        case LEFT:{
+                            textX = cellX+2;
+                            break;
+                        } case RIGHT: {
+                            float stringWidth = DEFAULT_FONT.getStringWidth(textLine) / 1000 * DEFAULT_FONT_SIZE;
+                            textX = (int) (cellX+cellWidth-stringWidth-2);
+                            break;
+                        } case CENTER: {
+                            float stringWidth = DEFAULT_FONT.getStringWidth(textLine) / 1000 * DEFAULT_FONT_SIZE;
+                            textX = (int) (cellX+(cellWidth-stringWidth)/2);
+                            break;
+                        }
+                    }
+                    text(textLine, textX, textY);
                 }
 
-                double cellWidth = singleCellWidth*cell.colspan;
                 cellX += (int) cellWidth;
                 if(j<row.cells.size()-1) {
                     blackLine(cellX, lineY, cellX, lineY+lineHeight);
