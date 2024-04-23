@@ -183,7 +183,7 @@ public class PDFFile implements AutoCloseable {
             PDFTableRow row = table.rows.get(table.rows.size()-(i+1));  // reverse order
             int lineHeight = (int)(row.rowspan()*table.lineHeight);
 
-            int cellX = x1;
+            double cellX = x1;
             // lines between the columns
             for(int j=0;j<row.cells.size(); j++){
                 PDFTableCell cell = row.cells.get(j);
@@ -192,7 +192,7 @@ public class PDFFile implements AutoCloseable {
 
                 for(int k=0; k<cell.text.size(); k++){
                     String textLine = cell.text.get(cell.text.size()-k-1);
-                    int textX = cellX+2;
+                    double textX = cellX+2;
                     int textY = (int) (lineY+table.lineHeight*k+4);
                     switch (cell.alignment){
                         case LEFT:{
@@ -208,12 +208,12 @@ public class PDFFile implements AutoCloseable {
                             break;
                         }
                     }
-                    text(textLine, textX, textY);
+                    text(textLine, (int) textX, textY);
                 }
 
-                cellX += (int) cellWidth;
+                cellX += cellWidth;
                 if(j<row.cells.size()-1) {
-                    blackLine(cellX, lineY, cellX, lineY+lineHeight);
+                    blackLine((int) cellX, lineY, (int) cellX, lineY+lineHeight);
                 }
             }
 
