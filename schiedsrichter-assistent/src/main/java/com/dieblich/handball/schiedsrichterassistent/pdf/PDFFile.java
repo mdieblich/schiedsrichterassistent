@@ -140,26 +140,6 @@ public class PDFFile implements AutoCloseable {
         text("Kopie zwecks Überprüfung an die spielleitende Stelle zu übersenden", 30,50);
     }
 
-    public void drawCoordinates() throws IOException {
-        for(int y=0; y<800; y+=10) {
-            lightGreyLine(0,y,650,y);
-        }
-        for (int x = 0; x < 650; x += 10) {
-            lightGreyLine(x,0,x,800);
-        }
-        for(int y=0; y<800; y+=50) {
-            darkGreyLine(0,y,650,y);
-        }
-        for (int x = 0; x < 650; x += 50) {
-            darkGreyLine(x,0,x,800);
-        }
-        for(int y=0; y<800; y+=50) {
-            for (int x = 0; x < 650; x += 50) {
-                text(x+"-"+y, x,y);
-            }
-        }
-    }
-
     private PDFTableRow fahrtkostenRow(String textA, String textB, String textC, String textD){
         return new PDFTableRow(
                 new PDFTableCell(textA, 2, PDFTableCell.Alignment.LEFT),
@@ -213,13 +193,13 @@ public class PDFFile implements AutoCloseable {
 
                 cellX += cellWidth;
                 if(j<row.cells.size()-1) {
-                    blackLine((int) cellX, lineY, (int) cellX, lineY+lineHeight);
+                    line((int) cellX, lineY, (int) cellX, lineY+lineHeight);
                 }
             }
 
             lineY += lineHeight;
             if(i<table.rows.size()-1) {
-                blackLine(x1, lineY, x2, lineY);
+                line(x1, lineY, x2, lineY);
             }
         }
     }
@@ -236,26 +216,16 @@ public class PDFFile implements AutoCloseable {
     }
 
     public void rect(int x1, int y1, int x2, int y2) throws IOException {
-        blackLine(x1, y1, x2, y1);
-        blackLine(x2, y1, x2, y2);
-        blackLine(x2, y2, x1, y2);
-        blackLine(x1, y2, x1, y1);
+        line(x1, y1, x2, y1);
+        line(x2, y1, x2, y2);
+        line(x2, y2, x1, y2);
+        line(x1, y2, x1, y1);
     }
 
-    public void blackLine(int x1, int y1, int x2, int y2) throws IOException {
-        line(x1, y1, x2, y2, 0,0,0);
-    }
-    public void darkGreyLine(int x1, int y1, int x2, int y2) throws IOException {
-        line(x1, y1, x2, y2,0.5f,0.5f,0.5f);
-    }
-    public void lightGreyLine(int x1, int y1, int x2, int y2) throws IOException {
-        line(x1, y1, x2, y2,0.8f,0.8f,0.8f);
-    }
-    public void line(int x1, int y1, int x2, int y2, float r, float g, float b) throws IOException {
+    public void line(int x1, int y1, int x2, int y2) throws IOException {
         currentStream.moveTo(x1, y1);
         currentStream.setLineWidth(0.5f);
         currentStream.lineTo(x2, y2);
-        currentStream.setStrokingColor(r,g,b);
         currentStream.stroke();
     }
 
