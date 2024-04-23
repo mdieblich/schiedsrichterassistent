@@ -190,7 +190,7 @@ public class PDFFile implements AutoCloseable {
                 double cellWidth = singleCellWidth*cell.colspan;
 
                 for(int k=0; k<cell.text.size(); k++){
-                    String textLine = cell.text.get(k);
+                    String textLine = cell.text.get(cell.text.size()-k-1);
                     int textX = cellX+2;
                     int textY = (int) (lineY+table.lineHeight*k+2);
                     switch (cell.alignment){
