@@ -17,7 +17,8 @@ public class PDFFile implements AutoCloseable {
     private PDPageContentStream currentStream;
 
     private final static PDFont DEFAULT_FONT = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
-    private final int DEFAULT_FONT_SIZE = 8;
+    private final static PDFont BOLD_FONT = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+    private final int DEFAULT_FONT_SIZE = 9;
 
     public PDFFile() throws IOException {
         doc = new PDDocument();
@@ -42,7 +43,7 @@ public class PDFFile implements AutoCloseable {
 
 
     private void seitenTitel() throws IOException {
-        text("Handball Nordrhein e.V.", 30,762);
+        text("Handball Nordrhein e.V.", 30,762, 16, true);
         text("Reisekostenabrechnung Schiedsrichter", 30, 745);
     }
     private void spielinformationen() throws IOException {
@@ -192,7 +193,7 @@ public class PDFFile implements AutoCloseable {
                 for(int k=0; k<cell.text.size(); k++){
                     String textLine = cell.text.get(cell.text.size()-k-1);
                     int textX = cellX+2;
-                    int textY = (int) (lineY+table.lineHeight*k+2);
+                    int textY = (int) (lineY+table.lineHeight*k+4);
                     switch (cell.alignment){
                         case LEFT:{
                             textX = cellX+2;
@@ -223,12 +224,15 @@ public class PDFFile implements AutoCloseable {
         }
     }
 
-    public void text(String text, int x, int y) throws IOException {
+    public void text(String text, int x, int y, int font_size, boolean bold) throws IOException {
         currentStream.beginText();
-        currentStream.setFont(DEFAULT_FONT, DEFAULT_FONT_SIZE);
+        currentStream.setFont(bold?BOLD_FONT:DEFAULT_FONT, font_size);
         currentStream.newLineAtOffset(x, y);
         currentStream.showText(text);
         currentStream.endText();
+    }
+    public void text(String text, int x, int y) throws IOException {
+        text(text, x, y, DEFAULT_FONT_SIZE, false);
     }
 
     public void rect(int x1, int y1, int x2, int y2) throws IOException {
