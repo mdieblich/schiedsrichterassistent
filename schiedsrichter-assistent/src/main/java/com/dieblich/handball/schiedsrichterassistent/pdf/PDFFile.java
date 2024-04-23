@@ -181,17 +181,13 @@ public class PDFFile implements AutoCloseable {
             for(int j=0;j<row.cells.size(); j++){
                 PDFTableCell cell = row.cells.get(j);
                 double singleCellWidth = (double)table.width/row.colCount;
-                double cellWidth = singleCellWidth*cell.colspan;
-                float stringWidth = DEFAULT_FONT.getStringWidth(cell.text.get(0)) / 1000 * DEFAULT_FONT_SIZE;
-                if( stringWidth > cellWidth-3){
-                    lightGreyLine(cellX, lineY, (int) (cellX+cellWidth), lineY+lineHeight);
-                }
 
                 for(int k=0; k<cell.text.size(); k++){
                     String textLine = cell.text.get(k);
                     text(textLine, cellX+2, (int) (lineY+table.lineHeight*k+2));
                 }
 
+                double cellWidth = singleCellWidth*cell.colspan;
                 cellX += (int) cellWidth;
                 if(j<row.cells.size()-1) {
                     blackLine(cellX, lineY, cellX, lineY+lineHeight);
