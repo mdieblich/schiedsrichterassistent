@@ -12,6 +12,10 @@ public class PDFTable {
     }
 
     public int height() {
-        return (int) (lineHeight*rows.size());
+        int height = 0;
+        for(PDFTableRow row:rows){
+            height += (int) (lineHeight*row.rowspan());
+        }
+        return height;
     }
 }

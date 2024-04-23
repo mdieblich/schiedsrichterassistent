@@ -1,6 +1,5 @@
 package com.dieblich.handball.schiedsrichterassistent.pdf;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,5 +25,16 @@ public class PDFTableRow {
             colCount += cell.colspan;
         }
         this.colCount = colCount;
+    }
+
+    public double rowspan() {
+        float maxRowSpan = 0;
+        for(PDFTableCell cell:cells){
+            int rowSpan = cell.rowspan();
+            if(maxRowSpan < rowSpan){
+                maxRowSpan = rowSpan;
+            }
+        }
+        return maxRowSpan;
     }
 }

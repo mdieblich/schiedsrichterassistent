@@ -17,6 +17,7 @@ public class PDFFile implements AutoCloseable {
     private PDPageContentStream currentStream;
 
     private final static PDFont DEFAULT_FONT = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+    private final int DEFAULT_FONT_SIZE = 8;
 
     public PDFFile() throws IOException {
         doc = new PDDocument();
@@ -57,7 +58,7 @@ public class PDFFile implements AutoCloseable {
                 new PDFTableRow(
                         "13156",
                         "13.04.2024 15:30",
-                        "Mittelrhein Landesliga Männer",
+                        "Mittelrhein Landesliga\nMänner",
                         "BTB Aachen III",
                         "SG Olheim-Straßfeld")
         );
@@ -119,7 +120,7 @@ public class PDFFile implements AutoCloseable {
         PDFTable table = new PDFTable(
                 new PDFTableRow(
                         "Wir versichern die Richtigkeit der vorgenannten Angaben und erklären, " +
-                                "dass wir die erforderliche Steuererklärung selbst veranlassen. Die notwendigen " +
+                                "dass wir die erforderliche Steuererklärung selbst veranlassen.\nDie notwendigen " +
                                 "Belege sind beigefügt bzw. lagen dem Verein zur Einsichtnahme vor."),
                 new PDFTableRow("Datum", "Datum"),
                 new PDFTableRow("Unterschrift", "Unterschrift")
@@ -170,36 +171,43 @@ public class PDFFile implements AutoCloseable {
         rect(x1, y1,x2, y2);
 
         // lines between the rows
-        for(int i=1; i<table.rows.size(); i++){
-            int lineY = (int) (y1+i*table.lineHeight);
-            blackLine( x1,lineY , x2, lineY);
-        }
+        int lineY = y1;
         for(int i=0; i<table.rows.size(); i++){
             PDFTableRow row = table.rows.get(table.rows.size()-(i+1));  // reverse order
-            int rowY1 = (int) (y1+i*table.lineHeight);
-            int rowY2 = (int) (y1+(i+1)*table.lineHeight);
+            int lineHeight = (int)(row.rowspan()*table.lineHeight);
 
             int cellX = x1;
             // lines between the columns
             for(int j=0;j<row.cells.size(); j++){
                 PDFTableCell cell = row.cells.get(j);
-                text(cell.text, cellX+2, rowY1+2);
-
-                double cellWidth = (double)table.width/row.colCount;
-                cellX += (int) (cellWidth*cell.colspan);
-                if(j<row.cells.size()-1) {
-                    blackLine(cellX, rowY1, cellX, rowY2);
+                double singleCellWidth = (double)table.width/row.colCount;
+                double cellWidth = singleCellWidth*cell.colspan;
+                float stringWidth = DEFAULT_FONT.getStringWidth(cell.text.get(0)) / 1000 * DEFAULT_FONT_SIZE;
+                if( stringWidth > cellWidth-3){
+                    lightGreyLine(cellX, lineY, (int) (cellX+cellWidth), lineY+lineHeight);
                 }
+
+                for(int k=0; k<cell.text.size(); k++){
+                    String textLine = cell.text.get(k);
+                    text(textLine, cellX+2, (int) (lineY+table.lineHeight*k+2));
+                }
+
+                cellX += (int) cellWidth;
+                if(j<row.cells.size()-1) {
+                    blackLine(cellX, lineY, cellX, lineY+lineHeight);
+                }
+            }
+
+            lineY += lineHeight;
+            if(i<table.rows.size()-1) {
+                blackLine(x1, lineY, x2, lineY);
             }
         }
     }
 
-    public void text(String text) throws IOException {
-        text(text, 100,700);
-    }
     public void text(String text, int x, int y) throws IOException {
         currentStream.beginText();
-        currentStream.setFont(DEFAULT_FONT, 8);
+        currentStream.setFont(DEFAULT_FONT, DEFAULT_FONT_SIZE);
         currentStream.newLineAtOffset(x, y);
         currentStream.showText(text);
         currentStream.endText();
