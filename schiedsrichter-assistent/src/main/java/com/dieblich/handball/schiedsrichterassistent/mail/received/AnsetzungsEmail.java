@@ -25,7 +25,9 @@ public class AnsetzungsEmail {
 
     static SchiriEinsatz extractSchiriEinsatz(String emailContent){
         LocalDateTime anwurf = null;
-        String hallenAdresse = null;
+        String halleName = null;
+        String halleStrasse = null;
+        String hallePLZOrt = null;
         String liga = null;
         String heimMannschaft = null;
         String gastMannschaft = null;
@@ -42,7 +44,9 @@ public class AnsetzungsEmail {
                 String ortsangabe = line.substring("Ort:".length());
                 String[] ortsAngabenTeile = ortsangabe.split(", ");
                 if(ortsAngabenTeile.length >= 3) {
-                    hallenAdresse = ortsAngabenTeile[1] + ", " + ortsAngabenTeile[2];
+                    halleName = ortsAngabenTeile[0].trim();
+                    halleStrasse = ortsAngabenTeile[1].trim();
+                    hallePLZOrt = ortsAngabenTeile[2].trim();
                 }
             } else if(line.startsWith("Spiel-Nr")){
                 // Die Spiel-Angaben stehen in der nächsten Zeile
@@ -69,7 +73,12 @@ public class AnsetzungsEmail {
             }
         }
 
-        return new SchiriEinsatz(anwurf, hallenAdresse, liga, heimMannschaft, gastMannschaft, schiriA, schiriB);
+        return new SchiriEinsatz(
+                anwurf,
+                halleName, halleStrasse, hallePLZOrt,
+                liga, heimMannschaft, gastMannschaft,
+                schiriA, schiriB
+        );
     }
 
 }

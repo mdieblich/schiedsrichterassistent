@@ -25,7 +25,9 @@ class SpielTerminEinzelschiriTest extends SpielTerminTest{
     private SpielTerminEinzelschiri prepareDefaultTermin(){
         LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
         SchiriEinsatz einsatz = new SchiriEinsatz(anwurf,
-                "Am Sportzentrum, 50259 Pulheim",
+                "06017 Pulheim",
+                "Am Sportzentrum",
+                "50259 Pulheim",
                 "Kreisliga Herren",
                 "SC Pulheim 3",
                 "Fortuna Köln 4",
