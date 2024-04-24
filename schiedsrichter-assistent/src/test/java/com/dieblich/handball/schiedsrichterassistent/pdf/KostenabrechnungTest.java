@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-class PDFFileTest {
+class KostenabrechnungTest {
 
     @Test
     public void createTestFile() throws IOException {
-        PDFFile file = new PDFFile();
-        file.exportToFile("martinpdf.pdf");
+        Kostenabrechnung abr = new Kostenabrechnung();
+        abr.exportToPDF("martinpdf.pdf");
     }
 }
