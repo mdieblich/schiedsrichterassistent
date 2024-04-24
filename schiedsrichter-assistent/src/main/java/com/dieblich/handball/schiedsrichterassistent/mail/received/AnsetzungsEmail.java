@@ -24,6 +24,7 @@ public class AnsetzungsEmail {
     }
 
     static SchiriEinsatz extractSchiriEinsatz(String emailContent){
+        String spielNr = null;
         LocalDateTime anwurf = null;
         String halleName = null;
         String halleStrasse = null;
@@ -48,7 +49,8 @@ public class AnsetzungsEmail {
                     halleStrasse = ortsAngabenTeile[1].trim();
                     hallePLZOrt = ortsAngabenTeile[2].trim();
                 }
-            } else if(line.startsWith("Spiel-Nr")){
+            } else if(line.startsWith("Spiel-Nr:")){
+                spielNr = line.substring("Spiel-Nr:".length()).trim();
                 // Die Spiel-Angaben stehen in der nächsten Zeile
                 if(i<allLines.length-1){
                     String nextLine = allLines[++i].trim();
@@ -74,6 +76,7 @@ public class AnsetzungsEmail {
         }
 
         return new SchiriEinsatz(
+                spielNr,
                 anwurf,
                 halleName, halleStrasse, hallePLZOrt,
                 liga, heimMannschaft, gastMannschaft,

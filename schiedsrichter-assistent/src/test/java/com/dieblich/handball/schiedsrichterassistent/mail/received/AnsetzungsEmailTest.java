@@ -30,6 +30,7 @@ class AnsetzungsEmailTest {
             """;
         SchiriEinsatz actual = AnsetzungsEmail.extractSchiriEinsatz(emailContent);
         SchiriEinsatz expected = new SchiriEinsatz(
+                "10078",
                 LocalDateTime.of(2024, 2, 25, 16, 30),
                 "06041 Köln Schule",
                 "Schulstraße 3",
@@ -71,6 +72,7 @@ class AnsetzungsEmailTest {
 
         SchiriEinsatz actual = AnsetzungsEmail.extractSchiriEinsatz(emailContent);
         SchiriEinsatz expected = new SchiriEinsatz(
+                "1137",
                 LocalDateTime.of(2024, 3, 2, 18, 0),
                 "06076 BTV-Sportzentrum",
                 "von-Wied-Straße 2",
@@ -104,6 +106,7 @@ class AnsetzungsEmailTest {
 
         SchiriEinsatz actual = AnsetzungsEmail.extractSchiriEinsatz(emailContent);
         SchiriEinsatz expected = new SchiriEinsatz(
+                "21131",
                 LocalDateTime.of(2024, 3, 16, 16, 0),
                 "09004 GWN-Arena",
                 "Mateh-Yehuda-Str. 3a",

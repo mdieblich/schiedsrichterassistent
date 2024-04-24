@@ -23,7 +23,7 @@ class SpielTerminFahrerTest extends SpielTerminTest {
     @SuppressWarnings("NonAsciiCharacters")
     private SpielTerminFahrer prepareDefaultTermin(){
         LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
-        SchiriEinsatz einsatz = new SchiriEinsatz(anwurf,
+        SchiriEinsatz einsatz = new SchiriEinsatz("1", anwurf,
                 "0617 Pulheim",
                 "Am Sportzentrum",
                 "50259 Pulheim",

@@ -3,6 +3,7 @@ package com.dieblich.handball.schiedsrichterassistent;
 import java.time.LocalDateTime;
 
 public record SchiriEinsatz(
+    String spielNr,
     LocalDateTime anwurf,
     String halleName,
     String halleStrasse,
@@ -20,10 +21,6 @@ public record SchiriEinsatz(
     @Deprecated
     public String hallenAdresse(){
         return halleStrasse + ", " + hallePLZOrt;
-    }
-
-    public String spielNr(){
-        throw new RuntimeException("Not implemented");
     }
 
     public Schiedsrichter otherSchiri(Schiedsrichter schiedsrichter) {
