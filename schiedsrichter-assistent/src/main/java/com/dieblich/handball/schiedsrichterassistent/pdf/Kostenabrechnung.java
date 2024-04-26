@@ -95,7 +95,7 @@ public class Kostenabrechnung {
     }
 
     private void schiedsrichterInformationen(PDFFile pdfFile) throws IOException {
-        PDFTable table = null;
+        PDFTable table;
         if(schiriB != null){
             table = new PDFTable(
                     tableHeader("Schiedsrichter-Informationen"),
@@ -129,7 +129,7 @@ public class Kostenabrechnung {
     }
     @SuppressWarnings("NonAsciiCharacters")
     private void fahrtkostenInformationen(PDFFile pdfFile) throws IOException {
-        PDFTable table = null;
+        PDFTable table;
 
         double teilnameEntschädigung = schiriA.Kosten.TeilnahmeEntschädigung.get(einsatz.ligaBezeichnungAusEmail());
 

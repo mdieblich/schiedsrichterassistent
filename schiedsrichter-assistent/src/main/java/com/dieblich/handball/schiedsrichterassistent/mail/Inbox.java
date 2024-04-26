@@ -17,9 +17,9 @@ public class Inbox{
 
     static class SchiriInbox {
         private boolean hasOldConfig = false;
-        List<Email> configEmails = new ArrayList<>();
-        List<Email> emailsToHandle = new ArrayList<>();
-        List<Exception> exceptions = new ArrayList<>();
+        final List<Email> configEmails = new ArrayList<>();
+        final List<Email> emailsToHandle = new ArrayList<>();
+        final List<Exception> exceptions = new ArrayList<>();
 
         public boolean schiriIsUnknown(){
             return !hasOldConfig && configEmails.isEmpty();

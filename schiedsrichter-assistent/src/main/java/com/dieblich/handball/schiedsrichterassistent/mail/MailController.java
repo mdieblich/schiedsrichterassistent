@@ -132,7 +132,7 @@ public class MailController {
         try {
             stratoSend.send(email);
         } catch (EmailException e) {
-            logger.error("Konnte keine AskForConfigurationEmail senden an " + sender, e);
+            logger.error("Konnte keine AskForConfigurationEmail senden an {}", sender, e);
         }
     }
 
@@ -168,7 +168,7 @@ public class MailController {
         try {
             stratoSend.send(welcomeEmail);
         } catch (EmailException e) {
-            logger.error("Konnte keine WelcomeEmail senden an " + newUserEmail, e);
+            logger.error("Konnte keine WelcomeEmail senden an {}", newUserEmail, e);
         }
     }
 
@@ -218,7 +218,7 @@ public class MailController {
         } catch (EmailException e) {
             logger.error("Konnte Fehleremail nicht senden, ", e);
             for(int i=0; i<exceptions.size(); i++){
-                logger.error("Fehlermeldung " + i, exceptions.get(i));
+                logger.error("Fehlermeldung {}", i, exceptions.get(i));
             }
         }
     }

@@ -18,7 +18,6 @@ public record SchiriEinsatz(
         return schiriB != null;
     }
 
-    @Deprecated
     public String hallenAdresse(){
         return halleStrasse + ", " + hallePLZOrt;
     }

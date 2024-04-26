@@ -2,8 +2,6 @@ package com.dieblich.handball.schiedsrichterassistent.mail.templates;
 
 import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.mail.Email;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Session;
 
 public class SecondSchiriMissingEmail extends Email {
 

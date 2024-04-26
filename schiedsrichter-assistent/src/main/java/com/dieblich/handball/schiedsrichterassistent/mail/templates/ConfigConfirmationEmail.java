@@ -3,11 +3,8 @@ package com.dieblich.handball.schiedsrichterassistent.mail.templates;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.mail.Email;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Session;
 
 import java.util.List;
-
 
 public class ConfigConfirmationEmail extends Email {
 
@@ -26,7 +23,7 @@ public class ConfigConfirmationEmail extends Email {
                 ---------- KONFIGURATION START -------------------------------
                 """ + currentConfig.toJSON() + """
                 ---------- KONFIGURATION ENDE --------------------------------
-                                
+                
                 Viele Grüße,
                 der Schiribot
                 

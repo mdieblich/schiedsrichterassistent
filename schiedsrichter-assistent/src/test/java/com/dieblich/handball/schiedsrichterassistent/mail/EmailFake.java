@@ -1,10 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
-import jakarta.mail.Message;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 public class EmailFake extends Email{
 

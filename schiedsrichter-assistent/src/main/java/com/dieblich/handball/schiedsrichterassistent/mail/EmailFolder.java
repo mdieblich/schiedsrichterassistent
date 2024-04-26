@@ -1,7 +1,5 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
-import jakarta.mail.MessagingException;
-
 import java.util.List;
 
 public interface EmailFolder {

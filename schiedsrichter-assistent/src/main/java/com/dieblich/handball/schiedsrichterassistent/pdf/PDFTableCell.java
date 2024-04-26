@@ -8,7 +8,7 @@ public class PDFTableCell {
     public List<String> text;
     public Alignment alignment;
     public int colspan;
-    public boolean bold = false;
+    public boolean bold;
 
     public PDFTableCell(String text, int colspan, Alignment alignment, boolean bold){
         this.text = List.of(text.split("\n"));
@@ -62,6 +62,6 @@ public class PDFTableCell {
     }
 
     public enum Alignment{
-        LEFT, CENTER, RIGHT;
+        LEFT, CENTER, RIGHT
     }
 }

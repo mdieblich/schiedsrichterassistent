@@ -19,7 +19,7 @@ public class AnsetzungsEmail {
         this.originalEmail = originalEmail;
     }
 
-    public SchiriEinsatz extractSchiriEinsatz() throws MessagingException, IOException {
+    public SchiriEinsatz extractSchiriEinsatz() {
         return extractSchiriEinsatz(originalEmail.getContent());
     }
 
