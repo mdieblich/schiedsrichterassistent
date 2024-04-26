@@ -26,7 +26,16 @@ public class PDFFile implements AutoCloseable {
         currentStream = new PDPageContentStream(doc, currentPage);
     }
 
+    private float calculateStringWidth(String text){
+        try{
+            return DEFAULT_FONT.getStringWidth(text) / 1000 * DEFAULT_FONT_SIZE;
+        } catch (Exception e){
+            return 0;
+        }
+    }
+
     public void table(PDFTable table, int x1, int y1) throws IOException {
+        table.limitCellWidth(this::calculateStringWidth);
         int x2 = x1+table.width;
         int y2 = y1+table.height();
         rect(x1, y1,x2, y2);

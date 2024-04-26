@@ -1,6 +1,5 @@
 package com.dieblich.handball.schiedsrichterassistent.pdf;
 
-import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SchirieinsatzAblauf;
