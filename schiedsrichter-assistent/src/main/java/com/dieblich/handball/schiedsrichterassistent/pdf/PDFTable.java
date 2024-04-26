@@ -1,6 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.pdf;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class PDFTable {
     public List<PDFTableRow> rows;
@@ -17,5 +18,9 @@ public class PDFTable {
             height += (int) (lineHeight*row.rowspan());
         }
         return height;
+    }
+
+    public void limitCellWidth(Function<String, Float> calculateStringWidth) {
+        rows.forEach(row -> row.limitCellWidth(width, calculateStringWidth));
     }
 }
