@@ -2,6 +2,7 @@ package com.dieblich.handball.schiedsrichterassistent.pdf;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class PDFTableRow {
@@ -36,5 +37,9 @@ public class PDFTableRow {
             }
         }
         return maxRowSpan;
+    }
+
+    public void limitCellWidth(double tableWidth, Function<String, Float> calculateStringWidth) {
+        cells.forEach(cell -> cell.limitCellWidth(tableWidth/colCount, calculateStringWidth));
     }
 }
