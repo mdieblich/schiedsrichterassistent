@@ -123,12 +123,12 @@ public class SchiriConfiguration {
 
         @JsonIgnore
         public String getStrasse() {
-            throw new RuntimeException("Not implemented");
+            return Adresse.split(",")[0].trim();
         }
 
         @JsonIgnore
         public String getPLZOrt() {
-            throw new RuntimeException("Not implemented");
+            return Adresse.split(",")[1].trim();
         }
     }
 
