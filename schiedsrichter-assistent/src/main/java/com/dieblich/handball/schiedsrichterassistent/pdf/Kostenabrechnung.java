@@ -1,11 +1,36 @@
 package com.dieblich.handball.schiedsrichterassistent.pdf;
 
+import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
+import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
+import com.dieblich.handball.schiedsrichterassistent.calendar.SchirieinsatzAblauf;
+import org.springframework.lang.Nullable;
+
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.time.format.DateTimeFormatter;
 
 public class Kostenabrechnung {
 
-    public Kostenabrechnung(){
+    private static final DateTimeFormatter FORMAT_DATE_TIME = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    private static final DateTimeFormatter FORMAT_DATE = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private static final DateTimeFormatter FORMAT_TIME = DateTimeFormatter.ofPattern("HH:mm");
 
+    private static final DecimalFormat CURRENCY = new DecimalFormat("0.00 €");
+    private static final DecimalFormat DISTANCE = new DecimalFormat("# km");
+
+    private final SchiriEinsatz einsatz;
+    private final SchirieinsatzAblauf ablauf;
+    private final SchiriConfiguration schiriA;
+    @Nullable private final SchiriConfiguration schiriB;
+
+    public Kostenabrechnung(SchiriEinsatz einsatz, SchirieinsatzAblauf ablauf, SchiriConfiguration schiriA, @Nullable SchiriConfiguration schiriB){
+        this.einsatz = einsatz;
+        this.ablauf = ablauf;
+        this.schiriA = schiriA;
+        this.schiriB = schiriB;
+    }
+    public Kostenabrechnung(SchiriEinsatz einsatz, SchirieinsatzAblauf ablauf, SchiriConfiguration schiri){
+        this(einsatz, ablauf, schiri, null);
     }
 
     public void exportToPDF(String filename) throws IOException {
@@ -38,11 +63,11 @@ public class Kostenabrechnung {
                         "Gastmannschaft"
                 ),
                 new PDFTableRow(
-                        "13156",
-                        "13.04.2024 15:30",
-                        "Mittelrhein Landesliga\nMänner",
-                        "BTB Aachen III",
-                        "SG Olheim-Straßfeld")
+                        einsatz.spielNr(),
+                        einsatz.anwurf().format(FORMAT_DATE_TIME),
+                        einsatz.ligaBezeichnungAusEmail(),
+                        einsatz.heimMannschaft(),
+                        einsatz.gastMannschaft())
         );
         pdfFile.table(table, 29, 637);
     }
@@ -62,45 +87,110 @@ public class Kostenabrechnung {
                         "Ort"
                 ),
                 new PDFTableRow(
-                        "AC2 Aachen Gillesbachtal",
-                        "Branderhofer Weg 15",
-                        "52066 Aachen")
+                        einsatz.halleName(),
+                        einsatz.halleStrasse(),
+                        einsatz.hallePLZOrt())
         );
         pdfFile.table(table, 29, 570);
     }
 
     private void schiedsrichterInformationen(PDFFile pdfFile) throws IOException {
-        PDFTable table = new PDFTable(
-                tableHeader("Schiedsrichter-Informationen"),
-                new PDFTableRow("SR A", "SR B"),
-                new PDFTableRow("Nachname", "", "Nachname", ""),
-                new PDFTableRow("Vorname", "", "Vorname", ""),
-                new PDFTableRow("Straße", "", "Straße", ""),
-                new PDFTableRow("Ort", "", "Ort", ""),
-                new PDFTableRow(""),
-                new PDFTableRow("Abfahrtdatum", "Abfahrtszeit", "Abfahrtdatum", "Abfahrtszeit"),
-                new PDFTableRow("13.04.2024", "13:45", "13.04.2024", "13:45"),
-                new PDFTableRow("vorraus. Rückkehrdatum", "Rückkehrzeit", "vorraus. Rückkehrdatum", "Rückkehrzeit"),
-                new PDFTableRow("13.04.2024", "18:15", "13.04.2024", "18:00")
-        );
+        PDFTable table = null;
+        if(schiriB != null){
+            table = new PDFTable(
+                    tableHeader("Schiedsrichter-Informationen"),
+                    new PDFTableRow("SR A", "SR B"),
+                    new PDFTableRow("Nachname", schiriA.Benutzerdaten.Nachname, "Nachname", schiriB.Benutzerdaten.Nachname),
+                    new PDFTableRow("Vorname", schiriA.Benutzerdaten.Vorname, "Vorname", schiriB.Benutzerdaten.Vorname),
+                    new PDFTableRow("Straße", schiriA.Benutzerdaten.getStrasse(), "Straße", schiriB.Benutzerdaten.getStrasse()),
+                    new PDFTableRow("Ort", schiriA.Benutzerdaten.getPLZOrt(), "Ort", schiriB.Benutzerdaten.getPLZOrt()),
+                    new PDFTableRow(""),
+                    new PDFTableRow("Abfahrtdatum", "Abfahrtszeit", "Abfahrtdatum", "Abfahrtszeit"),
+                    new PDFTableRow(ablauf.getAbfahrt().format(FORMAT_DATE), ablauf.getAbfahrt().format(FORMAT_TIME), ablauf.getPartnerAbholen().format(FORMAT_DATE), ablauf.getPartnerAbholen().format(FORMAT_TIME)),
+                    new PDFTableRow("vorraus. Rückkehrdatum", "Rückkehrzeit", "vorraus. Rückkehrdatum", "Rückkehrzeit"),
+                    new PDFTableRow(ablauf.getHeimkehr().format(FORMAT_DATE), ablauf.getHeimkehr().format(FORMAT_TIME), ablauf.getZurueckbringenPartner().format(FORMAT_DATE), ablauf.getZurueckbringenPartner().format(FORMAT_TIME))
+            );
+        } else {
+            table = new PDFTable(
+                    tableHeader("Schiedsrichter-Informationen"),
+                    new PDFTableRow("SR A", "SR B"),
+                    new PDFTableRow("Nachname", schiriA.Benutzerdaten.Nachname, "Nachname", ""),
+                    new PDFTableRow("Vorname", schiriA.Benutzerdaten.Vorname, "Vorname", ""),
+                    new PDFTableRow("Straße", schiriA.Benutzerdaten.getStrasse(), "Straße", ""),
+                    new PDFTableRow("Ort", schiriA.Benutzerdaten.getPLZOrt(), "Ort", ""),
+                    new PDFTableRow(""),
+                    new PDFTableRow("Abfahrtdatum", "Abfahrtszeit", "Abfahrtdatum", "Abfahrtszeit"),
+                    new PDFTableRow(ablauf.getAbfahrt().format(FORMAT_DATE), ablauf.getAbfahrt().format(FORMAT_TIME), "", ""),
+                    new PDFTableRow("vorraus. Rückkehrdatum", "Rückkehrzeit", "vorraus. Rückkehrdatum", "Rückkehrzeit"),
+                    new PDFTableRow(ablauf.getHeimkehr().format(FORMAT_DATE), ablauf.getHeimkehr().format(FORMAT_TIME), "", "")
+                    );
+        }
         pdfFile.table(table, 29, 370);
     }
+    @SuppressWarnings("NonAsciiCharacters")
     private void fahrtkostenInformationen(PDFFile pdfFile) throws IOException {
-        PDFTable table = new PDFTable(
+        PDFTable table = null;
+
+        double teilnameEntschädigung = schiriA.Kosten.TeilnahmeEntschädigung.get(einsatz.ligaBezeichnungAusEmail());
+
+        double distanzA = (ablauf.getFahrtZumPartner().distanzInMetern()+ablauf.getFahrtZurHalle().distanzInMetern())*2*0.001;
+        double kilometerPauschale = schiriA.Kosten.Fahrer.get(einsatz.ligaBezeichnungAusEmail());
+        double fahrtkostenA = distanzA * kilometerPauschale;
+        double summeA = teilnameEntschädigung+fahrtkostenA;
+
+        if(schiriB != null){
+
+            double distanzB = ablauf.getFahrtZurHalle().distanzInMetern()*2*0.001;
+            double beifahrerPauschale = schiriB.Kosten.Beifahrer.get(einsatz.ligaBezeichnungAusEmail());
+            double fahrtkostenB = distanzB * beifahrerPauschale;
+            double summeB = teilnameEntschädigung+fahrtkostenB;
+
+            double gesamtSumme = summeA + summeB;
+
+            table = new PDFTable(
                 tableHeader("Fahrtkosteninformationen"),
-                fahrtkostenRow("157 km x 0,30 €", "47,10 €", "  0 km x 0,30 €", "€"),
-                fahrtkostenRow("  0 km x 0,30 €", "€"),
+                fahrtkostenRow(
+                        DISTANCE.format(distanzA) + " x "+CURRENCY.format(kilometerPauschale),
+                        CURRENCY.format(fahrtkostenA),
+                        DISTANCE.format(distanzB) + " x "+CURRENCY.format(beifahrerPauschale),
+                        CURRENCY.format(fahrtkostenB)
+                ),
+                fahrtkostenRow("___ km x ___ €", "€"),
                 fahrtkostenRow("Nahverkehrskosten (Belege beifügen)", "€"),
                 fahrtkostenRow("Tagegeld für ___ Stunden", "€"),
-                fahrtkostenRow("Teilnahmeentschädigung", "30,00 €"),
+                fahrtkostenRow("Teilnahmeentschädigung", CURRENCY.format(teilnameEntschädigung)),
                 fahrtkostenRow("Übernachtung (Belege beifügen)", "€"),
                 fahrtkostenRow("Sonstige Auslagen (Belege beifügen)", "€"),
-                fahrtkostenRow("Summe:", "77,10 €", "Summe:", "30,00"),
+                fahrtkostenRow("Summe:", CURRENCY.format(summeA), "Summe:", CURRENCY.format(summeB)),
                 new PDFTableRow(
                         new PDFTableCell("Gesamtsumme", 5, PDFTableCell.Alignment.LEFT, true),
-                        new PDFTableCell("107,10 €",    1, PDFTableCell.Alignment.RIGHT, true)
+                        new PDFTableCell(CURRENCY.format(gesamtSumme),    1, PDFTableCell.Alignment.RIGHT, true)
                 )
-        );
+            );
+        } else {
+
+            table = new PDFTable(
+                    tableHeader("Fahrtkosteninformationen"),
+                    fahrtkostenRow(
+                            DISTANCE.format(distanzA) + " x "+CURRENCY.format(kilometerPauschale),
+                            CURRENCY.format(fahrtkostenA),
+                             "___ km x ___ €",
+                            "€"
+                    ),
+                    fahrtkostenRow("___ km x ___ €", "€"),
+                    fahrtkostenRow("Nahverkehrskosten (Belege beifügen)", "€"),
+                    fahrtkostenRow("Tagegeld für ___ Stunden", "€"),
+                    fahrtkostenRow("Teilnahmeentschädigung", CURRENCY.format(teilnameEntschädigung), "Teilnahmeentschädigung", "€"),
+                    fahrtkostenRow("Übernachtung (Belege beifügen)", "€"),
+                    fahrtkostenRow("Sonstige Auslagen (Belege beifügen)", "€"),
+                    fahrtkostenRow("Summe:", CURRENCY.format(summeA), "Summe:", ""),
+                    new PDFTableRow(
+                            new PDFTableCell("Gesamtsumme", 5, PDFTableCell.Alignment.LEFT, true),
+                            new PDFTableCell(CURRENCY.format(summeA),    1, PDFTableCell.Alignment.RIGHT, true)
+                    )
+            );
+
+        }
         pdfFile.table(table, 29, 188);
     }
 
