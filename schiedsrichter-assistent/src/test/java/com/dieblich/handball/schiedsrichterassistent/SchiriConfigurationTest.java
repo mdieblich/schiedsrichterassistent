@@ -54,6 +54,35 @@ class SchiriConfigurationTest {
               }
             }
           },
+          "Kosten" : {
+            "TeilnahmeEntschädigung" : {
+              "Standard" : 22.5,
+              "Abweichungen": {
+                "Oberliga Männer" : 50.0,
+                "Oberliga Frauen" : 40.0,
+                "Verbandsliga Männer" : 40.0,
+                "Verbandsliga Frauen" : 30.0,
+                "Landesliga Männer" : 30.0,
+                "Landesliga Frauen" : 30.0
+              }
+            },
+            "Fahrer" : {
+              "Standard" : 0.35,
+              "Abweichungen" : {
+                "Oberliga" : 0.3,
+                "Verbandsliga" : 0.3,
+                "Landesliga" : 0.3
+              }
+            },
+            "Beifahrer" : {
+              "Standard" : 0.05,
+              "Abweichungen" : {
+                "Oberliga" : 0.0,
+                "Verbandsliga" : 0.0,
+                "Landesliga" : 0.0
+              }
+            }
+          },
           "Gespannpartner": [
             "mike.blind@loser.com"
           ]
@@ -96,6 +125,35 @@ class SchiriConfigurationTest {
               }
             }
           },
+          "Kosten" : {
+            "TeilnahmeEntschädigung" : {
+              "Standard" : 22.50,
+              "Abweichungen": {
+                "Oberliga Männer" : 50.0,
+                "Oberliga Frauen" : 40.0,
+                "Verbandsliga Männer" : 40.0,
+                "Verbandsliga Frauen" : 30.0,
+                "Landesliga Männer" : 30.0,
+                "Landesliga Frauen" : 30.0
+              }
+            },
+            "Fahrer" : {
+              "Standard" : 0.35,
+              "Abweichungen" : {
+                "Oberliga" : 0.3,
+                "Verbandsliga" : 0.3,
+                "Landesliga" : 0.3
+              }
+            },
+            "Beifahrer" : {
+              "Standard" : 0.05,
+              "Abweichungen" : {
+                "Oberliga" : 0.0,
+                "Verbandsliga" : 0.0,
+                "Landesliga" : 0.0
+              }
+            }
+          },
           "Gespannpartner": []
         }
         """);
@@ -128,6 +186,35 @@ class SchiriConfigurationTest {
                 "Regionalliga" : 45
               }
             }
+          },
+          "Kosten" : {
+            "TeilnahmeEntschädigung" : {
+              "Standard" : 22.50,
+              "Abweichungen": {
+                "Oberliga Männer" : 50.0,
+                "Oberliga Frauen" : 40.0,
+                "Verbandsliga Männer" : 40.0,
+                "Verbandsliga Frauen" : 30.0,
+                "Landesliga Männer" : 30.0,
+                "Landesliga Frauen" : 30.0
+              }
+            },
+            "Fahrer" : {
+              "Standard" : 0.35,
+              "Abweichungen" : {
+                "Oberliga" : 0.3,
+                "Verbandsliga" : 0.3,
+                "Landesliga" : 0.3
+              }
+            },
+            "Beifahrer" : {
+              "Standard" : 0.05,
+              "Abweichungen" : {
+                "Oberliga" : 0.0,
+                "Verbandsliga" : 0.0,
+                "Landesliga" : 0.0
+              }
+            }
           }
         }
         """;
@@ -149,7 +236,7 @@ class SchiriConfigurationTest {
         SchiriConfiguration config = new SchiriConfiguration("muster@moritz.de");
         config.Benutzerdaten.Vorname = "Moritz";
         config.Benutzerdaten.Nachname = "Schulze";
-        config.Benutzerdaten.Adresse = "Irgendo 12, 12345 Berlin";
+        config.Benutzerdaten.Adresse = "Irgendwo 12, 12345 Berlin";
         config.Benutzerdaten.Längengrad = 5.0;
         config.Benutzerdaten.Breitengrad = 6.0;
         config.Spielablauf.UmziehenVorSpiel = 20;
@@ -168,7 +255,7 @@ class SchiriConfigurationTest {
         assertEquals("muster@moritz.de", config.Benutzerdaten.Email);
         assertEquals("Moritz", config.Benutzerdaten.Vorname);
         assertEquals("Schulze", config.Benutzerdaten.Nachname);
-        assertEquals("Irgendo 12, 12345 Berlin", config.Benutzerdaten.Adresse);
+        assertEquals("Irgendwo 12, 12345 Berlin", config.Benutzerdaten.Adresse);
         assertEquals(5.0, config.Benutzerdaten.Längengrad);
         assertEquals(6.0, config.Benutzerdaten.Breitengrad);
         assertEquals(20, config.Spielablauf.UmziehenVorSpiel);
@@ -268,7 +355,7 @@ class SchiriConfigurationTest {
         assertEquals(5, config.Benutzerdaten.Breitengrad);
     }
     @Test
-    public void updateWithUnknwonAdresseChangesNothing() {
+    public void updateWithUnknownAdresseChangesNothing() {
         SchiriConfiguration config = new SchiriConfiguration("");
         String adresseBefore = config.Benutzerdaten.Adresse;
         config.updateWith("""
@@ -284,7 +371,7 @@ class SchiriConfigurationTest {
         assertNull(config.Benutzerdaten.Breitengrad);
     }
     @Test
-    public void updateWithUnknwonAdresseCreatesLogEntry() {
+    public void updateWithUnknownAdresseCreatesLogEntry() {
         SchiriConfiguration config = new SchiriConfiguration("");
         List<String> log = new ArrayList<>();
         config.updateWith("""
@@ -308,7 +395,7 @@ class SchiriConfigurationTest {
     }
 
     @Test
-    public void updateWithUnknwonAdresseButGeoLocationWorks() {
+    public void updateWithUnknownAdresseButGeoLocationWorks() {
         SchiriConfiguration config = new SchiriConfiguration("");
         config.updateWith("""
                 {
@@ -361,15 +448,68 @@ class SchiriConfigurationTest {
                 	"Spielablauf": {
                         "UmziehenVorSpiel": 25,
                         "UmziehenNachSpiel
-                	
+                
                 }
                 """, fakeAddressToGeoLocation, log::add);
 
         assertEquals(1, log.size());
     }
 
+    @Test
+    public void updateWithCreatesTeilnahmeEntschädigung() {
+        SchiriConfiguration config = new SchiriConfiguration("");
+        config.updateWith("""
+                {
+                	"Kosten" : {
+                        "TeilnahmeEntschädigung" : {
+                            "Abweichungen": {
+                                "Regionalliga Männer" : 100.0
+                            }
+                        }
+                      }
+                }
+                """, fakeAddressToGeoLocation, fakeLog);
+
+        assertEquals(100d, config.Kosten.TeilnahmeEntschädigung.get("Regionalliga Männer"));
+    }
+
+    @Test
+    public void updateWithCreatesFahrtkosten() {
+        SchiriConfiguration config = new SchiriConfiguration("");
+        config.updateWith("""
+                {
+                	"Kosten" : {
+                        "Fahrer" : {
+                          "Abweichungen" : {
+                            "Regionalliga" : 0.9
+                          }
+                        }
+                      }
+                }
+                """, fakeAddressToGeoLocation, fakeLog);
+
+        assertEquals(0.9, config.Kosten.Fahrer.get("Regionalliga"));
+    }
+
+    @Test
+    public void updateWithCreatesBeifahrerKosten() {
+        SchiriConfiguration config = new SchiriConfiguration("");
+        config.updateWith("""
+                {
+                	"Kosten" : {
+                        "Beifahrer" : {
+                          "Abweichungen" : {
+                            "Regionalliga" : 0.30
+                          }
+                        }
+                      }
+                }
+                """, fakeAddressToGeoLocation, fakeLog);
+
+        assertEquals(0.3, config.Kosten.Beifahrer.get("Regionalliga"));
+    }
+
     private final Function<String, Optional<Koordinaten>> fakeAddressToGeoLocation = (String) -> Optional.empty();
     private final Consumer<String> fakeLog = (String) -> {};
-
 
 }
