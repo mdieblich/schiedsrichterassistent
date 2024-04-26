@@ -30,7 +30,8 @@ public class PDFTableCell {
         return text.size();
     }
 
-    public void limitCellWidth(double maxCellWidth, Function<String, Float> calculateStringWidth) {
+    public void limitCellWidth(double maxSingleCellWidth, Function<String, Float> calculateStringWidth) {
+        double maxCellWidth = colspan * maxSingleCellWidth;
         List<String> newLines = new ArrayList<>();
         for(String oldLine:text){
             String[] words = oldLine.split(" ");

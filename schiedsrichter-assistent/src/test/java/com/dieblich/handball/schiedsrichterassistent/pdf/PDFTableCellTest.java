@@ -58,4 +58,15 @@ class PDFTableCellTest {
 
         assertEquals(List.of("Martin und", "Heizungsmo","nteur Max"), cell.text);
     }
+
+    @Test
+    public void limitCellWidth_WithColspan(){
+        PDFTableCell cell = new PDFTableCell("Markus und Moritz");
+        cell.colspan = 2;
+        Function<String, Float> calculateStringWidth = text -> (float)text.length();
+
+        cell.limitCellWidth(5, calculateStringWidth);
+
+        assertEquals(List.of("Markus und", "Moritz"), cell.text);
+    }
 }
