@@ -60,7 +60,7 @@ public class SpielTerminFahrer implements SpielTermin{
         return einsatz.hallenAdresse();
     }
 
-    SchirieinsatzAblauf getSpielAblauf() throws GeoException, MissingConfigException {
+    public SchirieinsatzAblauf getSpielAblauf() throws GeoException, MissingConfigException {
         if(spielAblauf == null){
             spielAblauf = createSpielablauf();
         }
