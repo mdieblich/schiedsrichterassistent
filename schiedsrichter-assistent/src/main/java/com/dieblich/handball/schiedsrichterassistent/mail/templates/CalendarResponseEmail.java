@@ -4,6 +4,7 @@ import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTermin;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.mail.Email;
+import com.dieblich.handball.schiedsrichterassistent.pdf.Kostenabrechnung;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -13,11 +14,12 @@ public class CalendarResponseEmail extends Email implements AutoCloseable{
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-    public CalendarResponseEmail(String botEmailAddress, String schiriEmailAddress, SpielTermin spielTermin) throws GeoException, IOException, MissingConfigException {
+    public CalendarResponseEmail(String botEmailAddress, String schiriEmailAddress, SpielTermin spielTermin, Kostenabrechnung kostenabrechnung) throws GeoException, IOException, MissingConfigException {
         super(botEmailAddress, schiriEmailAddress,
                 "Termine für deine Ansetzung am "+spielTermin.getDay().format(DATE_FORMAT),
                 "Anbei deine Ansetzung.\n\n" + spielTermin.getDescription(),
-                saveToFile(spielTermin)
+                saveToFile(spielTermin),
+                saveToFile(kostenabrechnung)
         );
     }
 
@@ -30,6 +32,15 @@ public class CalendarResponseEmail extends Email implements AutoCloseable{
         }
         return new File(uniqueID+".ics");
     }
+
+    private static File saveToFile(Kostenabrechnung kostenabrechnung) throws IOException {
+        long uniqueID = System.currentTimeMillis();
+        String fileName = uniqueID+".pdf";
+
+        kostenabrechnung.exportToPDF(fileName);
+        return new File(fileName);
+    }
+
 
     @Override
     public void close() {

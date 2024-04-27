@@ -10,6 +10,7 @@ import com.dieblich.handball.schiedsrichterassistent.geo.GeoService;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoServiceImpl;
 import com.dieblich.handball.schiedsrichterassistent.mail.received.AnsetzungsEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.*;
+import com.dieblich.handball.schiedsrichterassistent.pdf.Kostenabrechnung;
 import jakarta.annotation.PostConstruct;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -196,17 +197,19 @@ public class MailController {
 
     private void sendCalendarEventForOneSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration config) throws GeoException, MissingConfigException, IOException, EmailException {
         SpielTerminEinzelschiri spielTermin = new SpielTerminEinzelschiri(schiriEinsatz, config, geoService);
-        sendTermin(spielTermin, config.Benutzerdaten.Email);
+        Kostenabrechnung abrechnung = new Kostenabrechnung(schiriEinsatz, spielTermin.getSpielAblauf(), config);
+        sendTermin(spielTermin, abrechnung, config.Benutzerdaten.Email);
     }
     private void sendCalendarEventForTwoSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration fahrer, SchiriConfiguration beifahrer) throws GeoException, MissingConfigException, IOException, EmailException {
         SpielTerminFahrer spielTerminFahrer = new SpielTerminFahrer(schiriEinsatz, fahrer, beifahrer, geoService);
-        sendTermin(spielTerminFahrer, fahrer.Benutzerdaten.Email);
+        Kostenabrechnung abrechnung = new Kostenabrechnung(schiriEinsatz, spielTerminFahrer.getSpielAblauf(), fahrer, beifahrer);
+        sendTermin(spielTerminFahrer, abrechnung, fahrer.Benutzerdaten.Email);
         SpielTerminBeifahrer spielTerminBeifahrer = spielTerminFahrer.createBeifahrerTermin();
-        sendTermin(spielTerminBeifahrer, beifahrer.Benutzerdaten.Email);
+        sendTermin(spielTerminBeifahrer, abrechnung, beifahrer.Benutzerdaten.Email);
     }
 
-    private void sendTermin(SpielTermin termin, String receiver) throws GeoException, MissingConfigException, IOException, EmailException {
-        try (CalendarResponseEmail response = new CalendarResponseEmail(botEmailaddress, receiver, termin)) {
+    private void sendTermin(SpielTermin termin, Kostenabrechnung abrechnung, String receiver) throws GeoException, MissingConfigException, IOException, EmailException {
+        try (CalendarResponseEmail response = new CalendarResponseEmail(botEmailaddress, receiver, termin, abrechnung)) {
             stratoSend.send(response);
         }
     }
