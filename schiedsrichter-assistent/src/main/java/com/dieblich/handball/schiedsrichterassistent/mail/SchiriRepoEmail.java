@@ -92,8 +92,7 @@ public class SchiriRepoEmail implements SchiriRepo {
                 config.Benutzerdaten.Email,
                 "nobody@cares.de",
                 config.Benutzerdaten.getAnzeigeName(),
-                config.toJSON(),
-                null
+                config.toJSON()
                 );
         schiedsrichter.upload(configEmail);
     }
