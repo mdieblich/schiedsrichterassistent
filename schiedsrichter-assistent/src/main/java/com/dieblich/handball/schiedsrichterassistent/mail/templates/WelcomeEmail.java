@@ -26,7 +26,7 @@ public class WelcomeEmail extends Email {
                     },
                     "Gespannpartner": [
                         "annette.stunde@handball.net",
-                        "o.schmitz@hsg-oberpal.de
+                        "o.schmitz@hsg-oberpal.de"
                     ]
                 }
                 Dabei gibst du bitte deinen richtigen Namen + Adresse an, sowie die Email-Adressen deiner Gespannpartner

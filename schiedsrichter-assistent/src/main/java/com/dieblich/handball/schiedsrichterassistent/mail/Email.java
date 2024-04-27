@@ -27,7 +27,7 @@ public class Email {
     @Getter
     private final String content;
 
-    private File attachment;
+    private final List<File> attachments;
 
     public Email(Message message) throws EmailException {
         try {
@@ -36,21 +36,18 @@ public class Email {
             sender = extractSender(message);
             content = extractContent(message);
             receivers = extractReceivers(message);
+            attachments = List.of();
         } catch (Exception e) {
             throw new EmailException("Error reading content of message: " + message, e);
         }
     }
 
-    public Email(String sender, String receiver, String subject, String content, File attachment){
+    public Email(String sender, String receiver, String subject, String content, File... attachments){
         this.sender = sender;
         this.receivers = List.of(receiver);
         this.subject = subject;
         this.content = content;
-        this.attachment = attachment;
-    }
-
-    public Email(String sender, String receiver, String subject, String content){
-       this(sender, receiver, subject, content, null);
+        this.attachments = List.of(attachments);
     }
 
     private @NotNull String extractSender(Message message) throws MessagingException, EmailException {
@@ -149,8 +146,8 @@ public class Email {
         MimeMultipart multiPart = new MimeMultipart();
 
         multiPart.addBodyPart(createTextContent());
-        if(attachment != null){
-            multiPart.addBodyPart(createFileAttachmentContent());
+        for(File attachment:attachments){
+            multiPart.addBodyPart(createFileAttachmentContent(attachment));
         }
 
         return multiPart;
@@ -162,13 +159,13 @@ public class Email {
         return messageBodyPart;
     }
 
-    private BodyPart createFileAttachmentContent() throws MessagingException, IOException {
+    private BodyPart createFileAttachmentContent(File attachment) throws MessagingException, IOException {
         MimeBodyPart attachmentPart = new MimeBodyPart();
         attachmentPart.attachFile(attachment);
         return attachmentPart;
     }
 
-    protected File getAttachment() {
-        return attachment;
+    protected List<File> getAttachments() {
+        return attachments;
     }
 }

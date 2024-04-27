@@ -33,7 +33,9 @@ public class CalendarResponseEmail extends Email implements AutoCloseable{
 
     @Override
     public void close() {
-        //noinspection ResultOfMethodCallIgnored
-        getAttachment().delete();
+        for(File attachment:getAttachments()){
+            //noinspection ResultOfMethodCallIgnored
+            attachment.delete();
+        }
     }
 }
