@@ -133,12 +133,13 @@ public class Kostenabrechnung {
 
         double teilnameEntschädigung = schiriA.Kosten.TeilnahmeEntschädigung.get(einsatz.ligaBezeichnungAusEmail());
 
-        double distanzA = (ablauf.getFahrtZumPartner().distanzInMetern()+ablauf.getFahrtZurHalle().distanzInMetern())*2*0.001;
-        double kilometerPauschale = schiriA.Kosten.Fahrer.get(einsatz.ligaBezeichnungAusEmail());
-        double fahrtkostenA = distanzA * kilometerPauschale;
-        double summeA = teilnameEntschädigung+fahrtkostenA;
 
         if(schiriB != null){
+
+            double distanzA = (ablauf.getFahrtZumPartner().distanzInMetern()+ablauf.getFahrtZurHalle().distanzInMetern())*2*0.001;
+            double kilometerPauschale = schiriA.Kosten.Fahrer.get(einsatz.ligaBezeichnungAusEmail());
+            double fahrtkostenA = distanzA * kilometerPauschale;
+            double summeA = teilnameEntschädigung+fahrtkostenA;
 
             double distanzB = ablauf.getFahrtZurHalle().distanzInMetern()*2*0.001;
             double beifahrerPauschale = schiriB.Kosten.Beifahrer.get(einsatz.ligaBezeichnungAusEmail());
@@ -168,6 +169,11 @@ public class Kostenabrechnung {
                 )
             );
         } else {
+
+            double distanzA = ablauf.getFahrtZurHalle().distanzInMetern()*2*0.001;
+            double kilometerPauschale = schiriA.Kosten.Fahrer.get(einsatz.ligaBezeichnungAusEmail());
+            double fahrtkostenA = distanzA * kilometerPauschale;
+            double summeA = teilnameEntschädigung+fahrtkostenA;
 
             table = new PDFTable(
                     tableHeader("Fahrtkosteninformationen"),
