@@ -244,7 +244,7 @@ public class SchiriConfiguration {
                 Fahrer.updateWith(other.Fahrer);
             }
             if(other.Beifahrer != null){
-                Beifahrer = other.Beifahrer;
+                Beifahrer.updateWith(other.Beifahrer);
             }
         }
 
