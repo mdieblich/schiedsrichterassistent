@@ -113,7 +113,7 @@ public class Kostenabrechnung {
         } else {
             table = new PDFTable(
                     tableHeader("Schiedsrichter-Informationen"),
-                    new PDFTableRow("SR A", "SR B"),
+                    new PDFTableRow("SR A", ""),
                     new PDFTableRow("Nachname", schiriA.Benutzerdaten.Nachname, "Nachname", ""),
                     new PDFTableRow("Vorname", schiriA.Benutzerdaten.Vorname, "Vorname", ""),
                     new PDFTableRow("Straße", schiriA.Benutzerdaten.getStrasse(), "Straße", ""),
