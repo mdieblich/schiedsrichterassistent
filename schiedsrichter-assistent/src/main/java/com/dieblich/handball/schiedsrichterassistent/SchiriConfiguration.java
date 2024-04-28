@@ -56,7 +56,7 @@ public class SchiriConfiguration {
             this.Email = email;
         }
 
-        public void updateWith(Benutzerdaten other, Function<String, Optional<Koordinaten>> addressToKoordinaten, Consumer<String> log) {
+        public void updateWith(Benutzerdaten other, Function<String, Optional<Koordinaten>> addressToKoordinaten) throws ConfigException {
             if(other.Email != null) {Email = other.Email;}
             if(other.Vorname != null) {Vorname = other.Vorname;}
             if(other.Nachname != null) {Nachname = other.Nachname;}
@@ -75,21 +75,23 @@ public class SchiriConfiguration {
                         Längengrad = optionalKoordinaten.get().längengrad();
                         Breitengrad = optionalKoordinaten.get().breitengrad();
                     }else{
-                        log.accept("Für die Adresse \""+other.Adresse+"\" konnten Längen- und Breitengrad nicht bestimmt werden. Sie wird daher nicht übernomen.");
-                        log.accept("FALLS DAS PROBLEM WIEDERHOLT AUFTRITT SO KANNST DU FOLGENDES TUN:");
-                        log.accept("1. Bestimme mithilfe eines Kartendienstes (z.B. https://www.gpskoordinaten.de/) deinen Längen- und Breitengrad.");
-                        log.accept("2. Setze in der Konfiguration im Abschnitt \"Benutzerdaten\" die Adresse UND Werte für \"Löngengrad\"");
-                        log.accept("   und \"Breitengrad\". Beachte bitte, dass du min. 4-Nachkommastellen verwendest.");
-                        log.accept("   Verwendet wird das Koordinatensystem WGS 84");
+                        throw new ConfigException(
+                                "Für die Adresse \""+other.Adresse+"\" konnten Längen- und Breitengrad nicht bestimmt werden. Sie wird daher nicht übernomen.\n" +
+                                "FALLS DAS PROBLEM WIEDERHOLT AUFTRITT SO KANNST DU FOLGENDES TUN:\n" +
+                                "1. Bestimme mithilfe eines Kartendienstes (z.B. https://www.gpskoordinaten.de/) deinen Längen- und Breitengrad.\n" +
+                                "2. Setze in der Konfiguration im Abschnitt \"Benutzerdaten\" die Adresse UND Werte für \"Längengrad\" " +
+                                "und \"Breitengrad\". Beachte bitte, dass du min. 4-Nachkommastellen verwendest. " +
+                                "Verwendet wird das Koordinatensystem WGS 84"
+                        );
                     }
                 }
             }
         }
 
         @JsonIgnore
-        public Koordinaten getCoords() throws MissingConfigException {
+        public Koordinaten getCoords() throws ConfigException {
             if(Längengrad == null || Breitengrad == null){
-                throw new MissingConfigException("Längen- oder Breitengrad fehlt");
+                throw new ConfigException("Längen- oder Breitengrad fehlt");
             }
             return new Koordinaten(Breitengrad, Längengrad);
         }
@@ -296,20 +298,20 @@ public class SchiriConfiguration {
         ));
         return config;
     }
-    public void updateWith(String configUpdate, Function<String, Optional<Koordinaten>> addressToKoordinaten, Consumer<String> log) {
+    public void updateWith(String configUpdate, Function<String, Optional<Koordinaten>> addressToKoordinaten) throws ConfigException {
         try {
             // Remove NBSP first
             configUpdate = configUpdate.replace("\u00a0","");
             SchiriConfiguration newConfig = mapper.readValue(configUpdate, SchiriConfiguration.class);
-            updateWith(newConfig, addressToKoordinaten, log);
-        } catch (JsonProcessingException e) {
-            log.accept("Fehler beim Lesen der Konfiguration: " + e.getMessage());
+            updateWith(newConfig, addressToKoordinaten);
+        } catch (JsonProcessingException | ConfigException e) {
+            throw new ConfigException("Fehler beim Aktualisieren der Konfiguration", e);
         }
     }
 
-    public void updateWith(SchiriConfiguration other, Function<String, Optional<Koordinaten>> addressToKoordinaten, Consumer<String> log) {
+    public void updateWith(SchiriConfiguration other, Function<String, Optional<Koordinaten>> addressToKoordinaten) throws ConfigException {
         if(other.Benutzerdaten != null){
-            Benutzerdaten.updateWith(other.Benutzerdaten, addressToKoordinaten, log);
+            Benutzerdaten.updateWith(other.Benutzerdaten, addressToKoordinaten);
         }
         if(other.Spielablauf != null){
             Spielablauf.updateWith(other.Spielablauf);

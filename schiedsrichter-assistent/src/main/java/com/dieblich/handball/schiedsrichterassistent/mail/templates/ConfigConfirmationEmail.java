@@ -4,16 +4,15 @@ import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.mail.Email;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.util.List;
-
 public class ConfigConfirmationEmail extends Email {
 
-    public ConfigConfirmationEmail(String botEmailAddress, String schiriEmailAddress, SchiriConfiguration currentConfig, List<String> log) throws JsonProcessingException {
+    public ConfigConfirmationEmail(String botEmailAddress, String schiriEmailAddress, SchiriConfiguration currentConfig) throws JsonProcessingException {
         super(botEmailAddress, schiriEmailAddress,
                 "RE: Konfiguration",
                 """
                 Ich habe deine Konfigurationsänderung erhalten. Die vollständige Konfiguration siehst du unten.
-                Solltest du etwas vermissen, so findest du noch weiter unten mein (Fehler-)Protokoll.
+                Solltest du etwas vermissen, so kann es sein, dass Fehler aufgetreten sind. Du erhältst dann eine
+                weitere Email mit dem Fehlerprotokoll.
                 
                 Du kannst deine Konfiguration jederzeit ändern, wenn du mir eine Email mit dem Betreff "Konfiguration"
                 zuschickst. Inhalt der Email sollten ausschließlich die Einstellungen sein, die du ändern möchtest.
@@ -28,9 +27,6 @@ public class ConfigConfirmationEmail extends Email {
                 der Schiribot
                 
                 Eine Kreation von Martin Fritz
-                ---------- FEHLERPROTOKOLL START -----------------------------
-                """ + String.join("\n", log) + "\n" + """
-                ---------- FEHLERPROTOKOLL ENDE ------------------------------
                 """
         );
     }

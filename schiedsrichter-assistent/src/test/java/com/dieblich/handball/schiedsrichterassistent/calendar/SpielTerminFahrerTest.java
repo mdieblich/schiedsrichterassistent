@@ -1,6 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.calendar;
 
-import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
+import com.dieblich.handball.schiedsrichterassistent.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 class SpielTerminFahrerTest extends SpielTerminTest {
     @Test
-    public void summary() throws GeoException, MissingConfigException {
+    public void summary() throws GeoException, ConfigException {
         SpielTerminFahrer termin = prepareDefaultTermin();
 
         String calendarEvent = termin.extractCalendarEvent();
@@ -62,7 +62,7 @@ class SpielTerminFahrerTest extends SpielTerminTest {
         return new SpielTerminFahrer(einsatz, configFahrer, configBeifahrer, fakeGeoService);
     }
     @Test
-    public void location() throws GeoException, MissingConfigException {
+    public void location() throws GeoException, ConfigException {
         SpielTerminFahrer termin = prepareDefaultTermin();
 
         String calendarEvent = termin.extractCalendarEvent();
@@ -70,7 +70,7 @@ class SpielTerminFahrerTest extends SpielTerminTest {
         assertEntryIs("LOCATION", "Am Sportzentrum\\, 50259 Pulheim", calendarEvent);
     }
     @Test
-    public void startTime() throws GeoException, MissingConfigException {
+    public void startTime() throws GeoException, ConfigException {
         SpielTerminFahrer termin = prepareDefaultTermin();
 
         // act
@@ -91,7 +91,7 @@ class SpielTerminFahrerTest extends SpielTerminTest {
     }
 
     @Test
-    public void endTime() throws GeoException, MissingConfigException {
+    public void endTime() throws GeoException, ConfigException {
         SpielTerminFahrer termin = prepareDefaultTermin();
 
         // act
@@ -113,7 +113,7 @@ class SpielTerminFahrerTest extends SpielTerminTest {
     }
 
     @Test
-    public void description() throws GeoException, MissingConfigException {
+    public void description() throws GeoException, ConfigException {
         SpielTerminFahrer termin = prepareDefaultTermin();
 
         // act

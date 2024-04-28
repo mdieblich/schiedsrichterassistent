@@ -3,7 +3,7 @@ package com.dieblich.handball.schiedsrichterassistent.calendar;
 import biweekly.Biweekly;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
-import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
+import com.dieblich.handball.schiedsrichterassistent.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ public class SpielTerminBeifahrer implements SpielTermin{
     }
 
     @Override
-    public String extractCalendarEvent() throws GeoException, MissingConfigException {
+    public String extractCalendarEvent() throws GeoException, ConfigException {
         ICalendar ical = new ICalendar();
         VEvent event = new VEvent();
 
@@ -38,7 +38,7 @@ public class SpielTerminBeifahrer implements SpielTermin{
     }
 
     @Override
-    public String getDescription() throws GeoException, MissingConfigException {
+    public String getDescription() throws GeoException, ConfigException {
         return spielTerminFahrer.getDescription();
     }
 }

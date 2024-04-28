@@ -3,7 +3,7 @@ package com.dieblich.handball.schiedsrichterassistent.calendar;
 import biweekly.Biweekly;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
-import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
+import com.dieblich.handball.schiedsrichterassistent.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.geo.Fahrt;
@@ -36,7 +36,7 @@ public class SpielTerminEinzelschiri implements SpielTermin {
 
     // TODO test exceptions are thrown
     @Override
-    public String extractCalendarEvent() throws GeoException, MissingConfigException {
+    public String extractCalendarEvent() throws GeoException, ConfigException {
         ICalendar ical = new ICalendar();
         VEvent event = new VEvent();
 
@@ -52,14 +52,14 @@ public class SpielTerminEinzelschiri implements SpielTermin {
         return Biweekly.write(ical).go();
     }
 
-    public SchirieinsatzAblauf getSpielAblauf() throws GeoException, MissingConfigException {
+    public SchirieinsatzAblauf getSpielAblauf() throws GeoException, ConfigException {
         if(spielAblauf == null){
             spielAblauf = createSpielablauf();
         }
         return spielAblauf;
     }
 
-    private SchirieinsatzAblauf createSpielablauf() throws MissingConfigException, GeoException {
+    private SchirieinsatzAblauf createSpielablauf() throws ConfigException, GeoException {
         Koordinaten coordsSchiri = config.Benutzerdaten.getCoords();
         Optional<Koordinaten> optionalCoordsHalle = geoService.findKoordinaten(einsatz.hallenAdresse());
         if (optionalCoordsHalle.isEmpty()) {
@@ -79,13 +79,13 @@ public class SpielTerminEinzelschiri implements SpielTermin {
     }
 
     @Override
-    public String getDescription() throws GeoException, MissingConfigException {
+    public String getDescription() throws GeoException, ConfigException {
         if(description == null){
             SchirieinsatzAblauf ablauf = getSpielAblauf();
             description = einsatz.heimMannschaft() + " vs. " + einsatz.gastMannschaft() + "\n";
             description += "\n";
-            description += "Berechnete Fahrtzeit: "+(ablauf.getFahrtZurHalle().dauerInSekunden()/60)+" Min\n";
-            description += "Berechnete Strecke: "+(ablauf.getFahrtZurHalle().distanzInMetern()/1000)+" km\n";
+            description += "Berechnete Fahrtzeit: "+ ablauf.getFahrtZurHalle().dauerInMinuten()      + " Min\n";
+            description += "Berechnete Strecke: "  + ablauf.getFahrtZurHalle().distanzInKilometern() + " km\n";
             description += "\n";
             description += SpielTermin.asTimeOfDay(ablauf.getAbfahrt())              + " Uhr Abfahrt" + "\n";
             description += SpielTermin.asTimeOfDay(ablauf.getAnkunftHalle())         + " Uhr Ankunft" + "\n";

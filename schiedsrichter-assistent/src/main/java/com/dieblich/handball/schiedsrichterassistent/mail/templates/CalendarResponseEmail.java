@@ -1,6 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.mail.templates;
 
-import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
+import com.dieblich.handball.schiedsrichterassistent.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTermin;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.mail.Email;
@@ -14,7 +14,7 @@ public class CalendarResponseEmail extends Email implements AutoCloseable{
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-    public CalendarResponseEmail(String botEmailAddress, String schiriEmailAddress, SpielTermin spielTermin, Kostenabrechnung kostenabrechnung) throws GeoException, IOException, MissingConfigException {
+    public CalendarResponseEmail(String botEmailAddress, String schiriEmailAddress, SpielTermin spielTermin, Kostenabrechnung kostenabrechnung) throws GeoException, IOException, ConfigException {
         super(botEmailAddress, schiriEmailAddress,
                 "Termine für deine Ansetzung am "+spielTermin.getDay().format(DATE_FORMAT),
                 "Anbei deine Ansetzung.\n\n" + spielTermin.getDescription(),
@@ -23,7 +23,7 @@ public class CalendarResponseEmail extends Email implements AutoCloseable{
         );
     }
 
-    private static File saveToFile(SpielTermin spielTermin) throws IOException, GeoException, MissingConfigException {
+    private static File saveToFile(SpielTermin spielTermin) throws IOException, GeoException, ConfigException {
         long uniqueID = System.currentTimeMillis();
         String fileName = uniqueID+".ics";
 

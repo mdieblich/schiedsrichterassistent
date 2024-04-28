@@ -3,7 +3,7 @@ package com.dieblich.handball.schiedsrichterassistent.calendar;
 import biweekly.Biweekly;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
-import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
+import com.dieblich.handball.schiedsrichterassistent.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.geo.Fahrt;
@@ -36,7 +36,7 @@ public class SpielTerminFahrer implements SpielTermin{
     }
 
     @Override
-    public String extractCalendarEvent() throws GeoException, MissingConfigException {
+    public String extractCalendarEvent() throws GeoException, ConfigException {
         ICalendar ical = new ICalendar();
         VEvent event = new VEvent();
 
@@ -60,13 +60,13 @@ public class SpielTerminFahrer implements SpielTermin{
         return einsatz.hallenAdresse();
     }
 
-    public SchirieinsatzAblauf getSpielAblauf() throws GeoException, MissingConfigException {
+    public SchirieinsatzAblauf getSpielAblauf() throws GeoException, ConfigException {
         if(spielAblauf == null){
             spielAblauf = createSpielablauf();
         }
         return spielAblauf;
     }
-    private SchirieinsatzAblauf createSpielablauf() throws MissingConfigException, GeoException {
+    private SchirieinsatzAblauf createSpielablauf() throws ConfigException, GeoException {
         Koordinaten coordsFahrer = schiriConfigFahrer.Benutzerdaten.getCoords();
         Koordinaten coordsBeifahrer = schiriConfigBeifahrer.Benutzerdaten.getCoords();
         Optional<Koordinaten> optionalCoordsHalle = geoService.findKoordinaten(einsatz.hallenAdresse());
@@ -92,17 +92,17 @@ public class SpielTerminFahrer implements SpielTermin{
     }
 
     @Override
-    public String getDescription() throws GeoException, MissingConfigException {
+    public String getDescription() throws GeoException, ConfigException {
         if(description == null){
             String nameFahrer = schiriConfigFahrer.Benutzerdaten.Vorname;
             String nameBeifahrer = schiriConfigBeifahrer.Benutzerdaten.Vorname;
             SchirieinsatzAblauf ablauf = getSpielAblauf();
             description = einsatz.heimMannschaft() + " vs. " + einsatz.gastMannschaft() + "\n";
             description += "\n";
-            description += "Berechnete Fahrtzeit: "+(ablauf.getFahrtZumPartner().dauerInSekunden()/60)  +" Min "+nameFahrer+" zu "+nameBeifahrer+"\n";
-            description += "                      "+(ablauf.getFahrtZurHalle().dauerInSekunden()/60)    +" Min zur Halle\n";
-            description += "Berechnete Strecke:   "+(ablauf.getFahrtZumPartner().distanzInMetern()/1000)+" km  "+nameFahrer+" zu "+nameBeifahrer+"\n";
-            description += "                      "+(ablauf.getFahrtZurHalle().distanzInMetern()/1000)  +" km  zur Halle\n";
+            description += "Berechnete Fahrtzeit: "+ablauf.getFahrtZumPartner().dauerInMinuten()     +" Min "+nameFahrer+" zu "+nameBeifahrer+"\n";
+            description += "                      "+ablauf.getFahrtZurHalle().dauerInMinuten()       +" Min zur Halle\n";
+            description += "Berechnete Strecke:   "+ablauf.getFahrtZumPartner().distanzInKilometern()+" km  "+nameFahrer+" zu "+nameBeifahrer+"\n";
+            description += "                      "+ablauf.getFahrtZurHalle().distanzInKilometern()  +" km  zur Halle\n";
             description += "\n";
             description += SpielTermin.asTimeOfDay(ablauf.getAbfahrt())               + " Uhr Abfahrt " + nameFahrer                + "\n";
             description += SpielTermin.asTimeOfDay(ablauf.getPartnerAbholen())        + " Uhr " + nameBeifahrer + " abholen"        + "\n";

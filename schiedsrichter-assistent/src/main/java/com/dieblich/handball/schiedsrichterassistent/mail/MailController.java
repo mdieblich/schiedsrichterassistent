@@ -117,11 +117,10 @@ public class MailController {
 
             SchiriConfiguration config = optionalOldConfig.orElse(SchiriConfiguration.NEW_DEFAULT(sender));
 
-            List<String> log = new ArrayList<>();
-            config.updateWith(email.getContent(), geoService::findKoordinaten, log::add);
+            config.updateWith(email.getContent(), geoService::findKoordinaten);
             schiriRepo.overwriteSchiriConfiguration(config);
 
-            ConfigConfirmationEmail responseEmail = new ConfigConfirmationEmail(botEmailaddress, sender, config, log);
+            ConfigConfirmationEmail responseEmail = new ConfigConfirmationEmail(botEmailaddress, sender, config);
             stratoSend.send(responseEmail);
         } catch (Exception e) {
             inbox.addException(sender, e);
@@ -195,12 +194,12 @@ public class MailController {
         return schiriConfigB;
     }
 
-    private void sendCalendarEventForOneSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration config) throws GeoException, MissingConfigException, IOException, EmailException {
+    private void sendCalendarEventForOneSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration config) throws GeoException, ConfigException, IOException, EmailException {
         SpielTerminEinzelschiri spielTermin = new SpielTerminEinzelschiri(schiriEinsatz, config, geoService);
         Kostenabrechnung abrechnung = new Kostenabrechnung(schiriEinsatz, spielTermin.getSpielAblauf(), config);
         sendTermin(spielTermin, abrechnung, config.Benutzerdaten.Email);
     }
-    private void sendCalendarEventForTwoSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration fahrer, SchiriConfiguration beifahrer) throws GeoException, MissingConfigException, IOException, EmailException {
+    private void sendCalendarEventForTwoSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration fahrer, SchiriConfiguration beifahrer) throws GeoException, ConfigException, IOException, EmailException {
         SpielTerminFahrer spielTerminFahrer = new SpielTerminFahrer(schiriEinsatz, fahrer, beifahrer, geoService);
         Kostenabrechnung abrechnung = new Kostenabrechnung(schiriEinsatz, spielTerminFahrer.getSpielAblauf(), fahrer, beifahrer);
         sendTermin(spielTerminFahrer, abrechnung, fahrer.Benutzerdaten.Email);
@@ -208,7 +207,7 @@ public class MailController {
         sendTermin(spielTerminBeifahrer, abrechnung, beifahrer.Benutzerdaten.Email);
     }
 
-    private void sendTermin(SpielTermin termin, Kostenabrechnung abrechnung, String receiver) throws GeoException, MissingConfigException, IOException, EmailException {
+    private void sendTermin(SpielTermin termin, Kostenabrechnung abrechnung, String receiver) throws GeoException, ConfigException, IOException, EmailException {
         try (CalendarResponseEmail response = new CalendarResponseEmail(botEmailaddress, receiver, termin, abrechnung)) {
             stratoSend.send(response);
         }

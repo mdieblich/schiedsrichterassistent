@@ -1,6 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.calendar;
 
-import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
+import com.dieblich.handball.schiedsrichterassistent.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 
 import java.time.Instant;
@@ -12,7 +12,7 @@ import java.util.Date;
 
 public interface SpielTermin {
     // TODO test exceptions are thrown
-    String extractCalendarEvent() throws GeoException, MissingConfigException;
+    String extractCalendarEvent() throws GeoException, ConfigException;
 
     LocalDate getDay();
 
@@ -25,5 +25,5 @@ public interface SpielTermin {
         return localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 
-    String getDescription() throws GeoException, MissingConfigException;
+    String getDescription() throws GeoException, ConfigException;
 }

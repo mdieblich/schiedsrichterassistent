@@ -1,6 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.calendar;
 
-import com.dieblich.handball.schiedsrichterassistent.MissingConfigException;
+import com.dieblich.handball.schiedsrichterassistent.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 class SpielTerminEinzelschiriTest extends SpielTerminTest{
 
     @Test
-    public void summary() throws GeoException, MissingConfigException {
+    public void summary() throws GeoException, ConfigException {
         SpielTerminEinzelschiri termin = prepareDefaultTermin();
 
         String calendarEvent = termin.extractCalendarEvent();
@@ -55,7 +55,7 @@ class SpielTerminEinzelschiriTest extends SpielTerminTest{
     }
 
     @Test
-    public void location() throws GeoException, MissingConfigException {
+    public void location() throws GeoException, ConfigException {
         SpielTerminEinzelschiri termin = prepareDefaultTermin();
 
         String calendarEvent = termin.extractCalendarEvent();
@@ -64,7 +64,7 @@ class SpielTerminEinzelschiriTest extends SpielTerminTest{
     }
 
     @Test
-    public void startTime() throws GeoException, MissingConfigException {
+    public void startTime() throws GeoException, ConfigException {
         SpielTerminEinzelschiri termin = prepareDefaultTermin();
 
         // act
@@ -82,7 +82,7 @@ class SpielTerminEinzelschiriTest extends SpielTerminTest{
         assertEntryIs("DTSTART", day+"T"+time+"Z", calendarEvent);
     }
     @Test
-    public void endTime() throws GeoException, MissingConfigException {
+    public void endTime() throws GeoException, ConfigException {
         SpielTerminEinzelschiri termin = prepareDefaultTermin();
 
         // act
@@ -101,7 +101,7 @@ class SpielTerminEinzelschiriTest extends SpielTerminTest{
         assertEntryIs("DTEND", day+"T"+time+"Z", calendarEvent);
     }
     @Test
-    public void description() throws GeoException, MissingConfigException {
+    public void description() throws GeoException, ConfigException {
         SpielTerminEinzelschiri termin = prepareDefaultTermin();
 
         // act
