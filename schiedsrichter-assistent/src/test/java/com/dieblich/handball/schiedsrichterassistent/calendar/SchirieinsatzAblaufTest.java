@@ -46,7 +46,7 @@ class SchirieinsatzAblaufTest {
         config.Spielablauf.UmziehenVorSpiel = 15;
         String liga = "Landesliga Männer";
         LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
-        Fahrt zurHalle = new Fahrt(45*60, 0);
+        Fahrt zurHalle = new Fahrt(45, 0);
         SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(anwurf, liga, zurHalle, config);
 
         assertEquals(LocalDateTime.parse("2024-04-13T14:00:00"), ablauf.getAbfahrt());
@@ -58,8 +58,8 @@ class SchirieinsatzAblaufTest {
         config.Spielablauf.UmziehenVorSpiel = 15;
         String liga = "Landesliga Männer";
         LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
-        Fahrt zurHalle = new Fahrt(45*60, 0);
-        Fahrt zumPartner = new Fahrt(15*60, 0);
+        Fahrt zurHalle = new Fahrt(45, 0);
+        Fahrt zumPartner = new Fahrt(15, 0);
         SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(anwurf, liga, zurHalle, zumPartner, config);
 
         assertEquals(LocalDateTime.parse("2024-04-13T14:00:00"), ablauf.getPartnerAbholen());
@@ -71,8 +71,8 @@ class SchirieinsatzAblaufTest {
         config.Spielablauf.UmziehenVorSpiel = 15;
         String liga = "Landesliga Männer";
         LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
-        Fahrt zurHalle = new Fahrt(45*60, 0);
-        Fahrt zumPartner = new Fahrt(15*60, 0);
+        Fahrt zurHalle = new Fahrt(45, 0);
+        Fahrt zumPartner = new Fahrt(15, 0);
         SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(anwurf, liga, zurHalle, zumPartner, config);
 
         assertEquals(LocalDateTime.parse("2024-04-13T13:45:00"), ablauf.getAbfahrt());
@@ -107,7 +107,7 @@ class SchirieinsatzAblaufTest {
         config.Spielablauf.PapierKramNachSpiel = 15;
         config.Spielablauf.UmziehenNachSpiel = 15;
         LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
-        Fahrt zurHalle = new Fahrt(45*60, 0);
+        Fahrt zurHalle = new Fahrt(45, 0);
         SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(anwurf, "", zurHalle, config);
 
         assertEquals(LocalDateTime.parse("2024-04-13T18:15:00"), ablauf.getHeimkehr());
@@ -119,8 +119,8 @@ class SchirieinsatzAblaufTest {
         config.Spielablauf.PapierKramNachSpiel = 15;
         config.Spielablauf.UmziehenNachSpiel = 15;
         LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
-        Fahrt zurHalle = new Fahrt(45*60, 0);
-        Fahrt zumPartner = new Fahrt(15*60, 0);
+        Fahrt zurHalle = new Fahrt(45, 0);
+        Fahrt zumPartner = new Fahrt(15, 0);
         SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(anwurf, "", zurHalle, zumPartner, config);
 
         assertEquals(LocalDateTime.parse("2024-04-13T18:15:00"), ablauf.getZurueckbringenPartner());
@@ -132,8 +132,8 @@ class SchirieinsatzAblaufTest {
         config.Spielablauf.PapierKramNachSpiel = 15;
         config.Spielablauf.UmziehenNachSpiel = 15;
         LocalDateTime anwurf = LocalDateTime.parse("2024-04-13T15:30:00");
-        Fahrt zurHalle = new Fahrt(45*60, 0);
-        Fahrt zumPartner = new Fahrt(15*60, 0);
+        Fahrt zurHalle = new Fahrt(45, 0);
+        Fahrt zumPartner = new Fahrt(15, 0);
         SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(anwurf, "", zurHalle, zumPartner, config);
 
         assertEquals(LocalDateTime.parse("2024-04-13T18:30:00"), ablauf.getHeimkehr());

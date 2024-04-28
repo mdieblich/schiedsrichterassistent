@@ -10,8 +10,8 @@ public class GeoServiceFake implements GeoService{
     private final Map<String, Koordinaten> koordinaten = new HashMap<>();
     private final Map<AbstractMap.SimpleImmutableEntry<Koordinaten, Koordinaten>, Fahrt> fahrten = new HashMap<>();
 
-    public void addFahrt(Koordinaten startCoords, Koordinaten endCoords, int dauerInSekunden, int distanzInMetern){
-        fahrten.put(pair(startCoords, endCoords), new Fahrt(dauerInSekunden, distanzInMetern));
+    public void addFahrt(Koordinaten startCoords, Koordinaten endCoords, int dauerInMinuten, int distanzInKilometern){
+        fahrten.put(pair(startCoords, endCoords), new Fahrt(dauerInMinuten, distanzInKilometern));
     }
 
     private AbstractMap.SimpleImmutableEntry<Koordinaten, Koordinaten> pair(Koordinaten a, Koordinaten b){

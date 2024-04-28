@@ -55,8 +55,8 @@ class SpielTerminFahrerTest extends SpielTerminTest {
 
         GeoServiceFake fakeGeoService = new GeoServiceFake();
         Koordinaten coordsHalle = fakeGeoService.addKoordinaten("Am Sportzentrum, 50259 Pulheim");
-        fakeGeoService.addFahrt(coordsFahrer, coordsBeifahrer, 15*60, 10*1000);
-        fakeGeoService.addFahrt(coordsBeifahrer, coordsHalle, 30*60, 34*1000);
+        fakeGeoService.addFahrt(coordsFahrer, coordsBeifahrer, 15, 10);
+        fakeGeoService.addFahrt(coordsBeifahrer, coordsHalle, 30, 34);
 
         // act
         return new SpielTerminFahrer(einsatz, configFahrer, configBeifahrer, fakeGeoService);

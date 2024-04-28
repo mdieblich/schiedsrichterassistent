@@ -48,7 +48,7 @@ class SpielTerminEinzelschiriTest extends SpielTerminTest{
 
         GeoServiceFake fakeGeoService = new GeoServiceFake();
         Koordinaten coordsHalle = fakeGeoService.addKoordinaten("Am Sportzentrum, 50259 Pulheim");
-        fakeGeoService.addFahrt(coordsSchiri, coordsHalle, 30*60, 34*1000);
+        fakeGeoService.addFahrt(coordsSchiri, coordsHalle, 30, 34);
 
         // act
         return new SpielTerminEinzelschiri(einsatz, config, fakeGeoService);
