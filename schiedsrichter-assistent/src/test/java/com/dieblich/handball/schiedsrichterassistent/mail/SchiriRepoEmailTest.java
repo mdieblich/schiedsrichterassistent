@@ -72,7 +72,6 @@ class SchiriRepoEmailTest {
         configuration.Spielablauf = null;
         configuration.Gespannpartner = null;
 
-
         // act
         repo.overwriteSchiriConfiguration(configuration);
 
@@ -92,7 +91,21 @@ class SchiriRepoEmailTest {
                     "Adresse" : null
                   },
                   "Spielablauf" : null,
-                  "Gespannpartner" : null
+                  "Gespannpartner" : null,
+                  "Kosten" : {
+                    "TeilnahmeEntschädigung" : {
+                      "Standard" : null,
+                      "Abweichungen" : { }
+                    },
+                    "Fahrer" : {
+                      "Standard" : null,
+                      "Abweichungen" : { }
+                    },
+                    "Beifahrer" : {
+                      "Standard" : null,
+                      "Abweichungen" : { }
+                    }
+                  }
                 }""", firstEmail.getContent().replace("\r", ""));
     }
     @Test
@@ -111,7 +124,6 @@ class SchiriRepoEmailTest {
         configuration.Spielablauf = null;
         configuration.Gespannpartner = null;
 
-
         // act
         repo.overwriteSchiriConfiguration(configuration);
 
@@ -131,7 +143,21 @@ class SchiriRepoEmailTest {
                     "Adresse" : null
                   },
                   "Spielablauf" : null,
-                  "Gespannpartner" : null
+                  "Gespannpartner" : null,
+                  "Kosten" : {
+                    "TeilnahmeEntschädigung" : {
+                      "Standard" : null,
+                      "Abweichungen" : { }
+                    },
+                    "Fahrer" : {
+                      "Standard" : null,
+                      "Abweichungen" : { }
+                    },
+                    "Beifahrer" : {
+                      "Standard" : null,
+                      "Abweichungen" : { }
+                    }
+                  }
                 }""", firstEmail.getContent().replace("\r", ""));
     }
 }
