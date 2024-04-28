@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.dieblich.handball'
-version = '1.2'
+version = '1.2.2'
 
 java {
 	sourceCompatibility = '17'

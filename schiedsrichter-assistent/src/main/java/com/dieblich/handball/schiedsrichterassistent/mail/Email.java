@@ -5,6 +5,7 @@ import jakarta.mail.internet.*;
 import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
+import org.jsoup.Jsoup;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,6 +62,9 @@ public class Email {
     private String extractContent(Message message) throws MessagingException, IOException {
         if (message.isMimeType("text/plain")) {
             return message.getContent().toString();
+        }
+        if(message.isMimeType("text/html")){
+            return Jsoup.parse(message.getContent().toString()).text();
         }
         if (message.isMimeType("multipart/*")) {
             MimeMultipart mimeMultipart = (MimeMultipart) message.getContent();
