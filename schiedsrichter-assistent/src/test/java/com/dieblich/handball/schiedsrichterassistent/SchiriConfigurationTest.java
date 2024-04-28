@@ -6,11 +6,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -232,7 +229,7 @@ class SchiriConfigurationTest {
     }
 
     @Test
-    public void updateWithNothingChangesNothing() {
+    public void updateWithNothingChangesNothing() throws ConfigException {
         SchiriConfiguration config = new SchiriConfiguration("muster@moritz.de");
         config.Benutzerdaten.Vorname = "Moritz";
         config.Benutzerdaten.Nachname = "Schulze";
@@ -250,7 +247,7 @@ class SchiriConfigurationTest {
                 "Kreisklasse", 4
         ));
 
-        config.updateWith("{}", fakeAddressToGeoLocation, fakeLog);
+        config.updateWith("{}", fakeAddressToGeoLocation);
 
         assertEquals("muster@moritz.de", config.Benutzerdaten.Email);
         assertEquals("Moritz", config.Benutzerdaten.Vorname);
@@ -270,7 +267,7 @@ class SchiriConfigurationTest {
         ), config.Spielablauf.TechnischeBesprechung.Abweichungen);
     }
     @Test
-    public void updateWithSingleEntry() {
+    public void updateWithSingleEntry() throws ConfigException {
         SchiriConfiguration config = new SchiriConfiguration("");
         config.updateWith("""
                 {
@@ -280,12 +277,12 @@ class SchiriConfigurationTest {
                 		}
                 	}
                 }
-                """, fakeAddressToGeoLocation, fakeLog);
+                """, fakeAddressToGeoLocation);
 
         assertEquals(90, config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten);
     }
     @Test
-    public void updateWithMultipleEntries() {
+    public void updateWithMultipleEntries() throws ConfigException {
         SchiriConfiguration config = new SchiriConfiguration("");
         config.updateWith("""
                 {
@@ -298,14 +295,14 @@ class SchiriConfigurationTest {
                 		}
                 	}
                 }
-                """, fakeAddressToGeoLocation, fakeLog);
+                """, fakeAddressToGeoLocation);
 
         assertEquals("Moritz", config.Benutzerdaten.Vorname);
         assertEquals(90, config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten);
     }
 
     @Test
-    public void updateWithTechnischeBesprechungLiga() {
+    public void updateWithTechnischeBesprechungLiga() throws ConfigException {
         SchiriConfiguration config = new SchiriConfiguration("");
         config.updateWith("""
                 {
@@ -317,12 +314,12 @@ class SchiriConfigurationTest {
                 		}
                 	}
                 }
-                """, fakeAddressToGeoLocation, fakeLog);
+                """, fakeAddressToGeoLocation);
 
         assertEquals(50, config.Spielablauf.TechnischeBesprechung.Abweichungen.get("Regionalliga"));
     }
     @Test
-    public void updateWithCreatesLiga() {
+    public void updateWithCreatesLiga() throws ConfigException {
         SchiriConfiguration config = new SchiriConfiguration("");
         config.updateWith("""
                 {
@@ -334,13 +331,13 @@ class SchiriConfigurationTest {
                 		}
                 	}
                 }
-                """, fakeAddressToGeoLocation, fakeLog);
+                """, fakeAddressToGeoLocation);
 
         assertEquals(20, config.Spielablauf.TechnischeBesprechung.Abweichungen.get("Kreisklasse"));
     }
 
     @Test
-    public void updateWithAdresseCreatesGeoLocation() {
+    public void updateWithAdresseCreatesGeoLocation() throws ConfigException {
         SchiriConfiguration config = new SchiriConfiguration("");
         config.updateWith("""
                 {
@@ -348,23 +345,28 @@ class SchiriConfigurationTest {
                 		"Adresse": "Dudelstr. 15, 12345 Dudelstadt"
                 	}
                 }
-                """, String -> Optional.of(new Koordinaten(5,3)), fakeLog);
+                """, String -> Optional.of(new Koordinaten(5,3)));
 
         assertEquals("Dudelstr. 15, 12345 Dudelstadt", config.Benutzerdaten.Adresse);
         assertEquals(3, config.Benutzerdaten.Längengrad);
         assertEquals(5, config.Benutzerdaten.Breitengrad);
     }
     @Test
-    public void updateWithUnknownAdresseChangesNothing() {
+    public void updateWithUnknownAdresseChangesNothing(){
         SchiriConfiguration config = new SchiriConfiguration("");
         String adresseBefore = config.Benutzerdaten.Adresse;
-        config.updateWith("""
-                {
-                	"Benutzerdaten": {
-                		"Adresse": "Dudelstr. 15, 12345 Dudelstadt"
-                	}
-                }
-                """, String -> Optional.empty(), fakeLog);
+        try {
+            config.updateWith("""
+                    {
+                    	"Benutzerdaten": {
+                    		"Adresse": "Dudelstr. 15, 12345 Dudelstadt"
+                    	}
+                    }
+                    """, String -> Optional.empty());
+            fail("Exception was expected to happen");
+        } catch (ConfigException e){
+            // so far, so good
+        }
 
         assertEquals(adresseBefore, config.Benutzerdaten.Adresse);
         assertNull(config.Benutzerdaten.Längengrad);
@@ -373,29 +375,30 @@ class SchiriConfigurationTest {
     @Test
     public void updateWithUnknownAdresseCreatesLogEntry() {
         SchiriConfiguration config = new SchiriConfiguration("");
-        List<String> log = new ArrayList<>();
-        config.updateWith("""
-                {
-                	"Benutzerdaten": {
-                		"Adresse": "Dudelstr. 15, 12345 Dudelstadt"
-                	}
-                }
-                """, String -> Optional.empty(), log::add);
-
-        List<String> expectedLog = List.of(
-            "Für die Adresse \"Dudelstr. 15, 12345 Dudelstadt\" konnten Längen- und Breitengrad nicht bestimmt werden. Sie wird daher nicht übernomen.",
-            "FALLS DAS PROBLEM WIEDERHOLT AUFTRITT SO KANNST DU FOLGENDES TUN:",
-            "1. Bestimme mithilfe eines Kartendienstes (z.B. https://www.gpskoordinaten.de/) deinen Längen- und Breitengrad.",
-            "2. Setze in der Konfiguration im Abschnitt \"Benutzerdaten\" die Adresse UND Werte für \"Löngengrad\"",
-            "   und \"Breitengrad\". Beachte bitte, dass du min. 4-Nachkommastellen verwendest.",
-            "   Verwendet wird das Koordinatensystem WGS 84"
-        );
-
-        assertEquals(expectedLog, log);
+        try {
+            config.updateWith("""
+                    {
+                    	"Benutzerdaten": {
+                    		"Adresse": "Dudelstr. 15, 12345 Dudelstadt"
+                    	}
+                    }
+                    """, String -> Optional.empty());
+            fail("Exception was not thrown");
+        } catch (ConfigException e){
+            String expectedMessage =
+                    """
+                            Für die Adresse "Dudelstr. 15, 12345 Dudelstadt" konnten Längen- und Breitengrad nicht bestimmt werden. Sie wird daher nicht übernomen.
+                            FALLS DAS PROBLEM WIEDERHOLT AUFTRITT SO KANNST DU FOLGENDES TUN:
+                            1. Bestimme mithilfe eines Kartendienstes (z.B. https://www.gpskoordinaten.de/) deinen Längen- und Breitengrad.
+                            2. Setze in der Konfiguration im Abschnitt "Benutzerdaten" die Adresse UND Werte für "Längengrad" \
+                            und "Breitengrad". Beachte bitte, dass du min. 4-Nachkommastellen verwendest. \
+                            Verwendet wird das Koordinatensystem WGS 84""";
+            assertEquals(expectedMessage, e.getCause().getMessage());
+        }
     }
 
     @Test
-    public void updateWithUnknownAdresseButGeoLocationWorks() {
+    public void updateWithUnknownAdresseButGeoLocationWorks() throws ConfigException {
         SchiriConfiguration config = new SchiriConfiguration("");
         config.updateWith("""
                 {
@@ -405,7 +408,7 @@ class SchiriConfigurationTest {
                 		"Breitengrad": 5
                 	}
                 }
-                """, fakeAddressToGeoLocation, fakeLog);
+                """, fakeAddressToGeoLocation);
 
         assertEquals("Dudelstr. 15, 12345 Dudelstadt", config.Benutzerdaten.Adresse);
         assertEquals(3, config.Benutzerdaten.Längengrad);
@@ -413,7 +416,7 @@ class SchiriConfigurationTest {
     }
 
     @Test
-    public void updateWithUnknownEntryDoesNothing() {
+    public void updateWithUnknownEntryDoesNothing() throws ConfigException {
         SchiriConfiguration config = new SchiriConfiguration("");
         config.updateWith("""
                 {
@@ -421,42 +424,49 @@ class SchiriConfigurationTest {
                 		"Grillen": "gerne"
                 	}
                 }
-                """, fakeAddressToGeoLocation, fakeLog);
+                """, fakeAddressToGeoLocation);
         // Nothing happens
     }
 
     @Test
-    public void updateWithWrongTypeDoesNothing() {
+    public void updateWithWrongTypeDoesNothing(){
         SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
         int umziehenVorher = config.Spielablauf.UmziehenVorSpiel;
-        config.updateWith("""
-                {
-                	"Spielablauf": {
-                        "UmziehenVorSpiel": "Ein String!"
-                	}
-                }
-                """, fakeAddressToGeoLocation, fakeLog);
+        try {
+            config.updateWith("""
+                    {
+                        "Spielablauf": {
+                            "UmziehenVorSpiel": "Ein String!"
+                        }
+                    }
+                    """, fakeAddressToGeoLocation);
+            fail("Exception was excpected");
+        } catch (ConfigException e) {
+            // so far, so good
+        }
 
         assertEquals(umziehenVorher, config.Spielablauf.UmziehenVorSpiel);
     }
     @Test
-    public void updateWithInvalidJSONCreatesLog() {
+    public void updateWithInvalidJSONCreatesException() {
         SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
-        List<String> log = new ArrayList<>();
-        config.updateWith("""
-                {
-                	"Spielablauf": {
-                        "UmziehenVorSpiel": 25,
-                        "UmziehenNachSpiel
-                
-                }
-                """, fakeAddressToGeoLocation, log::add);
-
-        assertEquals(1, log.size());
+        try {
+            config.updateWith("""
+                    {
+                        "Spielablauf": {
+                            "UmziehenVorSpiel": 25,
+                            "UmziehenNachSpiel
+                    
+                    }
+                    """, fakeAddressToGeoLocation);
+            fail("Exception not thrown");
+        } catch (ConfigException e) {
+            // everything is fine
+        }
     }
 
     @Test
-    public void updateWithCreatesTeilnahmeEntschädigung() {
+    public void updateWithCreatesTeilnahmeEntschädigung() throws ConfigException {
         SchiriConfiguration config = new SchiriConfiguration("");
         config.updateWith("""
                 {
@@ -468,13 +478,13 @@ class SchiriConfigurationTest {
                         }
                       }
                 }
-                """, fakeAddressToGeoLocation, fakeLog);
+                """, fakeAddressToGeoLocation);
 
         assertEquals(100d, config.Kosten.TeilnahmeEntschädigung.get("Regionalliga Männer"));
     }
 
     @Test
-    public void updateWithCreatesFahrtkosten() {
+    public void updateWithCreatesFahrtkosten() throws ConfigException {
         SchiriConfiguration config = new SchiriConfiguration("");
         config.updateWith("""
                 {
@@ -486,13 +496,13 @@ class SchiriConfigurationTest {
                         }
                       }
                 }
-                """, fakeAddressToGeoLocation, fakeLog);
+                """, fakeAddressToGeoLocation);
 
         assertEquals(0.9, config.Kosten.Fahrer.get("Regionalliga"));
     }
 
     @Test
-    public void updateWithCreatesBeifahrerKosten() {
+    public void updateWithCreatesBeifahrerKosten() throws ConfigException {
         SchiriConfiguration config = new SchiriConfiguration("");
         config.updateWith("""
                 {
@@ -504,12 +514,10 @@ class SchiriConfigurationTest {
                         }
                       }
                 }
-                """, fakeAddressToGeoLocation, fakeLog);
+                """, fakeAddressToGeoLocation);
 
         assertEquals(0.3, config.Kosten.Beifahrer.get("Regionalliga"));
     }
 
     private final Function<String, Optional<Koordinaten>> fakeAddressToGeoLocation = (String) -> Optional.empty();
-    private final Consumer<String> fakeLog = (String) -> {};
-
 }
