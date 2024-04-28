@@ -17,7 +17,7 @@ public interface SpielTermin {
     LocalDate getDay();
 
     static Date asDate(LocalDateTime localDateTime){
-        Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+        Instant instant = localDateTime.atZone(ZoneId.of("Europe/Berlin")).toInstant();
         return Date.from(instant);
     }
 
