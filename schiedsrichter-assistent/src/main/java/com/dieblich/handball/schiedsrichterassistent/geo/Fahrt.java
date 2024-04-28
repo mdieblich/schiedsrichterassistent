@@ -3,10 +3,10 @@ package com.dieblich.handball.schiedsrichterassistent.geo;
 import com.dieblich.handball.schiedsrichterassistent.geo.openroute.Segment;
 
 public record Fahrt (
-   int dauerInSekunden,
-   int distanzInMetern
+   int dauerInMinuten,
+   int distanzInKilometern
 ){
     public Fahrt(Segment segment){
-        this((int)segment.duration(), (int)segment.distance());
+        this((int)Math.ceil(segment.duration()/60), (int)Math.round(segment.distance()/1000));
     }
 }

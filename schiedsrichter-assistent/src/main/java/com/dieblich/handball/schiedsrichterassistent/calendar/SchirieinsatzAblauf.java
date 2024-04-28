@@ -42,11 +42,11 @@ public class SchirieinsatzAblauf {
     public LocalDateTime getAbfahrt() {
         if(isEinzelSchiri()){
             return getAnkunftHalle()
-                    .minusMinutes(fahrtZurHalle.dauerInSekunden()/60);
+                    .minusMinutes(fahrtZurHalle.dauerInMinuten());
         }
 
         return getPartnerAbholen()
-                .minusMinutes(fahrtZumPartner.dauerInSekunden()/60);
+                .minusMinutes(fahrtZumPartner.dauerInMinuten());
     }
 
     private boolean isEinzelSchiri() {
@@ -55,7 +55,7 @@ public class SchirieinsatzAblauf {
 
     public LocalDateTime getPartnerAbholen() {
         return getAnkunftHalle()
-                .minusMinutes(fahrtZurHalle.dauerInSekunden()/60);
+                .minusMinutes(fahrtZurHalle.dauerInMinuten());
     }
 
     public LocalDateTime getSpielEnde() {
@@ -70,15 +70,15 @@ public class SchirieinsatzAblauf {
     }
     public LocalDateTime getZurueckbringenPartner() {
         return getRueckfahrt()
-                .plusMinutes(fahrtZurHalle.dauerInSekunden()/60);
+                .plusMinutes(fahrtZurHalle.dauerInMinuten());
     }
     public LocalDateTime getHeimkehr() {
         if(isEinzelSchiri()) {
             return getRueckfahrt()
-                    .plusMinutes(fahrtZurHalle.dauerInSekunden() / 60);
+                    .plusMinutes(fahrtZurHalle.dauerInMinuten());
         }
         return getZurueckbringenPartner()
-                .plusMinutes(fahrtZumPartner.dauerInSekunden() / 60);
+                .plusMinutes(fahrtZumPartner.dauerInMinuten());
 
     }
 }
