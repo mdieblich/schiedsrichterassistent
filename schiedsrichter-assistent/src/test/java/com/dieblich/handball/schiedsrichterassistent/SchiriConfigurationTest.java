@@ -519,5 +519,18 @@ class SchiriConfigurationTest {
         assertEquals(0.3, config.Kosten.Beifahrer.get("Regionalliga"));
     }
 
+    @Test
+    public void getFahrtkostenForSchortLigaName(){
+        SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
+        config.Kosten.Fahrer.Abweichungen.put("Verbandsliga", 0.9d);
+        assertEquals(0.9d, config.Kosten.Fahrer.get("Mittelrhein Verbandsliga Frauen"));
+    }
+    @Test
+    public void getBeifahrerkostenForSchortLigaName(){
+        SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
+        config.Kosten.Beifahrer.Abweichungen.put("Verbandsliga", 0.9d);
+        assertEquals(0.9d, config.Kosten.Beifahrer.get("Mittelrhein Verbandsliga Frauen"));
+    }
+
     private final Function<String, Optional<Koordinaten>> fakeAddressToGeoLocation = (String) -> Optional.empty();
 }

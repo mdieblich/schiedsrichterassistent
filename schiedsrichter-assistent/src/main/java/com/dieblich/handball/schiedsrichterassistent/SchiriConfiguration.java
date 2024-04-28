@@ -229,6 +229,12 @@ public class SchiriConfiguration {
                 if(Abweichungen.containsKey(ligaName)){
                     return Abweichungen.get(ligaName);
                 }
+                // now, search with brute force
+                for(String key:Abweichungen.keySet()){
+                    if(ligaName.contains(key)){
+                        return Abweichungen.get(key);
+                    }
+                }
                 return Standard;
             }
 
