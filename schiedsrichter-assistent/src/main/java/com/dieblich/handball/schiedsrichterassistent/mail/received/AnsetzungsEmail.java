@@ -6,6 +6,7 @@ import com.dieblich.handball.schiedsrichterassistent.mail.Email;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AnsetzungsEmail {
@@ -23,6 +24,9 @@ public class AnsetzungsEmail {
     }
 
     static List<SchiriEinsatz> extractSchiriEinsaetze(String emailContent){
+
+        List<SchiriEinsatz> einsaetze = new ArrayList<>();
+
         String spielNr = null;
         LocalDateTime anwurf = null;
         String halleName = null;
@@ -72,15 +76,41 @@ public class AnsetzungsEmail {
                     schiriB = Schiedsrichter.fromNachnameVorname(schiris[1].trim());
                 }
             }
+
+            // now check if everything is complete, then we have a full Einsatz
+            if( spielNr        != null &&
+                anwurf         != null &&
+                halleName      != null &&
+                halleStrasse   != null &&
+                hallePLZOrt    != null &&
+                liga           != null &&
+                heimMannschaft != null &&
+                gastMannschaft != null &&
+                schiriA        != null){ // no need to check schiriB. Either both are set or none
+
+                einsaetze.add(new SchiriEinsatz(
+                        spielNr,
+                        anwurf,
+                        halleName, halleStrasse, hallePLZOrt,
+                        liga, heimMannschaft, gastMannschaft,
+                        schiriA, schiriB
+                ));
+                // reset all buffers
+                spielNr = null;
+                anwurf = null;
+                halleName = null;
+                halleStrasse = null;
+                hallePLZOrt = null;
+                liga = null;
+                heimMannschaft = null;
+                gastMannschaft = null;
+
+                schiriA = null;
+                schiriB = null;
+            }
         }
 
-        return List.of(new SchiriEinsatz(
-                spielNr,
-                anwurf,
-                halleName, halleStrasse, hallePLZOrt,
-                liga, heimMannschaft, gastMannschaft,
-                schiriA, schiriB
-        ));
+        return einsaetze;
     }
 
 }

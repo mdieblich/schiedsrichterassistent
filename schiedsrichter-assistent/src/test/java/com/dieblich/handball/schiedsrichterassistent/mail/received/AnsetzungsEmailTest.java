@@ -5,6 +5,7 @@ import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -118,6 +119,63 @@ class AnsetzungsEmailTest {
                 new Schiedsrichter("Andre", "Kohlenfluss")
         );
         assertEquals(expected, actual);
+    }
+
+
+    @Test
+    public void oneEmailTwoAnsetzungen(){
+        String emailContent = """
+            Sehr geehrte Damen und Herren,
+            
+            für die folgenden Begegnungen sind Schiedsrichter bzw. Beobachter eingeteilt worden:
+            
+            Olga Kebap: o.kebap@muster.de
+            Änderung: Gespann // o.kebap@muster.de
+            Liga: Kreisliga männliche Jugend A
+            Staffel:
+            Kreisliga männliche Jugend A
+            Spiel-Nr: 10078
+            25.02.2024 16:30 KiTA Handball Köln III - TSV Ballspiel II
+            Ort: 06041 Köln Schule, Schulstraße 3, 54321 Köln
+            SR-Gespann: Maxipfeife Moritz / Wippe Jürgen
+            SR-Gespann alt: Mustermann Max
+            
+            Änderung: Gespann // o.kebap@muster.de
+            Liga: Oberliga Frauen
+            Staffel:
+            Oberliga Frauen Gr. 3
+            Spiel-Nr: 4711
+            26.03.2025 17:24 Trinkzessinnen IV - TSV Saufen Feiern I
+            Ort: 01901 Berlin Halle, Hauptstraße 17, 12345 Berlin
+            SR-Gespann: Maxipfeife Moritz
+            SR-Gespann alt: Mustermann Max
+            """;
+        List<SchiriEinsatz> actual = AnsetzungsEmail.extractSchiriEinsaetze(emailContent);
+        SchiriEinsatz expectedA = new SchiriEinsatz(
+                "10078",
+                LocalDateTime.of(2024, 2, 25, 16, 30),
+                "06041 Köln Schule",
+                "Schulstraße 3",
+                "54321 Köln",
+                "Kreisliga männliche Jugend A",
+                "KiTA Handball Köln III",
+                "TSV Ballspiel II",
+                new Schiedsrichter("Moritz", "Maxipfeife"),
+                new Schiedsrichter("Jürgen", "Wippe")
+        );
+        SchiriEinsatz expectedB = new SchiriEinsatz(
+                "4711",
+                LocalDateTime.of(2025, 3, 26, 17, 24),
+                "01901 Berlin Halle",
+                "Hauptstraße 17",
+                "12345 Berlin",
+                "Oberliga Frauen",
+                "Trinkzessinnen IV",
+                "TSV Saufen Feiern I",
+                new Schiedsrichter("Moritz", "Maxipfeife"),
+                null
+        );
+        assertEquals(List.of(expectedA, expectedB), actual);
     }
 
 }
