@@ -3,11 +3,10 @@ package com.dieblich.handball.schiedsrichterassistent.mail.received;
 import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.mail.Email;
-import jakarta.mail.MessagingException;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class AnsetzungsEmail {
 
@@ -19,11 +18,11 @@ public class AnsetzungsEmail {
         this.originalEmail = originalEmail;
     }
 
-    public SchiriEinsatz extractSchiriEinsatz() {
-        return extractSchiriEinsatz(originalEmail.getContent());
+    public List<SchiriEinsatz> extractSchiriEinsaetze() {
+        return extractSchiriEinsaetze(originalEmail.getContent());
     }
 
-    static SchiriEinsatz extractSchiriEinsatz(String emailContent){
+    static List<SchiriEinsatz> extractSchiriEinsaetze(String emailContent){
         String spielNr = null;
         LocalDateTime anwurf = null;
         String halleName = null;
@@ -75,13 +74,13 @@ public class AnsetzungsEmail {
             }
         }
 
-        return new SchiriEinsatz(
+        return List.of(new SchiriEinsatz(
                 spielNr,
                 anwurf,
                 halleName, halleStrasse, hallePLZOrt,
                 liga, heimMannschaft, gastMannschaft,
                 schiriA, schiriB
-        );
+        ));
     }
 
 }

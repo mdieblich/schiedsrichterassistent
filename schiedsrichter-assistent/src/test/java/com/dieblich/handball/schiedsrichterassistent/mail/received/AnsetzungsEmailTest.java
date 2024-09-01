@@ -28,7 +28,7 @@ class AnsetzungsEmailTest {
             SR-Gespann: Maxipfeife Moritz
             SR-Gespann alt: Mustermann Max
             """;
-        SchiriEinsatz actual = AnsetzungsEmail.extractSchiriEinsatz(emailContent);
+        SchiriEinsatz actual = AnsetzungsEmail.extractSchiriEinsaetze(emailContent).get(0);
         SchiriEinsatz expected = new SchiriEinsatz(
                 "10078",
                 LocalDateTime.of(2024, 2, 25, 16, 30),
@@ -70,7 +70,7 @@ class AnsetzungsEmailTest {
                 SR-Gespann alt: Klowni Carsten / Lümmel Dominik
                 """;
 
-        SchiriEinsatz actual = AnsetzungsEmail.extractSchiriEinsatz(emailContent);
+        SchiriEinsatz actual = AnsetzungsEmail.extractSchiriEinsaetze(emailContent).get(0);
         SchiriEinsatz expected = new SchiriEinsatz(
                 "1137",
                 LocalDateTime.of(2024, 3, 2, 18, 0),
@@ -104,7 +104,7 @@ class AnsetzungsEmailTest {
                 SR-Gespann alt: -
                 """;
 
-        SchiriEinsatz actual = AnsetzungsEmail.extractSchiriEinsatz(emailContent);
+        SchiriEinsatz actual = AnsetzungsEmail.extractSchiriEinsaetze(emailContent).get(0);
         SchiriEinsatz expected = new SchiriEinsatz(
                 "21131",
                 LocalDateTime.of(2024, 3, 16, 16, 0),
