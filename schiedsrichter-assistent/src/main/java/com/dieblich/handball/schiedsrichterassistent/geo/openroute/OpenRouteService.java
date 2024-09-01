@@ -15,7 +15,6 @@ public abstract class OpenRouteService {
     }
 
     protected HttpHeaders createHeaders(){
-        System.out.println(this.getClass()+", apikey="+apikey);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", apikey);
         headers.add("Accept", "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8");
