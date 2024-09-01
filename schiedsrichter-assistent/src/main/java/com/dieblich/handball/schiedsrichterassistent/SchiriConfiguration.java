@@ -36,7 +36,12 @@ public class SchiriConfiguration {
     }
 
     public boolean hasGespannpartner(SchiriConfiguration configOtherSchiri) {
-        return Gespannpartner.contains(configOtherSchiri.Benutzerdaten.Email);
+        for(String email:Gespannpartner){
+            if(email.equalsIgnoreCase(configOtherSchiri.Benutzerdaten.Email)){
+                return true;
+            }
+        }
+        return false;
     }
 
     @ToString

@@ -558,5 +558,20 @@ class SchiriConfigurationTest {
         assertEquals(List.of("martin@nirgendwo.de"), config.Gespannpartner);
     }
 
+    @Test
+    public void hasGespannpartnerFindsNothing(){
+        SchiriConfiguration configA = SchiriConfiguration.NEW_DEFAULT("");
+        configA.Gespannpartner.add("Martin@nirgendwo.de");
+        SchiriConfiguration configB = SchiriConfiguration.NEW_DEFAULT("thomas@nirgendwo.de");
+        assertFalse(configA.hasGespannpartner(configB));
+    }
+    @Test
+    public void hasGespannpartnerIgnoresCase(){
+        SchiriConfiguration configA = SchiriConfiguration.NEW_DEFAULT("");
+        configA.Gespannpartner.add("Martin@nirgendwo.de");
+        SchiriConfiguration configB = SchiriConfiguration.NEW_DEFAULT("marTIN@nirgendwo.DE");
+        assertTrue(configA.hasGespannpartner(configB));
+    }
+
     private final Function<String, Optional<Koordinaten>> fakeAddressToGeoLocation = (String) -> Optional.empty();
 }
