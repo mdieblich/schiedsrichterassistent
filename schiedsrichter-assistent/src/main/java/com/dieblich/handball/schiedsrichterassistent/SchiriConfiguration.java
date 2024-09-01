@@ -324,7 +324,10 @@ public class SchiriConfiguration {
         }
         if(other.Gespannpartner != null){
             // this overrides the list, so that users can delete entries
-            Gespannpartner = other.Gespannpartner;
+            Gespannpartner.clear();
+            other.Gespannpartner.forEach(
+                    email -> Gespannpartner.add(email.toLowerCase())
+            );
         }
         if(other.Kosten != null){
             Kosten.updateWith(other.Kosten);

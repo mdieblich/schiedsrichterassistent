@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -543,6 +544,18 @@ class SchiriConfigurationTest {
                 }
                 """, fakeAddressToGeoLocation);
         assertEquals("martin@nirgendwo.de", config.Benutzerdaten.Email);
+    }
+    @Test
+    public void setWhitelistWillBeLowerCase() throws ConfigException {
+        SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
+        config.updateWith("""
+                {
+                    "Gespannpartner": [
+                        "Martin@nirgendwo.de"
+                    ]
+                }
+                """, fakeAddressToGeoLocation);
+        assertEquals(List.of("martin@nirgendwo.de"), config.Gespannpartner);
     }
 
     private final Function<String, Optional<Koordinaten>> fakeAddressToGeoLocation = (String) -> Optional.empty();
