@@ -141,14 +141,15 @@ public class MailController {
         try{
             if(isAnsetzung(email)){
                 AnsetzungsEmail ansetzungsEmail = new AnsetzungsEmail(email);
-                SchiriEinsatz schiriEinsatz = ansetzungsEmail.extractSchiriEinsatz();
-                if(schiriEinsatz.mitGespannspartner()){
-                    SchiriConfiguration schiriConfigB = findGespannpartner(config, schiriEinsatz);
-                    if (schiriConfigB != null){
-                        sendCalendarEventForTwoSchiedsrichter(schiriEinsatz, config, schiriConfigB);
+                for(SchiriEinsatz schiriEinsatz:ansetzungsEmail.extractSchiriEinsaetze()) {
+                    if (schiriEinsatz.mitGespannspartner()) {
+                        SchiriConfiguration schiriConfigB = findGespannpartner(config, schiriEinsatz);
+                        if (schiriConfigB != null) {
+                            sendCalendarEventForTwoSchiedsrichter(schiriEinsatz, config, schiriConfigB);
+                        }
+                    } else {
+                        sendCalendarEventForOneSchiedsrichter(schiriEinsatz, config);
                     }
-                } else {
-                    sendCalendarEventForOneSchiedsrichter(schiriEinsatz, config);
                 }
             } else {
                 DontKnowWhatToDoEmail response = new DontKnowWhatToDoEmail(botEmailaddress, config.Benutzerdaten.Email, email);
