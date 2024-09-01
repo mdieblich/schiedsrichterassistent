@@ -532,5 +532,18 @@ class SchiriConfigurationTest {
         assertEquals(0.9d, config.Kosten.Beifahrer.get("Mittelrhein Verbandsliga Frauen"));
     }
 
+    @Test
+    public void setEmailWillBeLowerCase() throws ConfigException {
+        SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
+        config.updateWith("""
+                {
+                 	"Benutzerdaten": {
+                        "Email": "Martin@nirgendwo.de"
+                 	}
+                }
+                """, fakeAddressToGeoLocation);
+        assertEquals("martin@nirgendwo.de", config.Benutzerdaten.Email);
+    }
+
     private final Function<String, Optional<Koordinaten>> fakeAddressToGeoLocation = (String) -> Optional.empty();
 }

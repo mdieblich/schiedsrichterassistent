@@ -57,7 +57,7 @@ public class SchiriConfiguration {
         }
 
         public void updateWith(Benutzerdaten other, Function<String, Optional<Koordinaten>> addressToKoordinaten) throws ConfigException {
-            if(other.Email != null) {Email = other.Email;}
+            if(other.Email != null) {Email = other.Email.toLowerCase();}
             if(other.Vorname != null) {Vorname = other.Vorname;}
             if(other.Nachname != null) {Nachname = other.Nachname;}
 
