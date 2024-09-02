@@ -3,7 +3,7 @@ package com.dieblich.handball.schiedsrichterassistent.api;
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriRepo;
 import com.dieblich.handball.schiedsrichterassistent.mail.EmailServerReadImpl;
-import com.dieblich.handball.schiedsrichterassistent.mail.SchiriRepoEmail;
+import com.dieblich.handball.schiedsrichterassistent.config.SchiriRepoEmail;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

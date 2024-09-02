@@ -8,6 +8,7 @@ import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTerminFahrer;
 import com.dieblich.handball.schiedsrichterassistent.config.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriRepo;
+import com.dieblich.handball.schiedsrichterassistent.config.SchiriRepoEmail;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoService;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoServiceImpl;

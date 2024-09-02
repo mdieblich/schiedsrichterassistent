@@ -3,6 +3,7 @@ package com.dieblich.handball.schiedsrichterassistent.mail;
 import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriRepo;
+import com.dieblich.handball.schiedsrichterassistent.config.SchiriRepoEmail;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
