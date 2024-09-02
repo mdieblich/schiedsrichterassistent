@@ -1,0 +1,9 @@
+[Unit]
+Description=Schiribot 1.3.0 DEAMON
+
+[Service]
+ExecStart=/usr/bin/java -jar /root/schiedsrichter-assistent-1.3.0.jar
+User=user
+
+[Install]
+WantedBy=multi-user.target
