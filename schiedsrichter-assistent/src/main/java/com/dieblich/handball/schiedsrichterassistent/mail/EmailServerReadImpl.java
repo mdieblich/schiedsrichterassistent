@@ -1,10 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
-import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import jakarta.mail.*;
 
-import java.io.IOException;
-import java.util.Optional;
 import java.util.Properties;
 
 public class EmailServerReadImpl implements AutoCloseable, EmailServerRead {
@@ -50,26 +47,6 @@ public class EmailServerReadImpl implements AutoCloseable, EmailServerRead {
         } catch(Exception e){
             throw new EmailException("Ordner " + name + " konnte nicht geladen werden", e);
         }
-    }
-
-    public SchiriConfiguration loadSchiriConfiguration(String emailAddress) throws IOException, EmailException {
-        Optional<Email> email = findConfigEmail(emailAddress);
-        if(email.isEmpty()){
-            return SchiriConfiguration.NEW_DEFAULT(emailAddress);
-        } else {
-            return SchiriConfiguration.fromJSON(email.get().getContent());
-        }
-    }
-
-    private Optional<Email> findConfigEmail(String emailAddress) throws EmailException {
-        EmailFolder schiedsrichter = fetchFolder("SCHIEDSRICHTER");
-
-        for(Email email:schiedsrichter.getEmails()){
-            if(email.isFrom(emailAddress)){
-                return Optional.of(email);
-            }
-        }
-        return Optional.empty();
     }
 
     @Override

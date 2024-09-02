@@ -19,8 +19,6 @@ public class SchiriConfigController {
 
     @Value("${mail.imap.host}")
     private String imapHost;
-    @Value("${mail.smtp.host}")
-    private String smtpHost;
     @Value("${mail.user}")
     private String botEmailaddress;
     @Value("${mail.password}")
@@ -28,6 +26,7 @@ public class SchiriConfigController {
 
     private SchiriRepo schiriRepo;
 
+    @SuppressWarnings("unused")
     @PostConstruct
     public void init() {
         EmailServerReadImpl stratoRead = new EmailServerReadImpl(imapHost, 993, botEmailaddress, botPassword);

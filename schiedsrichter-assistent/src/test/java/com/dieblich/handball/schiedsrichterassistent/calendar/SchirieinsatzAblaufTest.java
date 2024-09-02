@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("NonAsciiCharacters")
 class SchirieinsatzAblaufTest {
 
     @Test

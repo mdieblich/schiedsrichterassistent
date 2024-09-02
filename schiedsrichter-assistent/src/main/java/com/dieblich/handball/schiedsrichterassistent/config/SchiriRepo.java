@@ -17,9 +17,4 @@ public interface SchiriRepo {
         }
     }
 
-    enum ConfigurationStatus{
-        NEW,
-        INCOMPLETE,
-        COMPLETE
-    }
 }
