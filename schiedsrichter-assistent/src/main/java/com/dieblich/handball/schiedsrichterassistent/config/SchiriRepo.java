@@ -1,4 +1,6 @@
-package com.dieblich.handball.schiedsrichterassistent;
+package com.dieblich.handball.schiedsrichterassistent.config;
+
+import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 
 import java.util.Optional;
 

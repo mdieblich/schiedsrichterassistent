@@ -1,8 +1,8 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
-import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
-import com.dieblich.handball.schiedsrichterassistent.SchiriRepo;
+import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
+import com.dieblich.handball.schiedsrichterassistent.config.SchiriRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.Optional;

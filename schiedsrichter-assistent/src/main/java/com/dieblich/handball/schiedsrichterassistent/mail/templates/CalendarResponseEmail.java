@@ -1,6 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.mail.templates;
 
-import com.dieblich.handball.schiedsrichterassistent.ConfigException;
+import com.dieblich.handball.schiedsrichterassistent.config.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTermin;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.mail.Email;

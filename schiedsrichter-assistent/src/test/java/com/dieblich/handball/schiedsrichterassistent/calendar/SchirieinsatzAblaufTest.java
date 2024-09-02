@@ -1,6 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.calendar;
 
-import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
+import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.geo.Fahrt;
 import org.junit.jupiter.api.Test;
 

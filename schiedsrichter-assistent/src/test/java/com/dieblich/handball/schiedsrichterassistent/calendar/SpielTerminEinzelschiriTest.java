@@ -1,8 +1,8 @@
 package com.dieblich.handball.schiedsrichterassistent.calendar;
 
-import com.dieblich.handball.schiedsrichterassistent.ConfigException;
+import com.dieblich.handball.schiedsrichterassistent.config.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
-import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
+import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoServiceFake;

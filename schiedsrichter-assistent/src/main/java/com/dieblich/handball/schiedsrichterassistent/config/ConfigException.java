@@ -1,4 +1,4 @@
-package com.dieblich.handball.schiedsrichterassistent;
+package com.dieblich.handball.schiedsrichterassistent.config;
 
 public class ConfigException extends Exception {
     public ConfigException(String s) {

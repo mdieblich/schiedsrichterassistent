@@ -1,6 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.mail.templates;
 
-import com.dieblich.handball.schiedsrichterassistent.SchiriConfiguration;
+import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.mail.Email;
 
 import java.util.ArrayList;

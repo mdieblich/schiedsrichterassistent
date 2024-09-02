@@ -1,5 +1,6 @@
-package com.dieblich.handball.schiedsrichterassistent;
+package com.dieblich.handball.schiedsrichterassistent.config;
 
+import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.geo.Koordinaten;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;

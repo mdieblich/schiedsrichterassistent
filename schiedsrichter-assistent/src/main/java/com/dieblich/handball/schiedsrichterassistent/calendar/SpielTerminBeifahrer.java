@@ -3,7 +3,7 @@ package com.dieblich.handball.schiedsrichterassistent.calendar;
 import biweekly.Biweekly;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
-import com.dieblich.handball.schiedsrichterassistent.ConfigException;
+import com.dieblich.handball.schiedsrichterassistent.config.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 
 import java.time.LocalDate;
