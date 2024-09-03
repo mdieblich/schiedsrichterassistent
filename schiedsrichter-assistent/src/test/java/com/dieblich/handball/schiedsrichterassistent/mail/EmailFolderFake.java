@@ -22,8 +22,10 @@ public class EmailFolderFake implements EmailFolder{
         emails.clear();
     }
 
-    public void createEmail(String from, String subject, String content) {
-        upload(new EmailFake(this, from, "", subject, content));
+    public EmailFake createEmail(String from, String subject, String content) {
+        EmailFake newMail = new EmailFake(this, from, "", subject, content);
+        upload(newMail);
+        return newMail;
     }
 
     public void delete(Email email) {

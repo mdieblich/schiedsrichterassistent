@@ -3,6 +3,8 @@ package com.dieblich.handball.schiedsrichterassistent.mail;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 public class EmailFake extends Email{
 
     private final EmailFolderFake folder;
@@ -14,6 +16,10 @@ public class EmailFake extends Email{
     @Getter
     @Setter
     String content;
+
+    @Getter
+    @Setter
+    LocalDateTime sentDate;
 
     public EmailFake(EmailFolderFake folder, String from, String to, String subject, String content) {
         super(from, to, subject, content);

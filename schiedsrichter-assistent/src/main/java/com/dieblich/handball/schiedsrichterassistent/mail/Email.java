@@ -9,6 +9,8 @@ import org.jsoup.Jsoup;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,6 +20,9 @@ public class Email {
 
     @Getter
     private final String sender;
+
+    @Getter
+    private final LocalDateTime sentDate;
 
     @Getter
     private final List<String> receivers;
@@ -35,6 +40,7 @@ public class Email {
             jakartaMessage = message;
             subject = message.getSubject();
             sender = extractSender(message);
+            this.sentDate =  LocalDateTime.ofInstant(message.getSentDate().toInstant(), ZoneId.systemDefault());
             content = extractContent(message);
             receivers = extractReceivers(message);
             attachments = List.of();
@@ -45,6 +51,7 @@ public class Email {
 
     public Email(String sender, String receiver, String subject, String content, File... attachments){
         this.sender = sender;
+        this.sentDate = LocalDateTime.now();
         this.receivers = List.of(receiver);
         this.subject = subject;
         this.content = content;

@@ -4,6 +4,7 @@ import com.dieblich.handball.schiedsrichterassistent.mail.Email;
 import com.dieblich.handball.schiedsrichterassistent.mail.EmailFolder;
 import com.dieblich.handball.schiedsrichterassistent.mail.EmailServerRead;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,15 +42,21 @@ public class ApiAccessRepoEmail implements ApiAccessRepo{
     public boolean hasAccess(String emailAddress, String key) throws ApiAccessRepoException {
         try {
             EmailFolder accessKeyFolder = emailServer.fetchFolder("ACCESS_KEYS");
-            Optional<Email> accessEmail = accessKeyFolder.getEmails().stream().filter(email -> email.isFrom(emailAddress)).findAny();
-            //noinspection OptionalIsPresent
-            if(accessEmail.isEmpty()){
+            Optional<Email> optionalEmail = accessKeyFolder.getEmails().stream().filter(email -> email.isFrom(emailAddress)).findAny();
+            if(optionalEmail.isEmpty()){
                 return false;
             }
 
-            return accessEmail.get().getContent().equals(key);
+            Email accessEmail = optionalEmail.get();
+            LocalDateTime oldestTime = LocalDateTime.now().minusMinutes(15);
+            if( accessEmail.getSentDate().isBefore(oldestTime)){
+                return false;
+            }
+
+            return accessEmail.getContent().equals(key);
         } catch(Exception e) {
             throw new ApiAccessRepoException("Could not validate access key for " + emailAddress, e);
         }
     }
+
 }
