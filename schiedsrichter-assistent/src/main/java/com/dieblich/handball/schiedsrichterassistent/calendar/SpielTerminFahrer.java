@@ -91,6 +91,7 @@ public class SpielTerminFahrer implements SpielTermin{
         );
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public String getDescription() throws GeoException, ConfigException {
         if(description == null){
