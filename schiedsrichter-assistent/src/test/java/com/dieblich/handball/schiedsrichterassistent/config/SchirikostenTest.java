@@ -5,7 +5,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.File;
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,7 +29,7 @@ class SchirikostenTest {
     }
 
     @Test
-    public void readsContentFromConfigFile() throws IOException, ConfigException {
+    public void readsContentFromConfigFile() throws ConfigException {
         // arrange
         KostenConfiguration modifiedConfig = KostenConfiguration.defaultConfig();
         modifiedConfig.add("Opferliga Männer", 12.5, 0.10, 0.00);
@@ -40,7 +39,7 @@ class SchirikostenTest {
         Schirikosten kosten = KostenConfiguration.calculate("Opferliga Männer", 20);
 
         // assert
-        assertEquals(12.5, kosten.teilnahmeEntschädigung() );
+        assertEquals(12.5, kosten.teilnahmeEntschaedigung() );
         assertEquals(2, kosten.fahrtKostenFahrer() );
     }
 
@@ -105,10 +104,10 @@ class SchirikostenTest {
             "Regionsoberliga gemischte Jugend E, 16.00",
 
     })
-    public void teilnahmeEntschädigung(String liga, double expectedEntschädigung) throws ConfigException {
+    public void teilnahmeEntschaedigung(String liga, double expectedEntschaedigung) throws ConfigException {
         Schirikosten kosten = KostenConfiguration.calculate(liga, 30);
 
-        assertEquals(expectedEntschädigung, kosten.teilnahmeEntschädigung());
+        assertEquals(expectedEntschaedigung, kosten.teilnahmeEntschaedigung());
     }
 
     @ParameterizedTest

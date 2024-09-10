@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("NonAsciiCharacters")
 @ToString
 @EqualsAndHashCode
 public class KostenConfiguration {
+
     public KostenConfigurationsEintrag StandardSenioren;
     public KostenConfigurationsEintrag StandardJugendA;
     public KostenConfigurationsEintrag StandardJugendB;
@@ -51,16 +51,16 @@ public class KostenConfiguration {
             }
         }
         return new Schirikosten(
-                configForliga.Teilnahmeentschädigung,
-                configForliga.KilometerpauschaleFahrer*kilometer,
-                configForliga.KilometerpauschaleBeiFahrer*kilometer
+                configForliga.teilnahmeEntschaedigung(),
+                configForliga.kilometerPauschaleFahrer() *kilometer,
+                configForliga.kilometerPauschaleBeiFahrer() *kilometer
         );
     }
 
     private KostenConfiguration(){}
 
-    public void add(String liga, double teilnahmeentschädigung, double kilometerpauschaleFahrer, double kilometerpauschaleBeifahrer){
-        Abweichungen.put(liga.trim().toLowerCase(), new KostenConfigurationsEintrag(teilnahmeentschädigung, kilometerpauschaleFahrer, kilometerpauschaleBeifahrer));
+    public void add(String liga, double teilnahmeEntschaedigung, double kilometerpauschaleFahrer, double kilometerpauschaleBeifahrer){
+        Abweichungen.put(liga.trim().toLowerCase(), new KostenConfigurationsEintrag(teilnahmeEntschaedigung, kilometerpauschaleFahrer, kilometerpauschaleBeifahrer));
     }
 
     public KostenConfiguration(Map<String, KostenConfigurationsEintrag> configRows){
@@ -117,20 +117,5 @@ public class KostenConfiguration {
         defaultConfiguration.add("Regionsoberliga Frauen             ",25.00,0.35,0.05);
 
         return defaultConfiguration;
-    }
-
-    @SuppressWarnings("NonAsciiCharacters")
-    @ToString
-    @EqualsAndHashCode
-    public static class KostenConfigurationsEintrag {
-        public Double Teilnahmeentschädigung;
-        public Double KilometerpauschaleFahrer;
-        public Double KilometerpauschaleBeiFahrer;
-
-        public KostenConfigurationsEintrag(double Teilnahmeentschädigung, double KilometerpauschaleFahrer, double KilometerpauschaleBeiFahrer) {
-            this.Teilnahmeentschädigung = Teilnahmeentschädigung;
-            this.KilometerpauschaleFahrer = KilometerpauschaleFahrer;
-            this.KilometerpauschaleBeiFahrer = KilometerpauschaleBeiFahrer;
-        }
     }
 }

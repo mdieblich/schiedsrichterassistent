@@ -1,8 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.config;
 
-@SuppressWarnings("NonAsciiCharacters")
 public record Schirikosten(
-        double teilnahmeEntschädigung,
+        double teilnahmeEntschaedigung,
         double fahrtKostenFahrer,
         double fahrtKostenBeifahrer) {
 
