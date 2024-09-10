@@ -54,35 +54,6 @@ class SchiriConfigurationTest {
               }
             }
           },
-          "Kosten" : {
-            "TeilnahmeEntschädigung" : {
-              "Standard" : 22.5,
-              "Abweichungen": {
-                "Oberliga Männer" : 50.0,
-                "Oberliga Frauen" : 40.0,
-                "Verbandsliga Männer" : 40.0,
-                "Verbandsliga Frauen" : 30.0,
-                "Landesliga Männer" : 30.0,
-                "Landesliga Frauen" : 30.0
-              }
-            },
-            "Fahrer" : {
-              "Standard" : 0.35,
-              "Abweichungen" : {
-                "Oberliga" : 0.3,
-                "Verbandsliga" : 0.3,
-                "Landesliga" : 0.3
-              }
-            },
-            "Beifahrer" : {
-              "Standard" : 0.05,
-              "Abweichungen" : {
-                "Oberliga" : 0.0,
-                "Verbandsliga" : 0.0,
-                "Landesliga" : 0.0
-              }
-            }
-          },
           "Gespannpartner": [
             "mike.blind@loser.com"
           ]
@@ -122,35 +93,6 @@ class SchiriConfigurationTest {
               "Abweichungen" : {
                 "Oberliga" : 45,
                 "Regionalliga" : 45
-              }
-            }
-          },
-          "Kosten" : {
-            "TeilnahmeEntschädigung" : {
-              "Standard" : 22.50,
-              "Abweichungen": {
-                "Oberliga Männer" : 50.0,
-                "Oberliga Frauen" : 40.0,
-                "Verbandsliga Männer" : 40.0,
-                "Verbandsliga Frauen" : 30.0,
-                "Landesliga Männer" : 30.0,
-                "Landesliga Frauen" : 30.0
-              }
-            },
-            "Fahrer" : {
-              "Standard" : 0.35,
-              "Abweichungen" : {
-                "Oberliga" : 0.3,
-                "Verbandsliga" : 0.3,
-                "Landesliga" : 0.3
-              }
-            },
-            "Beifahrer" : {
-              "Standard" : 0.05,
-              "Abweichungen" : {
-                "Oberliga" : 0.0,
-                "Verbandsliga" : 0.0,
-                "Landesliga" : 0.0
               }
             }
           },
@@ -466,73 +408,6 @@ class SchiriConfigurationTest {
         } catch (ConfigException e) {
             // everything is fine
         }
-    }
-
-    @Test
-    public void updateWithCreatesTeilnahmeEntschädigung() throws ConfigException {
-        SchiriConfiguration config = new SchiriConfiguration("");
-        config.updateWith("""
-                {
-                	"Kosten" : {
-                        "TeilnahmeEntschädigung" : {
-                            "Abweichungen": {
-                                "Regionalliga Männer" : 100.0
-                            }
-                        }
-                      }
-                }
-                """, fakeAddressToGeoLocation);
-
-        assertEquals(100d, config.Kosten.TeilnahmeEntschädigung.get("Regionalliga Männer"));
-    }
-
-    @Test
-    public void updateWithCreatesFahrtkosten() throws ConfigException {
-        SchiriConfiguration config = new SchiriConfiguration("");
-        config.updateWith("""
-                {
-                	"Kosten" : {
-                        "Fahrer" : {
-                          "Abweichungen" : {
-                            "Regionalliga" : 0.9
-                          }
-                        }
-                      }
-                }
-                """, fakeAddressToGeoLocation);
-
-        assertEquals(0.9, config.Kosten.Fahrer.get("Regionalliga"));
-    }
-
-    @Test
-    public void updateWithCreatesBeifahrerKosten() throws ConfigException {
-        SchiriConfiguration config = new SchiriConfiguration("");
-        config.updateWith("""
-                {
-                	"Kosten" : {
-                        "Beifahrer" : {
-                          "Abweichungen" : {
-                            "Regionalliga" : 0.30
-                          }
-                        }
-                      }
-                }
-                """, fakeAddressToGeoLocation);
-
-        assertEquals(0.3, config.Kosten.Beifahrer.get("Regionalliga"));
-    }
-
-    @Test
-    public void getFahrtkostenForSchortLigaName(){
-        SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
-        config.Kosten.Fahrer.Abweichungen.put("Verbandsliga", 0.9d);
-        assertEquals(0.9d, config.Kosten.Fahrer.get("Mittelrhein Verbandsliga Frauen"));
-    }
-    @Test
-    public void getBeifahrerkostenForSchortLigaName(){
-        SchiriConfiguration config = SchiriConfiguration.NEW_DEFAULT("");
-        config.Kosten.Beifahrer.Abweichungen.put("Verbandsliga", 0.9d);
-        assertEquals(0.9d, config.Kosten.Beifahrer.get("Mittelrhein Verbandsliga Frauen"));
     }
 
     @Test

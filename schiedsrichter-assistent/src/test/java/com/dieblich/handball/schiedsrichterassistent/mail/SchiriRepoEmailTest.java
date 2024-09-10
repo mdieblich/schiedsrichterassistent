@@ -92,21 +92,7 @@ class SchiriRepoEmailTest {
                     "Adresse" : null
                   },
                   "Spielablauf" : null,
-                  "Gespannpartner" : null,
-                  "Kosten" : {
-                    "TeilnahmeEntschädigung" : {
-                      "Standard" : null,
-                      "Abweichungen" : { }
-                    },
-                    "Fahrer" : {
-                      "Standard" : null,
-                      "Abweichungen" : { }
-                    },
-                    "Beifahrer" : {
-                      "Standard" : null,
-                      "Abweichungen" : { }
-                    }
-                  }
+                  "Gespannpartner" : null
                 }""", firstEmail.getContent().replace("\r", ""));
     }
     @Test
@@ -144,21 +130,7 @@ class SchiriRepoEmailTest {
                     "Adresse" : null
                   },
                   "Spielablauf" : null,
-                  "Gespannpartner" : null,
-                  "Kosten" : {
-                    "TeilnahmeEntschädigung" : {
-                      "Standard" : null,
-                      "Abweichungen" : { }
-                    },
-                    "Fahrer" : {
-                      "Standard" : null,
-                      "Abweichungen" : { }
-                    },
-                    "Beifahrer" : {
-                      "Standard" : null,
-                      "Abweichungen" : { }
-                    }
-                  }
+                  "Gespannpartner" : null
                 }""", firstEmail.getContent().replace("\r", ""));
     }
 }

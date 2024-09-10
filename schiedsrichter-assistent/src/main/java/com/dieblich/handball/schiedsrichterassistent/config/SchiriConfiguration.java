@@ -22,7 +22,6 @@ public class SchiriConfiguration {
     public Benutzerdaten Benutzerdaten = new Benutzerdaten();
     public Spielablauf Spielablauf = new Spielablauf();
     public List<String> Gespannpartner = new ArrayList<>();
-    public Kosten Kosten = new Kosten();
 
     public SchiriConfiguration(String email){
         Benutzerdaten = new Benutzerdaten(email);
@@ -30,10 +29,10 @@ public class SchiriConfiguration {
 
     @JsonIgnore
     public boolean isComplete() {
-        if(Benutzerdaten == null || Spielablauf == null || Kosten == null){
+        if(Benutzerdaten == null || Spielablauf == null){
             return false;
         }
-        return Benutzerdaten.isComplete() && Spielablauf.isComplete() && Kosten.isComplete();
+        return Benutzerdaten.isComplete() && Spielablauf.isComplete();
     }
 
     public boolean hasGespannpartner(SchiriConfiguration configOtherSchiri) {
@@ -209,67 +208,6 @@ public class SchiriConfiguration {
         }
     }
 
-    @ToString
-    @EqualsAndHashCode
-    public static class Kosten{
-        public KostenConfig TeilnahmeEntschädigung = new KostenConfig();
-        public KostenConfig Fahrer = new KostenConfig();
-        public KostenConfig Beifahrer = new KostenConfig();
-
-        @ToString
-        @EqualsAndHashCode
-        public static class KostenConfig{
-            public Double Standard;
-            public Map<String, Double> Abweichungen = new HashMap<>();
-
-            public void updateWith(KostenConfig other) {
-                if(other.Standard != null) {Standard = other.Standard;}
-                if(other.Abweichungen != null){Abweichungen.putAll(other.Abweichungen);}
-            }
-
-            @JsonIgnore
-            public double get(String ligaBezeichnungAusEmail) {
-                String ligaName = ligaBezeichnungAusEmail.replace("Mittelrhein", "").trim();
-
-                if(Abweichungen.containsKey(ligaName)){
-                    return Abweichungen.get(ligaName);
-                }
-                // now, search with brute force
-                for(String key:Abweichungen.keySet()){
-                    if(ligaName.contains(key)){
-                        return Abweichungen.get(key);
-                    }
-                }
-                return Standard;
-            }
-
-            @JsonIgnore
-            public boolean isComplete() {
-                return Standard != null;
-            }
-        }
-
-        public void updateWith(SchiriConfiguration.Kosten other) {
-            if(other.TeilnahmeEntschädigung != null){
-                TeilnahmeEntschädigung.updateWith(other.TeilnahmeEntschädigung);
-            }
-            if(other.Fahrer != null){
-                Fahrer.updateWith(other.Fahrer);
-            }
-            if(other.Beifahrer != null){
-                Beifahrer.updateWith(other.Beifahrer);
-            }
-        }
-
-        @JsonIgnore
-        public boolean isComplete() {
-            if(TeilnahmeEntschädigung == null || Fahrer == null || Beifahrer == null){
-                return false;
-            }
-            return TeilnahmeEntschädigung.isComplete() && Fahrer.isComplete() && Beifahrer.isComplete();
-        }
-    }
-
     public static SchiriConfiguration NEW_DEFAULT(String email){
         SchiriConfiguration config = new SchiriConfiguration();
         config.Benutzerdaten.Email = email;
@@ -282,30 +220,6 @@ public class SchiriConfiguration {
                 // put Map.of inside HashMap to have it mutable
                 "Regionalliga", 45,
                 "Oberliga", 45
-        ));
-
-        config.Kosten.TeilnahmeEntschädigung.Standard = 22.5;
-        config.Kosten.TeilnahmeEntschädigung.Abweichungen.putAll(Map.of(
-                "Oberliga Männer" , 50d,
-                "Oberliga Frauen" , 40d,
-                "Verbandsliga Männer" , 40d,
-                "Verbandsliga Frauen" , 30d,
-                "Landesliga Männer" , 30d,
-                "Landesliga Frauen" , 30d
-        ));
-
-        config.Kosten.Fahrer.Standard = 0.35;
-        config.Kosten.Fahrer.Abweichungen.putAll(Map.of(
-                "Oberliga" , 0.3,
-                "Verbandsliga" , 0.3,
-                "Landesliga" , 0.3
-        ));
-
-        config.Kosten.Beifahrer.Standard = 0.05;
-        config.Kosten.Beifahrer.Abweichungen.putAll(Map.of(
-                "Oberliga" , 0d,
-                "Verbandsliga" , 0d,
-                "Landesliga" , 0d
         ));
         return config;
     }
@@ -333,9 +247,6 @@ public class SchiriConfiguration {
             other.Gespannpartner.forEach(
                     email -> Gespannpartner.add(email.toLowerCase())
             );
-        }
-        if(other.Kosten != null){
-            Kosten.updateWith(other.Kosten);
         }
     }
 
