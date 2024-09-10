@@ -42,6 +42,20 @@ class SchirikostenTest {
         assertEquals(12.5, kosten.teilnahmeEntschaedigung() );
         assertEquals(2, kosten.fahrtKostenFahrer() );
     }
+    @Test
+    public void readsNewContentFromConfigFile() throws ConfigException {
+        // arrange
+        KostenConfiguration modifiedConfig = KostenConfiguration.defaultConfig();
+        modifiedConfig.StandardSenioren = new KostenConfigurationsEintrag(12.5, 0.10, 0.00);
+        KostenConfigurationFile.defaultConfigFile().save(modifiedConfig);
+
+        // act
+        Schirikosten kosten = KostenConfiguration.calculate("Opferliga Männer", 20);
+
+        // assert
+        assertEquals(12.5, kosten.teilnahmeEntschaedigung() );
+        assertEquals(2, kosten.fahrtKostenFahrer() );
+    }
 
     @Test
     public void sanitizesTheConfig() {
