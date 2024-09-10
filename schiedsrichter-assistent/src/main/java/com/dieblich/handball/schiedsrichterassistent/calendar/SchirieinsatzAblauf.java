@@ -5,15 +5,16 @@ import com.dieblich.handball.schiedsrichterassistent.geo.Fahrt;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class SchirieinsatzAblauf {
     @Getter
     private final LocalDateTime anwurf;
+    @Getter
     private final String ligaBezeichnungAusEmail;
 
     @Getter
     private final Fahrt fahrtZurHalle;
-    @Getter
     private final Fahrt fahrtZumPartner;
     private final SchiriConfiguration config;
 
@@ -26,6 +27,10 @@ public class SchirieinsatzAblauf {
     }
     public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, Fahrt fahrtZurHalle, SchiriConfiguration config) {
         this(anwurf, ligaBezeichnungAusEmail, fahrtZurHalle, null, config);
+    }
+
+    public Optional<Fahrt> getFahrtZumPartner(){
+        return Optional.ofNullable(fahrtZumPartner);
     }
 
 
