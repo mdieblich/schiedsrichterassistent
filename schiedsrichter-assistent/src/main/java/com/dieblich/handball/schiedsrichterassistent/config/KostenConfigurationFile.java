@@ -29,7 +29,7 @@ public class KostenConfigurationFile {
         try {
             List<String> configFileContent  = Files.readAllLines(file.toPath());
             checkErrorsInConfigFile(configFileContent);
-            Map<String, KostenConfigurationsEintrag> configRows = convertToConfigRows(configFileContent);
+            Map<String, LigaKosten> configRows = convertToConfigRows(configFileContent);
             checkMandatoryKeys(configRows);
             return new KostenConfiguration(configRows);
         } catch (Exception e) {
@@ -77,13 +77,13 @@ public class KostenConfigurationFile {
         return !columnCorrect;
     }
 
-    private Map<String, KostenConfigurationsEintrag> convertToConfigRows(List<String> csvLines) throws ConfigException {
-        Map<String, KostenConfigurationsEintrag> configRows = new HashMap<>();
+    private Map<String, LigaKosten> convertToConfigRows(List<String> csvLines) throws ConfigException {
+        Map<String, LigaKosten> configRows = new HashMap<>();
         // skip first row, because it's the header
         for(int i=1; i<csvLines.size(); i++){
             String line = csvLines.get(i);
             try {
-                Map.Entry<String, KostenConfigurationsEintrag> configRow = convertToConfigRow(line);
+                Map.Entry<String, LigaKosten> configRow = convertToConfigRow(line);
                 configRows.put(configRow.getKey(), configRow.getValue());
             } catch (ConfigException e) {
                 throw new ConfigException("Fehler in Zeile " + (i+1), e);
@@ -92,14 +92,14 @@ public class KostenConfigurationFile {
         return configRows;
     }
 
-    private Map.Entry<String, KostenConfigurationsEintrag> convertToConfigRow(String csvLine) throws ConfigException {
+    private Map.Entry<String, LigaKosten> convertToConfigRow(String csvLine) throws ConfigException {
         // skip first row, because it's the header
         String[] columns = csvLine.split(";");
         if(columns.length < 4){
             throw new ConfigException("Zu wenig Spalten in der Zeile: " + csvLine);
         }
         String liga = columns[0].trim();
-        KostenConfigurationsEintrag configRow = new KostenConfigurationsEintrag(
+        LigaKosten configRow = new LigaKosten(
                 Double.parseDouble(columns[1].trim()),
                 Double.parseDouble(columns[2].trim()),
                 Double.parseDouble(columns[3].trim())
@@ -107,7 +107,7 @@ public class KostenConfigurationFile {
         return new AbstractMap.SimpleEntry<>(liga, configRow);
     }
 
-    private void checkMandatoryKeys(Map<String, KostenConfigurationsEintrag> configRows) throws ConfigException {
+    private void checkMandatoryKeys(Map<String, LigaKosten> configRows) throws ConfigException {
         List<String> missingMandatoryKeys = new ArrayList<>();
         for(String mandatoryKey:KostenConfiguration.MANDATORY_KEYS){
             if(!configRows.containsKey(mandatoryKey)){
@@ -143,7 +143,7 @@ public class KostenConfigurationFile {
 
     public static final String HEADER_ROW = "Liga;Teilnahmeentschädigung;KilometerpauschaleFahrer;KilometerpauschaleBeiFahrer";
 
-    private String toConfigRow(String name, KostenConfigurationsEintrag eintrag) {
+    private String toConfigRow(String name, LigaKosten eintrag) {
         DecimalFormat df = new DecimalFormat("0.00",new DecimalFormatSymbols(Locale.US));
         return name + ";" +
                 df.format(eintrag.teilnahmeEntschaedigung()) + ";" +

@@ -44,7 +44,7 @@ class KostenabrechnungTest {
                 configA
         );
         Kostenabrechnung abr = new Kostenabrechnung(einsatz, ablauf, configA, configB);
-        KostenConfigurationsEintrag ligaKosten = new KostenConfigurationsEintrag(25.0, 0.35, 0.05);
+        LigaKosten ligaKosten = new LigaKosten(25.0, 0.35, 0.05);
         assertEquals(new Schirikosten(ligaKosten, 80, 70), abr.getSchirikosten());
     }
 

@@ -13,13 +13,13 @@ import java.util.Map;
 @EqualsAndHashCode
 public class KostenConfiguration {
 
-    public KostenConfigurationsEintrag StandardSenioren;
-    public KostenConfigurationsEintrag StandardJugendA;
-    public KostenConfigurationsEintrag StandardJugendB;
-    public KostenConfigurationsEintrag StandardJugendC;
-    public KostenConfigurationsEintrag StandardJugendD;
-    public KostenConfigurationsEintrag StandardJugendE;
-    public Map<String, KostenConfigurationsEintrag> Abweichungen = new HashMap<>();
+    public LigaKosten StandardSenioren;
+    public LigaKosten StandardJugendA;
+    public LigaKosten StandardJugendB;
+    public LigaKosten StandardJugendC;
+    public LigaKosten StandardJugendD;
+    public LigaKosten StandardJugendE;
+    public Map<String, LigaKosten> Abweichungen = new HashMap<>();
 
     public static Schirikosten calculate(String liga, int kilometer) throws ConfigException {
         KostenConfiguration kostenConfig = loadOrCreate();
@@ -50,7 +50,7 @@ public class KostenConfiguration {
                 .toLowerCase()
                 .replaceAll("gr. \\d", "")
                 .trim();
-        KostenConfigurationsEintrag configForliga = Abweichungen.get(trimmedLiga);
+        LigaKosten configForliga = Abweichungen.get(trimmedLiga);
         if(configForliga == null){
             if(trimmedLiga.contains("jugend a")){
                 configForliga = StandardJugendA;
@@ -72,10 +72,10 @@ public class KostenConfiguration {
     private KostenConfiguration(){}
 
     public void add(String liga, double teilnahmeEntschaedigung, double kilometerpauschaleFahrer, double kilometerpauschaleBeifahrer){
-        Abweichungen.put(liga.trim().toLowerCase(), new KostenConfigurationsEintrag(teilnahmeEntschaedigung, kilometerpauschaleFahrer, kilometerpauschaleBeifahrer));
+        Abweichungen.put(liga.trim().toLowerCase(), new LigaKosten(teilnahmeEntschaedigung, kilometerpauschaleFahrer, kilometerpauschaleBeifahrer));
     }
 
-    public KostenConfiguration(Map<String, KostenConfigurationsEintrag> configRows){
+    public KostenConfiguration(Map<String, LigaKosten> configRows){
         StandardSenioren = configRows.remove("Standard Senioren");
         StandardJugendA  = configRows.remove("Standard Jugend A");
         StandardJugendB  = configRows.remove("Standard Jugend B");
@@ -97,12 +97,12 @@ public class KostenConfiguration {
     public static KostenConfiguration defaultConfig() {
         KostenConfiguration defaultConfiguration = new KostenConfiguration();
 
-        defaultConfiguration.StandardSenioren = new KostenConfigurationsEintrag(22.5, 0.35, 0.05);
-        defaultConfiguration.StandardJugendA  = new KostenConfigurationsEintrag(22.5, 0.35, 0.05);
-        defaultConfiguration.StandardJugendB  = new KostenConfigurationsEintrag(20.0, 0.35, 0.05);
-        defaultConfiguration.StandardJugendC  = new KostenConfigurationsEintrag(20.0, 0.35, 0.05);
-        defaultConfiguration.StandardJugendD  = new KostenConfigurationsEintrag(16.0, 0.35, 0.05);
-        defaultConfiguration.StandardJugendE  = new KostenConfigurationsEintrag(16.0, 0.35, 0.05);
+        defaultConfiguration.StandardSenioren = new LigaKosten(22.5, 0.35, 0.05);
+        defaultConfiguration.StandardJugendA  = new LigaKosten(22.5, 0.35, 0.05);
+        defaultConfiguration.StandardJugendB  = new LigaKosten(20.0, 0.35, 0.05);
+        defaultConfiguration.StandardJugendC  = new LigaKosten(20.0, 0.35, 0.05);
+        defaultConfiguration.StandardJugendD  = new LigaKosten(16.0, 0.35, 0.05);
+        defaultConfiguration.StandardJugendE  = new LigaKosten(16.0, 0.35, 0.05);
 
 
         defaultConfiguration.add("Regionalliga Männer                ",80.00,0.30,0.00);

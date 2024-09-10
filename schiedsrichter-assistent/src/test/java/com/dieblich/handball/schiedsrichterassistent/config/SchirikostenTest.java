@@ -48,7 +48,7 @@ class SchirikostenTest {
     public void readsNewContentFromConfigFile() throws ConfigException {
         // arrange
         KostenConfiguration modifiedConfig = KostenConfiguration.defaultConfig();
-        modifiedConfig.StandardSenioren = new KostenConfigurationsEintrag(12.5, 0.10, 0.00);
+        modifiedConfig.StandardSenioren = new LigaKosten(12.5, 0.10, 0.00);
         KostenConfigurationFile.defaultConfigFile().save(modifiedConfig);
 
         // act

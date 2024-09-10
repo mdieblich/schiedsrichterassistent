@@ -1,7 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.config;
 
 public record Schirikosten(
-        KostenConfigurationsEintrag ligaKosten,
+        LigaKosten ligaKosten,
         int distanzFahrerInKm,
         int distanzBeifahrerInKm) {
 
