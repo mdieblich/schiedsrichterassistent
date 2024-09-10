@@ -1,5 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.config;
 
+import com.dieblich.handball.schiedsrichterassistent.calendar.SchirieinsatzAblauf;
+import com.dieblich.handball.schiedsrichterassistent.geo.Fahrt;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -241,5 +243,25 @@ class SchirikostenTest {
         Schirikosten kosten = KostenConfiguration.calculate(liga, 30);
 
         assertEquals(expectedFahrtkosten, kosten.fahrtKostenBeifahrer());
+    }
+
+    @Test
+    public void berechneAusAblauf() throws ConfigException {
+        // arrange
+        SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(
+                null,
+                "Oberliga Frauen Gr. 2",
+                new Fahrt(0, 30),
+                new Fahrt(0, 10),
+                null
+        );
+
+        // act
+        Schirikosten kosten = KostenConfiguration.calculate(ablauf);
+
+        // assert
+        assertEquals(40.00, kosten.teilnahmeEntschaedigung());
+        assertEquals( 0.30 * 80, kosten.fahrtKostenFahrer());
+        assertEquals( 0.00, kosten.fahrtKostenBeifahrer());
     }
 }

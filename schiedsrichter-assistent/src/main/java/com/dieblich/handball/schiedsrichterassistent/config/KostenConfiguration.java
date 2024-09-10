@@ -1,5 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.config;
 
+import com.dieblich.handball.schiedsrichterassistent.calendar.SchirieinsatzAblauf;
+import com.dieblich.handball.schiedsrichterassistent.geo.Fahrt;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -20,16 +22,30 @@ public class KostenConfiguration {
     public Map<String, KostenConfigurationsEintrag> Abweichungen = new HashMap<>();
 
     public static Schirikosten calculate(String liga, double kilometer) throws ConfigException {
+        KostenConfiguration kostenConfig = loadOrCreate();
+        return kostenConfig.calculateInternal(liga, kilometer, kilometer);
+    }
+
+    private static KostenConfiguration loadOrCreate() throws ConfigException {
         KostenConfigurationFile configFile = KostenConfigurationFile.defaultConfigFile();
         if(!configFile.exists()){
             configFile.save(KostenConfiguration.defaultConfig());
         }
-        KostenConfiguration kostenConfig = configFile.load();
-
-        return kostenConfig.calculateInternal(liga, kilometer);
+        return configFile.load();
     }
 
-    private Schirikosten calculateInternal(String liga, double kilometer) {
+    public static Schirikosten calculate(SchirieinsatzAblauf ablauf) throws ConfigException {
+        KostenConfiguration kostenConfig = loadOrCreate();
+
+        double kmZurHalle = ablauf.getFahrtZurHalle().distanzInKilometern();
+        double kmZumPartner = ablauf.getFahrtZumPartner().orElse(Fahrt.NULL).distanzInKilometern();
+        double distanzFahrer = (kmZurHalle+kmZumPartner)*2;
+        double distanzBeifahrer = kmZurHalle*2;
+
+        return kostenConfig.calculateInternal(ablauf.getLigaBezeichnungAusEmail(), distanzFahrer, distanzBeifahrer);
+    }
+
+    private Schirikosten calculateInternal(String liga, double kilometerFahrer, double kilometerBeifahrer) {
         String trimmedLiga = liga
                 .toLowerCase()
                 .replaceAll("gr. \\d", "")
@@ -52,8 +68,8 @@ public class KostenConfiguration {
         }
         return new Schirikosten(
                 configForliga.teilnahmeEntschaedigung(),
-                configForliga.kilometerPauschaleFahrer() *kilometer,
-                configForliga.kilometerPauschaleBeiFahrer() *kilometer
+                configForliga.kilometerPauschaleFahrer() * kilometerFahrer,
+                configForliga.kilometerPauschaleBeiFahrer() * kilometerBeifahrer
         );
     }
 
