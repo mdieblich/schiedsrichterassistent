@@ -21,18 +21,6 @@ public class KostenConfiguration {
     public LigaKosten StandardJugendE;
     public Map<String, LigaKosten> Abweichungen = new HashMap<>();
 
-    public static Schirikosten calculate(String liga, int kilometer) throws ConfigException {
-        KostenConfiguration kostenConfig = loadOrCreate();
-        return kostenConfig.calculateInternal(liga, kilometer, kilometer);
-    }
-
-    private static KostenConfiguration loadOrCreate() throws ConfigException {
-        KostenConfigurationFile configFile = KostenConfigurationFile.defaultConfigFile();
-        if(!configFile.exists()){
-            configFile.save(KostenConfiguration.defaultConfig());
-        }
-        return configFile.load();
-    }
 
     public static Schirikosten calculate(SchirieinsatzAblauf ablauf) throws ConfigException {
         KostenConfiguration kostenConfig = loadOrCreate();
@@ -43,6 +31,14 @@ public class KostenConfiguration {
         int distanzBeifahrer = kmZurHalle*2;
 
         return kostenConfig.calculateInternal(ablauf.getLigaBezeichnungAusEmail(), distanzFahrer, distanzBeifahrer);
+    }
+
+    private static KostenConfiguration loadOrCreate() throws ConfigException {
+        KostenConfigurationFile configFile = KostenConfigurationFile.defaultConfigFile();
+        if(!configFile.exists()){
+            configFile.save(KostenConfiguration.defaultConfig());
+        }
+        return configFile.load();
     }
 
     private Schirikosten calculateInternal(String liga, int kilometerFahrer, int kilometerBeifahrer) {

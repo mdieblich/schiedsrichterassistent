@@ -20,14 +20,24 @@ class SchirikostenTest {
             boolean successfullyDeleted = configFile.delete();
             assertTrue(successfullyDeleted, "Precondition failed: File not deleted!");
         }
+        SchirieinsatzAblauf ablauf = createAblauf("Oberliga Frauen Gr. 2",30);
 
         // act
         try {
-            KostenConfiguration.calculate("Regionalliga Frauen", 20);
+            KostenConfiguration.calculate(ablauf);
         } catch (Exception e){ /* ignore all exceptions */ }
 
         // assert
         assertTrue(configFile.exists());
+    }
+
+    private SchirieinsatzAblauf createAblauf(String liga, int distanzFahrer){
+        return new SchirieinsatzAblauf(
+                null,
+                liga,
+                new Fahrt(0, distanzFahrer),
+                null
+        );
     }
 
     @Test
@@ -36,9 +46,10 @@ class SchirikostenTest {
         KostenConfiguration modifiedConfig = KostenConfiguration.defaultConfig();
         modifiedConfig.add("Opferliga Männer", 12.5, 0.10, 0.00);
         KostenConfigurationFile.defaultConfigFile().save(modifiedConfig);
+        SchirieinsatzAblauf ablauf = createAblauf("Opferliga Männer",10);
 
         // act
-        Schirikosten kosten = KostenConfiguration.calculate("Opferliga Männer", 20);
+        Schirikosten kosten = KostenConfiguration.calculate(ablauf);
 
         // assert
         assertEquals(12.5, kosten.getTeilnahmeEntschaedigung() );
@@ -50,9 +61,10 @@ class SchirikostenTest {
         KostenConfiguration modifiedConfig = KostenConfiguration.defaultConfig();
         modifiedConfig.StandardSenioren = new LigaKosten(12.5, 0.10, 0.00);
         KostenConfigurationFile.defaultConfigFile().save(modifiedConfig);
+        SchirieinsatzAblauf ablauf = createAblauf("Opferliga Männer",10);
 
         // act
-        Schirikosten kosten = KostenConfiguration.calculate("Opferliga Männer", 20);
+        Schirikosten kosten = KostenConfiguration.calculate(ablauf);
 
         // assert
         assertEquals(12.5, kosten.getTeilnahmeEntschaedigung() );
@@ -116,7 +128,10 @@ class SchirikostenTest {
 
     })
     public void teilnahmeEntschaedigung(String liga, double expectedEntschaedigung) throws ConfigException {
-        Schirikosten kosten = KostenConfiguration.calculate(liga, 30);
+        SchirieinsatzAblauf ablauf = createAblauf(liga,15);
+
+        // act
+        Schirikosten kosten = KostenConfiguration.calculate(ablauf);
 
         assertEquals(expectedEntschaedigung, kosten.getTeilnahmeEntschaedigung());
     }
@@ -178,7 +193,10 @@ class SchirikostenTest {
 
     })
     public void fahrtkosten30kmFahrer(String liga, double expectedFahrtkosten) throws ConfigException {
-        Schirikosten kosten = KostenConfiguration.calculate(liga, 30);
+        SchirieinsatzAblauf ablauf = createAblauf(liga,15);
+
+        // act
+        Schirikosten kosten = KostenConfiguration.calculate(ablauf);
 
         assertEquals(expectedFahrtkosten, kosten.getFahrtKostenFahrer());
     }
@@ -240,7 +258,10 @@ class SchirikostenTest {
 
     })
     public void fahrtkosten30kmBeifahrer(String liga, double expectedFahrtkosten) throws ConfigException {
-        Schirikosten kosten = KostenConfiguration.calculate(liga, 30);
+        SchirieinsatzAblauf ablauf = createAblauf(liga,15);
+
+        // act
+        Schirikosten kosten = KostenConfiguration.calculate(ablauf);
 
         assertEquals(expectedFahrtkosten, kosten.getFahrtKostenBeifahrer());
     }
