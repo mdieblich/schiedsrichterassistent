@@ -31,7 +31,9 @@ public class KostenConfigurationFile {
             checkErrorsInConfigFile(configFileContent);
             Map<String, LigaKosten> configRows = convertToConfigRows(configFileContent);
             checkMandatoryKeys(configRows);
-            return new KostenConfiguration(configRows);
+            KostenConfiguration loadedConfig = new KostenConfiguration(configRows);
+            System.out.println("Kosten-Datei erfolgreich geladen.");
+            return loadedConfig;
         } catch (Exception e) {
             throw new ConfigException("Fehler beim Lesen der Kosten-Datei: "+ file.getAbsolutePath(), e);
         }
@@ -126,6 +128,7 @@ public class KostenConfigurationFile {
         } catch (IOException e) {
             throw new ConfigException("Fehler beim Schreiben der Kosten-Datei: "+ file.getAbsolutePath(), e);
         }
+        System.out.println("Kosten-Datei neu angelegt.");
     }
 
     private List<String> toConfigRows(KostenConfiguration config) {
