@@ -1,8 +1,11 @@
 package com.dieblich.handball.schiedsrichterassistent.pdf;
 
+import com.dieblich.handball.schiedsrichterassistent.config.ConfigException;
+import com.dieblich.handball.schiedsrichterassistent.config.KostenConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SchirieinsatzAblauf;
+import com.dieblich.handball.schiedsrichterassistent.config.Schirikosten;
 import org.springframework.lang.Nullable;
 
 import java.io.IOException;
@@ -23,6 +26,8 @@ public class Kostenabrechnung {
     private final SchiriConfiguration schiriA;
     @Nullable private final SchiriConfiguration schiriB;
 
+    private Schirikosten schirikosten;
+
     public Kostenabrechnung(SchiriEinsatz einsatz, SchirieinsatzAblauf ablauf, SchiriConfiguration schiriA, @Nullable SchiriConfiguration schiriB){
         this.einsatz = einsatz;
         this.ablauf = ablauf;
@@ -33,7 +38,14 @@ public class Kostenabrechnung {
         this(einsatz, ablauf, schiri, null);
     }
 
-    public void exportToPDF(String filename) throws IOException {
+    public Schirikosten getSchirikosten() throws ConfigException {
+        if(schirikosten == null){
+            schirikosten = KostenConfiguration.calculate(ablauf);
+        }
+        return schirikosten;
+    }
+
+    public void exportToPDF(String filename) throws IOException, ConfigException {
         try(PDFFile pdfFile = new PDFFile()){
             seitenTitel(pdfFile);
             spielinformationen(pdfFile);
@@ -127,24 +139,22 @@ public class Kostenabrechnung {
         }
         pdfFile.table(table, 29, 370);
     }
-    @SuppressWarnings("NonAsciiCharacters")
-    private void fahrtkostenInformationen(PDFFile pdfFile) throws IOException {
+
+    private void fahrtkostenInformationen(PDFFile pdfFile) throws IOException, ConfigException {
         PDFTable table;
 
-        double teilnameEntschädigung = schiriA.Kosten.TeilnahmeEntschädigung.get(einsatz.ligaBezeichnungAusEmail());
+        double teilnameEntschaedigung = getSchirikosten().getTeilnahmeEntschaedigung();
 
+        int distanzA = getSchirikosten().distanzFahrerInKm();
+        double kilometerPauschale = getSchirikosten().ligaKosten().kilometerPauschaleFahrer();
+        double fahrtkostenA = getSchirikosten().getFahrtKostenFahrer();
+        double summeA = teilnameEntschaedigung+fahrtkostenA;
 
         if(schiriB != null){
-
-            int distanzA = (ablauf.getFahrtZumPartner().distanzInKilometern()+ablauf.getFahrtZurHalle().distanzInKilometern())*2;
-            double kilometerPauschale = schiriA.Kosten.Fahrer.get(einsatz.ligaBezeichnungAusEmail());
-            double fahrtkostenA = distanzA * kilometerPauschale;
-            double summeA = teilnameEntschädigung+fahrtkostenA;
-
-            int distanzB = ablauf.getFahrtZurHalle().distanzInKilometern()*2;
-            double beifahrerPauschale = schiriB.Kosten.Beifahrer.get(einsatz.ligaBezeichnungAusEmail());
-            double fahrtkostenB = distanzB * beifahrerPauschale;
-            double summeB = teilnameEntschädigung+fahrtkostenB;
+            int distanzB = getSchirikosten().distanzBeifahrerInKm();
+            double beifahrerPauschale = getSchirikosten().ligaKosten().kilometerPauschaleBeiFahrer();
+            double fahrtkostenB = getSchirikosten().getFahrtKostenBeifahrer();
+            double summeB = teilnameEntschaedigung+fahrtkostenB;
 
             double gesamtSumme = summeA + summeB;
 
@@ -159,7 +169,7 @@ public class Kostenabrechnung {
                 fahrtkostenRow("___ km x ___ €", "€"),
                 fahrtkostenRow("Nahverkehrskosten (Belege beifügen)", "€"),
                 fahrtkostenRow("Tagegeld für ___ Stunden", "€"),
-                fahrtkostenRow("Teilnahmeentschädigung", CURRENCY.format(teilnameEntschädigung)),
+                fahrtkostenRow("Teilnahmeentschädigung", CURRENCY.format(teilnameEntschaedigung)),
                 fahrtkostenRow("Übernachtung (Belege beifügen)", "€"),
                 fahrtkostenRow("Sonstige Auslagen (Belege beifügen)", "€"),
                 fahrtkostenRow("Summe:", CURRENCY.format(summeA), "Summe:", CURRENCY.format(summeB)),
@@ -169,11 +179,6 @@ public class Kostenabrechnung {
                 )
             );
         } else {
-
-            int distanzA = ablauf.getFahrtZurHalle().distanzInKilometern()*2;
-            double kilometerPauschale = schiriA.Kosten.Fahrer.get(einsatz.ligaBezeichnungAusEmail());
-            double fahrtkostenA = distanzA * kilometerPauschale;
-            double summeA = teilnameEntschädigung+fahrtkostenA;
 
             table = new PDFTable(
                     tableHeader("Fahrtkosteninformationen"),
@@ -186,7 +191,7 @@ public class Kostenabrechnung {
                     fahrtkostenRow("___ km x ___ €", "€"),
                     fahrtkostenRow("Nahverkehrskosten (Belege beifügen)", "€"),
                     fahrtkostenRow("Tagegeld für ___ Stunden", "€"),
-                    fahrtkostenRow("Teilnahmeentschädigung", CURRENCY.format(teilnameEntschädigung), "Teilnahmeentschädigung", "€"),
+                    fahrtkostenRow("Teilnahmeentschädigung", CURRENCY.format(teilnameEntschaedigung), "Teilnahmeentschädigung", "€"),
                     fahrtkostenRow("Übernachtung (Belege beifügen)", "€"),
                     fahrtkostenRow("Sonstige Auslagen (Belege beifügen)", "€"),
                     fahrtkostenRow("Summe:", CURRENCY.format(summeA), "Summe:", ""),
