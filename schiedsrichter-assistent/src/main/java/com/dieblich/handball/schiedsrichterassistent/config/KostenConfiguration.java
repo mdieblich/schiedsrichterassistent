@@ -1,7 +1,6 @@
 package com.dieblich.handball.schiedsrichterassistent.config;
 
 import com.dieblich.handball.schiedsrichterassistent.calendar.SchirieinsatzAblauf;
-import com.dieblich.handball.schiedsrichterassistent.geo.Fahrt;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 

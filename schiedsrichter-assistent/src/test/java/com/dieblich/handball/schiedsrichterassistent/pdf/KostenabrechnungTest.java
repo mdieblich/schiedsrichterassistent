@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class KostenabrechnungTest {
 
     @Test
-    public void calculatesKosten() throws ConfigException {
+    public void calculatesKosten() {
         SchiriConfiguration configA = SchiriConfiguration.NEW_DEFAULT("emailA");
         configA.Benutzerdaten.Vorname = "Max";
         configA.Benutzerdaten.Nachname = "Mustermann";

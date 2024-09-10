@@ -136,7 +136,7 @@ public class Kostenabrechnung {
         pdfFile.table(table, 29, 370);
     }
 
-    private void fahrtkostenInformationen(PDFFile pdfFile) throws IOException, ConfigException {
+    private void fahrtkostenInformationen(PDFFile pdfFile) throws IOException {
         PDFTable table;
 
         double teilnameEntschaedigung = getSchirikosten().getTeilnahmeEntschaedigung();
