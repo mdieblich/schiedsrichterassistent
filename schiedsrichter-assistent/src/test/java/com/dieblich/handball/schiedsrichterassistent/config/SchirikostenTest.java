@@ -57,11 +57,6 @@ class SchirikostenTest {
         assertEquals(2, kosten.fahrtKostenFahrer() );
     }
 
-    @Test
-    public void sanitizesTheConfig() {
-        fail("TODO: Implement");
-    }
-
     @ParameterizedTest
     @CsvSource({
 
