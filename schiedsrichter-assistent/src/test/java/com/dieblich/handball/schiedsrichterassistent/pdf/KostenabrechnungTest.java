@@ -49,7 +49,7 @@ class KostenabrechnungTest {
     }
 
     @Test
-    public void createTestFile() throws IOException, ConfigException {
+    public void createTestFile() throws IOException {
         SchiriConfiguration configA = SchiriConfiguration.NEW_DEFAULT("emailA");
         configA.Benutzerdaten.Vorname = "Max";
         configA.Benutzerdaten.Nachname = "Mustermann";

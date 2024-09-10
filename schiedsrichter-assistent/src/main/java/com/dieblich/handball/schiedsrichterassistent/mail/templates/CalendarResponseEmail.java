@@ -33,7 +33,7 @@ public class CalendarResponseEmail extends Email implements AutoCloseable{
         return new File(uniqueID+".ics");
     }
 
-    private static File saveToFile(Kostenabrechnung kostenabrechnung) throws IOException, ConfigException {
+    private static File saveToFile(Kostenabrechnung kostenabrechnung) throws IOException {
         long uniqueID = System.currentTimeMillis();
         String fileName = uniqueID+".pdf";
 

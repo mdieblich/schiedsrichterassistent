@@ -1,6 +1,5 @@
 package com.dieblich.handball.schiedsrichterassistent.pdf;
 
-import com.dieblich.handball.schiedsrichterassistent.config.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.config.KostenConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
@@ -41,7 +40,7 @@ public class Kostenabrechnung {
         this(einsatz, ablauf, kostenConfig,schiri, null);
     }
 
-    public void exportToPDF(String filename) throws IOException, ConfigException {
+    public void exportToPDF(String filename) throws IOException {
         try(PDFFile pdfFile = new PDFFile()){
             seitenTitel(pdfFile);
             spielinformationen(pdfFile);
