@@ -5,10 +5,7 @@ import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTermin;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTerminBeifahrer;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTerminEinzelschiri;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SpielTerminFahrer;
-import com.dieblich.handball.schiedsrichterassistent.config.ConfigException;
-import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
-import com.dieblich.handball.schiedsrichterassistent.config.SchiriRepo;
-import com.dieblich.handball.schiedsrichterassistent.config.SchiriRepoEmail;
+import com.dieblich.handball.schiedsrichterassistent.config.*;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoService;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoServiceImpl;
@@ -52,14 +49,18 @@ public class MailController {
     private EmailServerSend stratoSend;
     private GeoService geoService;
 
+    private KostenConfiguration kostenConfig;
+
     @PostConstruct
-    public void init() {
+    public void init() throws ConfigException {
         EmailServerReadImpl stratoRead = new EmailServerReadImpl(imapHost, 993, botEmailaddress, botPassword);
         schiriRepo = new SchiriRepoEmail(stratoRead);
         inbox = new Inbox(stratoRead);
 
         stratoSend = new EmailServerSend(smtpHost,587, botEmailaddress,botPassword);
         geoService = new GeoServiceImpl(openRouteApikey);
+
+        kostenConfig = KostenConfiguration.loadOrCreate();
     }
 
     @Scheduled(fixedDelay = 15*1000)
@@ -199,17 +200,17 @@ public class MailController {
         return schiriConfigB;
     }
 
-    private void sendCalendarEventForOneSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration config) throws GeoException, ConfigException, IOException, EmailException {
-        SpielTerminEinzelschiri spielTermin = new SpielTerminEinzelschiri(schiriEinsatz, config, geoService);
-        Kostenabrechnung abrechnung = new Kostenabrechnung(schiriEinsatz, spielTermin.getSpielAblauf(), config);
-        sendTermin(spielTermin, abrechnung, config.Benutzerdaten.Email);
+    private void sendCalendarEventForOneSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration schiriConfig) throws GeoException, ConfigException, IOException, EmailException {
+        SpielTerminEinzelschiri spielTermin = new SpielTerminEinzelschiri(schiriEinsatz, schiriConfig, geoService);
+        Kostenabrechnung abrechnung = new Kostenabrechnung(schiriEinsatz, spielTermin.getSpielAblauf(), kostenConfig, schiriConfig);
+        sendTermin(spielTermin, abrechnung, schiriConfig.Benutzerdaten.Email);
     }
-    private void sendCalendarEventForTwoSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration fahrer, SchiriConfiguration beifahrer) throws GeoException, ConfigException, IOException, EmailException {
-        SpielTerminFahrer spielTerminFahrer = new SpielTerminFahrer(schiriEinsatz, fahrer, beifahrer, geoService);
-        Kostenabrechnung abrechnung = new Kostenabrechnung(schiriEinsatz, spielTerminFahrer.getSpielAblauf(), fahrer, beifahrer);
-        sendTermin(spielTerminFahrer, abrechnung, fahrer.Benutzerdaten.Email);
+    private void sendCalendarEventForTwoSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration fahrerConfig, SchiriConfiguration beifahrerConfig) throws GeoException, ConfigException, IOException, EmailException {
+        SpielTerminFahrer spielTerminFahrer = new SpielTerminFahrer(schiriEinsatz, fahrerConfig, beifahrerConfig, geoService);
+        Kostenabrechnung abrechnung = new Kostenabrechnung(schiriEinsatz, spielTerminFahrer.getSpielAblauf(), kostenConfig, fahrerConfig, beifahrerConfig);
+        sendTermin(spielTerminFahrer, abrechnung, fahrerConfig.Benutzerdaten.Email);
         SpielTerminBeifahrer spielTerminBeifahrer = spielTerminFahrer.createBeifahrerTermin();
-        sendTermin(spielTerminBeifahrer, abrechnung, beifahrer.Benutzerdaten.Email);
+        sendTermin(spielTerminBeifahrer, abrechnung, beifahrerConfig.Benutzerdaten.Email);
     }
 
     private void sendTermin(SpielTermin termin, Kostenabrechnung abrechnung, String receiver) throws GeoException, ConfigException, IOException, EmailException {

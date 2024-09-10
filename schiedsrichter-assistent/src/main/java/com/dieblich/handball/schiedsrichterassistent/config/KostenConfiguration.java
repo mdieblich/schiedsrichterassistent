@@ -21,19 +21,7 @@ public class KostenConfiguration {
     public LigaKosten StandardJugendE;
     public Map<String, LigaKosten> Abweichungen = new HashMap<>();
 
-
-    public static Schirikosten calculate(SchirieinsatzAblauf ablauf) throws ConfigException {
-        KostenConfiguration kostenConfig = loadOrCreate();
-
-        int kmZurHalle = ablauf.getFahrtZurHalle().distanzInKilometern();
-        int kmZumPartner = ablauf.getFahrtZumPartner().orElse(Fahrt.NULL).distanzInKilometern();
-        int distanzFahrer = (kmZurHalle+kmZumPartner)*2;
-        int distanzBeifahrer = kmZurHalle*2;
-
-        return kostenConfig.calculateInternal(ablauf.getLigaBezeichnungAusEmail(), distanzFahrer, distanzBeifahrer);
-    }
-
-    private static KostenConfiguration loadOrCreate() throws ConfigException {
+    public static KostenConfiguration loadOrCreate() throws ConfigException {
         KostenConfigurationFile configFile = KostenConfigurationFile.defaultConfigFile();
         if(!configFile.exists()){
             configFile.save(KostenConfiguration.defaultConfig());
@@ -41,8 +29,9 @@ public class KostenConfiguration {
         return configFile.load();
     }
 
-    private Schirikosten calculateInternal(String liga, int kilometerFahrer, int kilometerBeifahrer) {
-        String trimmedLiga = liga
+    public Schirikosten calculate(SchirieinsatzAblauf ablauf) {
+
+        String trimmedLiga = ablauf.getLigaBezeichnungAusEmail()
                 .toLowerCase()
                 .replaceAll("gr. \\d", "")
                 .trim();
@@ -62,7 +51,7 @@ public class KostenConfiguration {
                 configForliga = StandardSenioren;
             }
         }
-        return new Schirikosten(configForliga, kilometerFahrer, kilometerBeifahrer);
+        return new Schirikosten(configForliga, ablauf.getKilometerFahrer(), ablauf.getKilometerBeifahrer());
     }
 
     private KostenConfiguration(){}

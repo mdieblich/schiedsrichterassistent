@@ -43,7 +43,7 @@ class KostenabrechnungTest {
                 new Fahrt(10*60, 5),
                 configA
         );
-        Kostenabrechnung abr = new Kostenabrechnung(einsatz, ablauf, configA, configB);
+        Kostenabrechnung abr = new Kostenabrechnung(einsatz, ablauf, KostenConfiguration.defaultConfig(), configA, configB);
         LigaKosten ligaKosten = new LigaKosten(25.0, 0.35, 0.05);
         assertEquals(new Schirikosten(ligaKosten, 80, 70), abr.getSchirikosten());
     }
@@ -78,7 +78,7 @@ class KostenabrechnungTest {
                 new Fahrt(10*60, 5),
                 configA
         );
-        Kostenabrechnung abr = new Kostenabrechnung(einsatz, ablauf, configA, configB);
+        Kostenabrechnung abr = new Kostenabrechnung(einsatz, ablauf, KostenConfiguration.defaultConfig(), configA, configB);
         abr.exportToPDF("kostenabrechnung.pdf");
     }
 }

@@ -6,6 +6,7 @@ import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
 import com.dieblich.handball.schiedsrichterassistent.calendar.SchirieinsatzAblauf;
 import com.dieblich.handball.schiedsrichterassistent.config.Schirikosten;
+import lombok.Getter;
 import org.springframework.lang.Nullable;
 
 import java.io.IOException;
@@ -26,23 +27,18 @@ public class Kostenabrechnung {
     private final SchiriConfiguration schiriA;
     @Nullable private final SchiriConfiguration schiriB;
 
-    private Schirikosten schirikosten;
+    @Getter
+    private final Schirikosten schirikosten;
 
-    public Kostenabrechnung(SchiriEinsatz einsatz, SchirieinsatzAblauf ablauf, SchiriConfiguration schiriA, @Nullable SchiriConfiguration schiriB){
+    public Kostenabrechnung(SchiriEinsatz einsatz, SchirieinsatzAblauf ablauf, KostenConfiguration kostenConfig, SchiriConfiguration schiriA, @Nullable SchiriConfiguration schiriB){
         this.einsatz = einsatz;
         this.ablauf = ablauf;
+        this.schirikosten = kostenConfig.calculate(ablauf);
         this.schiriA = schiriA;
         this.schiriB = schiriB;
     }
-    public Kostenabrechnung(SchiriEinsatz einsatz, SchirieinsatzAblauf ablauf, SchiriConfiguration schiri){
-        this(einsatz, ablauf, schiri, null);
-    }
-
-    public Schirikosten getSchirikosten() throws ConfigException {
-        if(schirikosten == null){
-            schirikosten = KostenConfiguration.calculate(ablauf);
-        }
-        return schirikosten;
+    public Kostenabrechnung(SchiriEinsatz einsatz, SchirieinsatzAblauf ablauf, KostenConfiguration kostenConfig, SchiriConfiguration schiri){
+        this(einsatz, ablauf, kostenConfig,schiri, null);
     }
 
     public void exportToPDF(String filename) throws IOException, ConfigException {

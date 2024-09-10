@@ -33,6 +33,17 @@ public class SchirieinsatzAblauf {
         return Optional.ofNullable(fahrtZumPartner);
     }
 
+    public int getKilometerFahrer(){
+        int kmZurHalle = fahrtZurHalle.distanzInKilometern();
+        int kmZumPartner = getFahrtZumPartner().orElse(Fahrt.NULL).distanzInKilometern();
+        return (kmZurHalle+kmZumPartner)*2;
+    }
+
+    public int getKilometerBeifahrer(){
+        int kmZurHalle = fahrtZurHalle.distanzInKilometern();
+        return kmZurHalle*2;
+    }
+
 
     public LocalDateTime getTechnischBesprechung() {
         return anwurf
