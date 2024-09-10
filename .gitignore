@@ -1,3 +1,4 @@
 /*.ics
 /schiedsrichter-assistent/src/main/resources/application.dev.properties
 /schiedsrichter-assistent/src/main/resources/application.prod.properties
+/kosten.csv
