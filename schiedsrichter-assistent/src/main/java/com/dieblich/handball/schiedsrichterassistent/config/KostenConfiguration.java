@@ -21,7 +21,7 @@ public class KostenConfiguration {
     public KostenConfigurationsEintrag StandardJugendE;
     public Map<String, KostenConfigurationsEintrag> Abweichungen = new HashMap<>();
 
-    public static Schirikosten calculate(String liga, double kilometer) throws ConfigException {
+    public static Schirikosten calculate(String liga, int kilometer) throws ConfigException {
         KostenConfiguration kostenConfig = loadOrCreate();
         return kostenConfig.calculateInternal(liga, kilometer, kilometer);
     }
@@ -37,15 +37,15 @@ public class KostenConfiguration {
     public static Schirikosten calculate(SchirieinsatzAblauf ablauf) throws ConfigException {
         KostenConfiguration kostenConfig = loadOrCreate();
 
-        double kmZurHalle = ablauf.getFahrtZurHalle().distanzInKilometern();
-        double kmZumPartner = ablauf.getFahrtZumPartner().orElse(Fahrt.NULL).distanzInKilometern();
-        double distanzFahrer = (kmZurHalle+kmZumPartner)*2;
-        double distanzBeifahrer = kmZurHalle*2;
+        int kmZurHalle = ablauf.getFahrtZurHalle().distanzInKilometern();
+        int kmZumPartner = ablauf.getFahrtZumPartner().orElse(Fahrt.NULL).distanzInKilometern();
+        int distanzFahrer = (kmZurHalle+kmZumPartner)*2;
+        int distanzBeifahrer = kmZurHalle*2;
 
         return kostenConfig.calculateInternal(ablauf.getLigaBezeichnungAusEmail(), distanzFahrer, distanzBeifahrer);
     }
 
-    private Schirikosten calculateInternal(String liga, double kilometerFahrer, double kilometerBeifahrer) {
+    private Schirikosten calculateInternal(String liga, int kilometerFahrer, int kilometerBeifahrer) {
         String trimmedLiga = liga
                 .toLowerCase()
                 .replaceAll("gr. \\d", "")
@@ -66,11 +66,7 @@ public class KostenConfiguration {
                 configForliga = StandardSenioren;
             }
         }
-        return new Schirikosten(
-                configForliga.teilnahmeEntschaedigung(),
-                configForliga.kilometerPauschaleFahrer() * kilometerFahrer,
-                configForliga.kilometerPauschaleBeiFahrer() * kilometerBeifahrer
-        );
+        return new Schirikosten(configForliga, kilometerFahrer, kilometerBeifahrer);
     }
 
     private KostenConfiguration(){}

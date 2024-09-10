@@ -41,8 +41,8 @@ class SchirikostenTest {
         Schirikosten kosten = KostenConfiguration.calculate("Opferliga Männer", 20);
 
         // assert
-        assertEquals(12.5, kosten.teilnahmeEntschaedigung() );
-        assertEquals(2, kosten.fahrtKostenFahrer() );
+        assertEquals(12.5, kosten.getTeilnahmeEntschaedigung() );
+        assertEquals(2, kosten.getFahrtKostenFahrer() );
     }
     @Test
     public void readsNewContentFromConfigFile() throws ConfigException {
@@ -55,8 +55,8 @@ class SchirikostenTest {
         Schirikosten kosten = KostenConfiguration.calculate("Opferliga Männer", 20);
 
         // assert
-        assertEquals(12.5, kosten.teilnahmeEntschaedigung() );
-        assertEquals(2, kosten.fahrtKostenFahrer() );
+        assertEquals(12.5, kosten.getTeilnahmeEntschaedigung() );
+        assertEquals(2, kosten.getFahrtKostenFahrer() );
     }
 
     @ParameterizedTest
@@ -118,7 +118,7 @@ class SchirikostenTest {
     public void teilnahmeEntschaedigung(String liga, double expectedEntschaedigung) throws ConfigException {
         Schirikosten kosten = KostenConfiguration.calculate(liga, 30);
 
-        assertEquals(expectedEntschaedigung, kosten.teilnahmeEntschaedigung());
+        assertEquals(expectedEntschaedigung, kosten.getTeilnahmeEntschaedigung());
     }
 
     @ParameterizedTest
@@ -180,7 +180,7 @@ class SchirikostenTest {
     public void fahrtkosten30kmFahrer(String liga, double expectedFahrtkosten) throws ConfigException {
         Schirikosten kosten = KostenConfiguration.calculate(liga, 30);
 
-        assertEquals(expectedFahrtkosten, kosten.fahrtKostenFahrer());
+        assertEquals(expectedFahrtkosten, kosten.getFahrtKostenFahrer());
     }
 
     @ParameterizedTest
@@ -242,7 +242,7 @@ class SchirikostenTest {
     public void fahrtkosten30kmBeifahrer(String liga, double expectedFahrtkosten) throws ConfigException {
         Schirikosten kosten = KostenConfiguration.calculate(liga, 30);
 
-        assertEquals(expectedFahrtkosten, kosten.fahrtKostenBeifahrer());
+        assertEquals(expectedFahrtkosten, kosten.getFahrtKostenBeifahrer());
     }
 
     @Test
@@ -260,8 +260,8 @@ class SchirikostenTest {
         Schirikosten kosten = KostenConfiguration.calculate(ablauf);
 
         // assert
-        assertEquals(40.00, kosten.teilnahmeEntschaedigung());
-        assertEquals( 0.30 * 80, kosten.fahrtKostenFahrer());
-        assertEquals( 0.00, kosten.fahrtKostenBeifahrer());
+        assertEquals(40.00, kosten.getTeilnahmeEntschaedigung());
+        assertEquals( 0.30 * 80, kosten.getFahrtKostenFahrer());
+        assertEquals( 0.00, kosten.getFahrtKostenBeifahrer());
     }
 }
