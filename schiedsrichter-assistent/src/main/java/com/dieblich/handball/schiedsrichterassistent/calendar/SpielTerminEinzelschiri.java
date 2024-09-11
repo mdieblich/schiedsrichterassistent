@@ -6,6 +6,7 @@ import biweekly.component.VEvent;
 import com.dieblich.handball.schiedsrichterassistent.config.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
+import com.dieblich.handball.schiedsrichterassistent.config.TechnischeBesprechungConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.geo.Fahrt;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoService;
@@ -18,14 +19,16 @@ public class SpielTerminEinzelschiri implements SpielTermin {
 
     private final SchiriEinsatz einsatz;
     private final SchiriConfiguration config;
+    private final TechnischeBesprechungConfiguration besprechungConfiguration;
     private final GeoService geoService;
 
     private SchirieinsatzAblauf spielAblauf;
     private String description;
 
-    public SpielTerminEinzelschiri(SchiriEinsatz einsatz, SchiriConfiguration config, GeoService geoService) {
+    public SpielTerminEinzelschiri(SchiriEinsatz einsatz, SchiriConfiguration config, TechnischeBesprechungConfiguration besprechungConfiguration, GeoService geoService) {
         this.einsatz = einsatz;
         this.config = config;
+        this.besprechungConfiguration = besprechungConfiguration;
         this.geoService = geoService;
     }
 
@@ -74,7 +77,8 @@ public class SpielTerminEinzelschiri implements SpielTermin {
                 einsatz.anwurf(),
                 einsatz.ligaBezeichnungAusEmail(),
                 optionalHinfahrt.get(),
-                config
+                config,
+                besprechungConfiguration
         );
     }
 

@@ -6,6 +6,7 @@ import biweekly.component.VEvent;
 import com.dieblich.handball.schiedsrichterassistent.config.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
+import com.dieblich.handball.schiedsrichterassistent.config.TechnischeBesprechungConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.geo.Fahrt;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoService;
@@ -18,15 +19,17 @@ public class SpielTerminFahrer implements SpielTermin{
     private final SchiriEinsatz einsatz;
     private final SchiriConfiguration schiriConfigFahrer;
     private final SchiriConfiguration schiriConfigBeifahrer;
+    private final TechnischeBesprechungConfiguration besprechungConfiguration;
     private final GeoService geoService;
 
     private SchirieinsatzAblauf spielAblauf;
     private String description;
 
-    public SpielTerminFahrer(SchiriEinsatz einsatz, SchiriConfiguration schiriConfigFahrer, SchiriConfiguration schiriConfigBeifahrer, GeoService geoService) {
+    public SpielTerminFahrer(SchiriEinsatz einsatz, SchiriConfiguration schiriConfigFahrer, SchiriConfiguration schiriConfigBeifahrer, TechnischeBesprechungConfiguration besprechungConfiguration, GeoService geoService) {
         this.einsatz = einsatz;
         this.schiriConfigFahrer = schiriConfigFahrer;
         this.schiriConfigBeifahrer = schiriConfigBeifahrer;
+        this.besprechungConfiguration = besprechungConfiguration;
         this.geoService = geoService;
     }
 
@@ -87,7 +90,8 @@ public class SpielTerminFahrer implements SpielTermin{
                 einsatz.ligaBezeichnungAusEmail(),
                 optionalFahrtZurHalle.get(),
                 optionalFahrtZumBeifahrer.get(),
-                schiriConfigFahrer
+                schiriConfigFahrer,
+                besprechungConfiguration
         );
     }
 

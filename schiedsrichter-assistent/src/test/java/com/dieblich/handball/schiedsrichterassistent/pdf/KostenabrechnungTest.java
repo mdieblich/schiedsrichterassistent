@@ -25,6 +25,9 @@ class KostenabrechnungTest {
         configB.Benutzerdaten.Nachname = "Testnutzer";
         configB.Benutzerdaten.Adresse = "Testallee. 12, 54321 Dortmund";
 
+        TechnischeBesprechungConfiguration technischeBesprechungConfiguration = TechnischeBesprechungConfiguration.defaultConfig();
+        technischeBesprechungConfiguration.standard = 30;
+
         SchiriEinsatz einsatz = new SchiriEinsatz("13156",
                 LocalDateTime.of(2024,4,13,15,30,0),
                 "AC2 Aachen Gillesbachtal",
@@ -41,7 +44,8 @@ class KostenabrechnungTest {
                 einsatz.ligaBezeichnungAusEmail(),
                 new Fahrt(30*60, 35),
                 new Fahrt(10*60, 5),
-                configA
+                configA,
+                technischeBesprechungConfiguration
         );
         Kostenabrechnung abr = new Kostenabrechnung(einsatz, ablauf, KostenConfiguration.defaultConfig(), configA, configB);
         LigaKosten ligaKosten = new LigaKosten(25.0, 0.35, 0.05);
@@ -60,6 +64,9 @@ class KostenabrechnungTest {
         configB.Benutzerdaten.Nachname = "Testnutzer";
         configB.Benutzerdaten.Adresse = "Testallee. 12, 54321 Dortmund";
 
+        TechnischeBesprechungConfiguration technischeBesprechungConfiguration = TechnischeBesprechungConfiguration.defaultConfig();
+        technischeBesprechungConfiguration.standard = 30;
+
         SchiriEinsatz einsatz = new SchiriEinsatz("13156",
                 LocalDateTime.of(2024,4,13,15,30,0),
                 "AC2 Aachen Gillesbachtal",
@@ -76,7 +83,8 @@ class KostenabrechnungTest {
                 einsatz.ligaBezeichnungAusEmail(),
                 new Fahrt(30*60, 35),
                 new Fahrt(10*60, 5),
-                configA
+                configA,
+                technischeBesprechungConfiguration
         );
         Kostenabrechnung abr = new Kostenabrechnung(einsatz, ablauf, KostenConfiguration.defaultConfig(), configA, configB);
         abr.exportToPDF("kostenabrechnung.pdf");

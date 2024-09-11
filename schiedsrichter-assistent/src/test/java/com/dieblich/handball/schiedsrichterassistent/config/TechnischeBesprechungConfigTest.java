@@ -1,7 +1,5 @@
 package com.dieblich.handball.schiedsrichterassistent.config;
 
-import com.dieblich.handball.schiedsrichterassistent.calendar.SchirieinsatzAblauf;
-import com.dieblich.handball.schiedsrichterassistent.geo.Fahrt;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -31,26 +29,16 @@ class TechnischeBesprechungConfigTest {
         assertTrue(configFile.exists());
     }
 
-    private SchirieinsatzAblauf createAblauf(String liga){
-        return new SchirieinsatzAblauf(
-                null,
-                liga,
-                null,
-                null
-        );
-    }
-
     @Test
     public void readsContentFromConfigFile() throws ConfigException {
         // arrange
         TechnischeBesprechungConfiguration modifiedConfig = TechnischeBesprechungConfiguration.defaultConfig();
         modifiedConfig.add("Opferliga Männer", 50);
         TechnischeBesprechungConfigurationFile.defaultConfigFile().save(modifiedConfig);
-        SchirieinsatzAblauf ablauf = createAblauf("Opferliga Männer");
 
         // act
         TechnischeBesprechungConfiguration config = TechnischeBesprechungConfiguration.loadOrCreate();
-        int dauer = config.get(ablauf);
+        int dauer = config.get("Opferliga Männer");
 
         // assert
         assertEquals(50, dauer );
@@ -61,11 +49,10 @@ class TechnischeBesprechungConfigTest {
         TechnischeBesprechungConfiguration modifiedConfig = TechnischeBesprechungConfiguration.defaultConfig();
         modifiedConfig.standard = 40;
         TechnischeBesprechungConfigurationFile.defaultConfigFile().save(modifiedConfig);
-        SchirieinsatzAblauf ablauf = createAblauf("Opferliga Männer");
 
         // act
         TechnischeBesprechungConfiguration config = TechnischeBesprechungConfiguration.loadOrCreate();
-        int dauer = config.get(ablauf);
+        int dauer = config.get("Opferliga Männer");
 
         // assert
         assertEquals(40, dauer);
@@ -128,30 +115,11 @@ class TechnischeBesprechungConfigTest {
 
     })
     public void dauerCheckForAllLigen(String liga, int expectedDauer) throws ConfigException {
-        SchirieinsatzAblauf ablauf = createAblauf(liga);
-
         // act
         TechnischeBesprechungConfiguration config = TechnischeBesprechungConfiguration.loadOrCreate();
-        int dauer = config.get(ablauf);
-
-        assertEquals(expectedDauer, dauer);
-    }
-
-    @Test
-    public void berechneAusAblauf() throws ConfigException {
-        // arrange
-        SchirieinsatzAblauf ablauf = new SchirieinsatzAblauf(
-                null,
-                "Oberliga Frauen Gr. 2",
-                null,
-                null
-        );
-
-        // act
-        TechnischeBesprechungConfiguration config = TechnischeBesprechungConfiguration.loadOrCreate();
-        int dauer = config.get(ablauf);
+        int dauer = config.get(liga);
 
         // assert
-        assertEquals(45, dauer);
+        assertEquals(expectedDauer, dauer);
     }
 }

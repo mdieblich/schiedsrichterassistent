@@ -50,6 +50,7 @@ public class MailController {
     private GeoService geoService;
 
     private KostenConfiguration kostenConfig;
+    private TechnischeBesprechungConfiguration technischeBesprechungConfiguration;
 
     @PostConstruct
     public void init() throws ConfigException {
@@ -61,6 +62,7 @@ public class MailController {
         geoService = new GeoServiceImpl(openRouteApikey);
 
         kostenConfig = KostenConfiguration.loadOrCreate();
+        technischeBesprechungConfiguration = TechnischeBesprechungConfiguration.loadOrCreate();
     }
 
     @Scheduled(fixedDelay = 15*1000)
@@ -201,12 +203,12 @@ public class MailController {
     }
 
     private void sendCalendarEventForOneSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration schiriConfig) throws GeoException, ConfigException, IOException, EmailException {
-        SpielTerminEinzelschiri spielTermin = new SpielTerminEinzelschiri(schiriEinsatz, schiriConfig, geoService);
+        SpielTerminEinzelschiri spielTermin = new SpielTerminEinzelschiri(schiriEinsatz, schiriConfig, technischeBesprechungConfiguration, geoService);
         Kostenabrechnung abrechnung = new Kostenabrechnung(schiriEinsatz, spielTermin.getSpielAblauf(), kostenConfig, schiriConfig);
         sendTermin(spielTermin, abrechnung, schiriConfig.Benutzerdaten.Email);
     }
     private void sendCalendarEventForTwoSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration fahrerConfig, SchiriConfiguration beifahrerConfig) throws GeoException, ConfigException, IOException, EmailException {
-        SpielTerminFahrer spielTerminFahrer = new SpielTerminFahrer(schiriEinsatz, fahrerConfig, beifahrerConfig, geoService);
+        SpielTerminFahrer spielTerminFahrer = new SpielTerminFahrer(schiriEinsatz, fahrerConfig, beifahrerConfig, technischeBesprechungConfiguration, geoService);
         Kostenabrechnung abrechnung = new Kostenabrechnung(schiriEinsatz, spielTerminFahrer.getSpielAblauf(), kostenConfig, fahrerConfig, beifahrerConfig);
         sendTermin(spielTerminFahrer, abrechnung, fahrerConfig.Benutzerdaten.Email);
         SpielTerminBeifahrer spielTerminBeifahrer = spielTerminFahrer.createBeifahrerTermin();

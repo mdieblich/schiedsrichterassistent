@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -45,14 +44,7 @@ class SchiriConfigurationTest {
             "EffektiveSpielDauer" : 90,
             "UmziehenVorSpiel" : 15,
             "PapierKramNachSpiel" : 15,
-            "UmziehenNachSpiel" : 15,
-            "TechnischeBesprechung" : {
-              "StandardDauerInMinuten" : 30,
-              "Abweichungen" : {
-                "Oberliga" : 45,
-                "Regionalliga" : 45
-              }
-            }
+            "UmziehenNachSpiel" : 15
           },
           "Gespannpartner": [
             "mike.blind@loser.com"
@@ -87,14 +79,7 @@ class SchiriConfigurationTest {
             "UmziehenVorSpiel" : 15,
             "EffektiveSpielDauer" : 90,
             "PapierKramNachSpiel" : 15,
-            "UmziehenNachSpiel" : 15,
-            "TechnischeBesprechung" : {
-              "StandardDauerInMinuten" : 30,
-              "Abweichungen" : {
-                "Oberliga" : 45,
-                "Regionalliga" : 45
-              }
-            }
+            "UmziehenNachSpiel" : 15
           },
           "Gespannpartner": []
         }
@@ -185,12 +170,6 @@ class SchiriConfigurationTest {
         config.Spielablauf.EffektiveSpielDauer = 99;
         config.Spielablauf.PapierKramNachSpiel = 5;
         config.Spielablauf.UmziehenNachSpiel = 25;
-        config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten = 90;
-        config.Spielablauf.TechnischeBesprechung.Abweichungen.putAll(Map.of(
-                "Regionalliga", 100,
-                "Oberliga", 60,
-                "Kreisklasse", 4
-        ));
 
         config.updateWith("{}", fakeAddressToGeoLocation);
 
@@ -204,12 +183,6 @@ class SchiriConfigurationTest {
         assertEquals(99, config.Spielablauf.EffektiveSpielDauer);
         assertEquals(5, config.Spielablauf.PapierKramNachSpiel );
         assertEquals(25, config.Spielablauf.UmziehenNachSpiel );
-        assertEquals(90, config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten);
-        assertEquals(Map.of(
-        "Regionalliga", 100,
-        "Oberliga", 60,
-        "Kreisklasse", 4
-        ), config.Spielablauf.TechnischeBesprechung.Abweichungen);
     }
     @Test
     public void updateWithSingleEntry() throws ConfigException {
@@ -217,14 +190,12 @@ class SchiriConfigurationTest {
         config.updateWith("""
                 {
                 	"Spielablauf": {
-                		"TechnischeBesprechung": {
-                			"StandardDauerInMinuten": 90
-                		}
+                	    "UmziehenVorSpiel" : 90
                 	}
                 }
                 """, fakeAddressToGeoLocation);
 
-        assertEquals(90, config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten);
+        assertEquals(90, config.Spielablauf.UmziehenVorSpiel);
     }
     @Test
     public void updateWithMultipleEntries() throws ConfigException {
@@ -235,50 +206,13 @@ class SchiriConfigurationTest {
                         "Vorname": "Moritz"
                  	},
                 	"Spielablauf": {
-                		"TechnischeBesprechung": {
-                			"StandardDauerInMinuten": 90
-                		}
+                	    "UmziehenVorSpiel" : 90
                 	}
                 }
                 """, fakeAddressToGeoLocation);
 
         assertEquals("Moritz", config.Benutzerdaten.Vorname);
-        assertEquals(90, config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten);
-    }
-
-    @Test
-    public void updateWithTechnischeBesprechungLiga() throws ConfigException {
-        SchiriConfiguration config = new SchiriConfiguration("");
-        config.updateWith("""
-                {
-                	"Spielablauf": {
-                		"TechnischeBesprechung": {
-                            "Abweichungen": {
-                                "Regionalliga": 50
-                            }
-                		}
-                	}
-                }
-                """, fakeAddressToGeoLocation);
-
-        assertEquals(50, config.Spielablauf.TechnischeBesprechung.Abweichungen.get("Regionalliga"));
-    }
-    @Test
-    public void updateWithCreatesLiga() throws ConfigException {
-        SchiriConfiguration config = new SchiriConfiguration("");
-        config.updateWith("""
-                {
-                	"Spielablauf": {
-                		"TechnischeBesprechung": {
-                            "Abweichungen": {
-                                "Kreisklasse": 20
-                            }
-                		}
-                	}
-                }
-                """, fakeAddressToGeoLocation);
-
-        assertEquals(20, config.Spielablauf.TechnischeBesprechung.Abweichungen.get("Kreisklasse"));
+        assertEquals(90, config.Spielablauf.UmziehenVorSpiel);
     }
 
     @Test

@@ -145,66 +145,20 @@ public class SchiriConfiguration {
         public Integer EffektiveSpielDauer;
         public Integer PapierKramNachSpiel;
         public Integer UmziehenNachSpiel;
-        public TechnischeBesprechung TechnischeBesprechung = new TechnischeBesprechung();
 
         public void updateWith(Spielablauf other) {
             if(other.UmziehenVorSpiel != null) {UmziehenVorSpiel = other.UmziehenVorSpiel;}
             if(other.EffektiveSpielDauer != null) {EffektiveSpielDauer = other.EffektiveSpielDauer;}
             if(other.PapierKramNachSpiel != null) {PapierKramNachSpiel = other.PapierKramNachSpiel;}
             if(other.UmziehenNachSpiel != null) {UmziehenNachSpiel = other.UmziehenNachSpiel;}
-            if(other.TechnischeBesprechung != null) {
-                TechnischeBesprechung.updateWith(other.TechnischeBesprechung);
-            }
         }
 
         @JsonIgnore
         public boolean isComplete() {
-            if(TechnischeBesprechung == null){
-                return false;
-            }
             return UmziehenVorSpiel != null &&
                     EffektiveSpielDauer != null &&
                     PapierKramNachSpiel != null &&
-                    UmziehenNachSpiel != null &&
-                    TechnischeBesprechung.isComplete();
-        }
-
-        @ToString
-        @EqualsAndHashCode
-        public static class TechnischeBesprechung{
-            public Integer StandardDauerInMinuten;
-            public Map<String, Integer> Abweichungen = new HashMap<>();
-
-            public void updateWith(TechnischeBesprechung other) {
-                if(other.StandardDauerInMinuten != null) {StandardDauerInMinuten = other.StandardDauerInMinuten;                }
-                if(other.Abweichungen != null){Abweichungen.putAll(other.Abweichungen);}
-            }
-
-
-            public int getVorlaufProLiga(String ligaBezeichnungAusEmail) {
-                String ligaName = findLigaName(ligaBezeichnungAusEmail);
-
-                if(Abweichungen.containsKey(ligaName)){
-                    return Abweichungen.get(ligaName);
-                }
-                return StandardDauerInMinuten;
-            }
-
-            public static String findLigaName(String ligaBezeichnungAusEmail){
-                String[] ligaParts = ligaBezeichnungAusEmail.split(" ");
-                for(String ligaPart:ligaParts){
-                    String lowerCaseliga = ligaPart.toLowerCase();
-                    if(lowerCaseliga.contains("liga") || lowerCaseliga.contains("klasse")){
-                        return ligaPart;
-                    }
-                }
-                throw new IllegalArgumentException("Aus der Liga-Bezeichung \""+ligaBezeichnungAusEmail+"\" konnte nicht die Liga oder Klasse extrahiert werden");
-            }
-
-            @JsonIgnore
-            public boolean isComplete() {
-                return StandardDauerInMinuten != null;
-            }
+                    UmziehenNachSpiel != null;
         }
     }
 
@@ -215,12 +169,6 @@ public class SchiriConfiguration {
         config.Spielablauf.EffektiveSpielDauer = 90;
         config.Spielablauf.PapierKramNachSpiel = 15;
         config.Spielablauf.UmziehenNachSpiel = 15;
-        config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten = 30;
-        config.Spielablauf.TechnischeBesprechung.Abweichungen.putAll(Map.of(
-                // put Map.of inside HashMap to have it mutable
-                "Regionalliga", 45,
-                "Oberliga", 45
-        ));
         return config;
     }
     public void updateWith(String configUpdate, Function<String, Optional<Koordinaten>> addressToKoordinaten) throws ConfigException {

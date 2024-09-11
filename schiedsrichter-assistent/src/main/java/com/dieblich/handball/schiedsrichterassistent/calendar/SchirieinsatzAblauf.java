@@ -1,6 +1,7 @@
 package com.dieblich.handball.schiedsrichterassistent.calendar;
 
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
+import com.dieblich.handball.schiedsrichterassistent.config.TechnischeBesprechungConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.geo.Fahrt;
 import lombok.Getter;
 
@@ -17,16 +18,18 @@ public class SchirieinsatzAblauf {
     private final Fahrt fahrtZurHalle;
     private final Fahrt fahrtZumPartner;
     private final SchiriConfiguration config;
+    private final TechnischeBesprechungConfiguration besprechungConfiguration;
 
-    public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, Fahrt fahrtZurHalle, Fahrt fahrtZumPartner, SchiriConfiguration config) {
+    public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, Fahrt fahrtZurHalle, Fahrt fahrtZumPartner, SchiriConfiguration config, TechnischeBesprechungConfiguration besprechungConfiguration) {
         this.anwurf = anwurf;
         this.ligaBezeichnungAusEmail = ligaBezeichnungAusEmail;
         this.fahrtZurHalle = fahrtZurHalle;
         this.fahrtZumPartner = fahrtZumPartner;
         this.config = config;
+        this.besprechungConfiguration = besprechungConfiguration;
     }
-    public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, Fahrt fahrtZurHalle, SchiriConfiguration config) {
-        this(anwurf, ligaBezeichnungAusEmail, fahrtZurHalle, null, config);
+    public SchirieinsatzAblauf(LocalDateTime anwurf, String ligaBezeichnungAusEmail, Fahrt fahrtZurHalle, SchiriConfiguration config, TechnischeBesprechungConfiguration besprechungConfiguration) {
+        this(anwurf, ligaBezeichnungAusEmail, fahrtZurHalle, null, config, besprechungConfiguration);
     }
 
     public Optional<Fahrt> getFahrtZumPartner(){
@@ -47,7 +50,7 @@ public class SchirieinsatzAblauf {
 
     public LocalDateTime getTechnischBesprechung() {
         return anwurf
-                .minusMinutes(config.Spielablauf.TechnischeBesprechung.getVorlaufProLiga(ligaBezeichnungAusEmail));
+                .minusMinutes(besprechungConfiguration.get(ligaBezeichnungAusEmail));
     }
 
     public LocalDateTime getAnkunftHalle() {

@@ -1,7 +1,5 @@
 package com.dieblich.handball.schiedsrichterassistent.config;
 
-import com.dieblich.handball.schiedsrichterassistent.calendar.SchirieinsatzAblauf;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +16,9 @@ public class TechnischeBesprechungConfiguration {
         return configFile.load();
     }
 
-    public int get(SchirieinsatzAblauf ablauf) {
+    public int get(String ligaBezeichnungAusEmail) {
 
-        String trimmedLiga = ablauf.getLigaBezeichnungAusEmail()
+        String trimmedLiga = ligaBezeichnungAusEmail
                 .toLowerCase()
                 .replaceAll("gr. \\d", "")
                 .trim();

@@ -35,6 +35,7 @@ class SchirikostenTest {
                 null,
                 liga,
                 new Fahrt(0, distanzFahrer),
+                null,
                 null
         );
     }
@@ -278,6 +279,7 @@ class SchirikostenTest {
                 "Oberliga Frauen Gr. 2",
                 new Fahrt(0, 30),
                 new Fahrt(0, 10),
+                null,
                 null
         );
 

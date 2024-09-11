@@ -4,6 +4,7 @@ import com.dieblich.handball.schiedsrichterassistent.config.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
+import com.dieblich.handball.schiedsrichterassistent.config.TechnischeBesprechungConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoServiceFake;
 import com.dieblich.handball.schiedsrichterassistent.geo.Koordinaten;
@@ -40,7 +41,8 @@ class SpielTerminEinzelschiriTest extends SpielTerminTest{
         Koordinaten coordsSchiri = new Koordinaten(18.0, 17.0);
         config.Benutzerdaten.Längengrad = coordsSchiri.längengrad();
         config.Benutzerdaten.Breitengrad = coordsSchiri.breitengrad();
-        config.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten = 30;
+        TechnischeBesprechungConfiguration technischeBesprechungConfiguration = TechnischeBesprechungConfiguration.defaultConfig();
+        technischeBesprechungConfiguration.standard = 30;
         config.Spielablauf.UmziehenVorSpiel = 15;
         config.Spielablauf.EffektiveSpielDauer = 90;
         config.Spielablauf.PapierKramNachSpiel = 15;
@@ -51,7 +53,7 @@ class SpielTerminEinzelschiriTest extends SpielTerminTest{
         fakeGeoService.addFahrt(coordsSchiri, coordsHalle, 30, 34);
 
         // act
-        return new SpielTerminEinzelschiri(einsatz, config, fakeGeoService);
+        return new SpielTerminEinzelschiri(einsatz, config, technischeBesprechungConfiguration, fakeGeoService);
     }
 
     @Test

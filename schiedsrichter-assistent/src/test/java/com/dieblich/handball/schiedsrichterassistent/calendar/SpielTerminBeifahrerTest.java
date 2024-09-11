@@ -4,6 +4,7 @@ import com.dieblich.handball.schiedsrichterassistent.config.ConfigException;
 import com.dieblich.handball.schiedsrichterassistent.Schiedsrichter;
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.SchiriEinsatz;
+import com.dieblich.handball.schiedsrichterassistent.config.TechnischeBesprechungConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoException;
 import com.dieblich.handball.schiedsrichterassistent.geo.GeoServiceFake;
 import com.dieblich.handball.schiedsrichterassistent.geo.Koordinaten;
@@ -39,12 +40,12 @@ class SpielTerminBeifahrerTest extends SpielTerminTest{
         Koordinaten coordsFahrer = new Koordinaten(18.0, 17.0);
         configFahrer.Benutzerdaten.Längengrad = coordsFahrer.längengrad();
         configFahrer.Benutzerdaten.Breitengrad = coordsFahrer.breitengrad();
-        configFahrer.Spielablauf.TechnischeBesprechung.StandardDauerInMinuten = 30;
         configFahrer.Spielablauf.UmziehenVorSpiel = 15;
         configFahrer.Spielablauf.EffektiveSpielDauer = 90;
         configFahrer.Spielablauf.PapierKramNachSpiel = 15;
         configFahrer.Spielablauf.UmziehenNachSpiel = 15;
-
+        TechnischeBesprechungConfiguration technischeBesprechungConfiguration = TechnischeBesprechungConfiguration.defaultConfig();
+        technischeBesprechungConfiguration.standard = 30;
 
         SchiriConfiguration configBeifahrer = SchiriConfiguration.NEW_DEFAULT("");
         configBeifahrer.Benutzerdaten.Vorname = "Andre";
@@ -59,7 +60,7 @@ class SpielTerminBeifahrerTest extends SpielTerminTest{
         fakeGeoService.addFahrt(coordsBeifahrer, coordsHalle, 30, 34);
 
         // act
-        return new SpielTerminFahrer(einsatz, configFahrer, configBeifahrer, fakeGeoService)
+        return new SpielTerminFahrer(einsatz, configFahrer, configBeifahrer, technischeBesprechungConfiguration, fakeGeoService)
                 .createBeifahrerTermin();
     }
     @Test
