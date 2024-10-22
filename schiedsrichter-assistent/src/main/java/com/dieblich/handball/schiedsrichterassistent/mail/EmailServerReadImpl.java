@@ -1,10 +1,14 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import jakarta.mail.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
 public class EmailServerReadImpl implements AutoCloseable, EmailServerRead {
+
+    private static final Logger logger = LoggerFactory.getLogger(EmailServerReadImpl.class);
 
     private final Session session;
     private Store store;
@@ -26,9 +30,11 @@ public class EmailServerReadImpl implements AutoCloseable, EmailServerRead {
     private void ensureConnection() throws MessagingException {
         if (store == null) {
             store = session.getStore("imap");
+            logger.info("imap Store established");
         }
         if (!store.isConnected()) {
             store.connect(host, port, user, password);
+            logger.info("Connected as {} at {}:{}", this.user, this.host, this.port);
         }
 
     }
@@ -41,8 +47,10 @@ public class EmailServerReadImpl implements AutoCloseable, EmailServerRead {
             Folder folder = defaultFolder.getFolder(name);
             if (!folder.exists()) {
                 folder.create(Folder.HOLDS_FOLDERS | Folder.HOLDS_MESSAGES);
+                logger.info("Created folder {}" , name);
             }
             folder.open(Folder.READ_WRITE);
+            logger.info("Opened folder {}" , name);
             return new EmailFolderImpl(folder, session);
         } catch(Exception e){
             throw new EmailException("Ordner " + name + " konnte nicht geladen werden", e);

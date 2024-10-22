@@ -1,25 +1,29 @@
 package com.dieblich.handball.schiedsrichterassistent.mail;
 
 import jakarta.mail.*;
-import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class EmailFolderImpl implements EmailFolder {
+    private static final Logger logger = LoggerFactory.getLogger(EmailFolder.class);
+
     private final Folder folder;
     private final Session session;
 
-    private final List<Email> fetchedEmails = new ArrayList<>();
-    @Getter
-    private final Map<Message, Exception> failedEmails = new HashMap<>();
+    private List<Email> fetchedEmails;
+    private Map<Message, Exception> failedEmails;
 
     public EmailFolderImpl(Folder folder, Session session) throws EmailException {
         this.folder = folder;
         this.session = session;
-        fetchEmails();
     }
     private void fetchEmails() throws EmailException {
         try {
+            logger.info("Fetching emails");
+            fetchedEmails = new ArrayList<>();
+            failedEmails = new HashMap<>();
             for(Message message: folder.getMessages()){
                 try{
                     fetchedEmails.add(new Email(message));
@@ -27,14 +31,25 @@ public class EmailFolderImpl implements EmailFolder {
                     failedEmails.put(message, e);
                 }
             }
+            logger.info("Emails fetched");
         } catch (MessagingException e) {
             throw new EmailException("Fehler beim Abrufen der Emails aus " + folder, e);
         }
     }
 
     @Override
-    public List<Email> getEmails(){
+    public List<Email> getEmails() throws EmailException {
+        if(fetchedEmails == null){
+            fetchEmails();
+        }
         return fetchedEmails;
+    }
+
+    public Map<Message, Exception> getFailedEmails() throws EmailException {
+        if(failedEmails == null){
+            fetchEmails();
+        }
+        return failedEmails;
     }
 
 
