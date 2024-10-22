@@ -4,11 +4,15 @@ import com.dieblich.handball.schiedsrichterassistent.config.SchiriConfiguration;
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriRepo;
 import com.dieblich.handball.schiedsrichterassistent.config.SchiriRepoEmail;
 import com.dieblich.handball.schiedsrichterassistent.mail.templates.WelcomeEmail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Inbox{
+
+    private static final Logger logger = LoggerFactory.getLogger(Inbox.class);
 
     private final EmailServerRead emailServer;
     private final SchiriRepo schiriRepo;
@@ -25,6 +29,13 @@ public class Inbox{
         public boolean schiriIsUnknown(){
             return !hasOldConfig && configEmails.isEmpty();
         }
+
+        private String summary(){
+            return
+                configEmails.size() + " config updates, " +
+                emailsToHandle.size() + " normal emails, " +
+                exceptions.size() + " exceptions.";
+        }
     }
 
     public Inbox(EmailServerRead emailServer){
@@ -33,21 +44,32 @@ public class Inbox{
     }
 
     public void checkEmails() throws EmailException {
+        logger.info("Checking Emails.");
         inboxFolder = emailServer.fetchFolder("INBOX");
+        logger.info("Categorizing {} Emails:", inboxFolder.getEmails().size());
         for(Email email: inboxFolder.getEmails()){
-            sortEmail(email);
+            categorizeEmail(email);
+        }
+        logger.info("Emails from {} differnt Schiris categorized:", schirisInboxes.size());
+        for(Map.Entry<String, SchiriInbox> inbox: schirisInboxes.entrySet()){
+            logger.info("{}: {}", inbox.getKey(), inbox.getValue().summary());
         }
     }
 
-    private void sortEmail(Email email){
+    private void categorizeEmail(Email email){
+        logger.info("Categorizing <{}> \"{}\".", email.getSender(), email.getSubject());
         SchiriInbox schiriInbox = getSchiriInbox(email.getSender());
         if (isConfigUpdate(email)) {
+            logger.info("Category: Config update.");
             schiriInbox.configEmails.add(email);
         } else {
+            logger.info("Category: Normal email.");
             if (schiriInbox.schiriIsUnknown()) {
+                logger.debug("Unsure if the author is known. Searching for old config...");
                 try {
                     Optional<SchiriConfiguration> optionalConfig = schiriRepo.findConfigByEmail(email.getSender());
                     if (optionalConfig.isPresent()) {
+                        logger.debug("...old config found");
                         schiriInbox.hasOldConfig = true;
                     }
                 } catch (SchiriRepo.SchiriRepoException e) {
@@ -113,6 +135,7 @@ public class Inbox{
         return occurredExceptions;
     }
     public void purge() throws EmailException {
+        logger.info("Purging emails");
         if(inboxFolder != null){
             schirisInboxes.clear();
             inboxFolder.deleteAll();

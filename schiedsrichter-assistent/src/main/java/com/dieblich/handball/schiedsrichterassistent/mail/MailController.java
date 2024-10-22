@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-
 @SuppressWarnings("unused")
 @Configuration
 @EnableScheduling
@@ -65,17 +64,16 @@ public class MailController {
         technischeBesprechungConfiguration = TechnischeBesprechungConfiguration.loadOrCreate();
     }
 
-    @Scheduled(fixedDelay = 15*1000)
+    @Scheduled(fixedDelay = 60*1000)
     public void checkInbox() {
-        System.out.println("Check the inbox " + LocalDateTime.now());
+        logger.info("Start routine at {}", LocalDateTime.now());
         try{
             inbox.checkEmails();
         } catch (EmailException e) {
             logger.error("Fehler beim Laden der Emails aus der Inbox", e);
         }
-        for(Email configEmail: inbox.getConfigEmails()){
-            handleConfigUpdate(configEmail);
-        }
+
+        handleConfigEmails();
 
         Map<String, SchiriConfiguration> fullyConfiguredSchiris = new HashMap<>();
         List<String> partlyConfiguredSchiris = new ArrayList<>();
@@ -114,6 +112,14 @@ public class MailController {
             inbox.purge();
         } catch (EmailException e) {
             logger.error("Fehler beim Löschen der Emails im Posteingang", e);
+        }
+    }
+
+    private void handleConfigEmails() {
+        List<Email> configEmails = inbox.getConfigEmails();
+        logger.info("Handling {} config emails.", configEmails.size());
+        for(Email configEmail: inbox.getConfigEmails()){
+            handleConfigUpdate(configEmail);
         }
     }
 

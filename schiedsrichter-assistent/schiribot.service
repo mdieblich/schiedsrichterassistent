@@ -3,7 +3,7 @@ Description=Schiribot 1.5.0 DEAMON
 
 [Service]
 ExecStart=/usr/bin/java -jar /root/schiedsrichter-assistent-1.5.0.jar
-User=user
+User=root
 
 [Install]
 WantedBy=multi-user.target

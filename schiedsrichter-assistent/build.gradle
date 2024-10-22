@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.dieblich.handball'
-version = '1.5.0'
+version = '1.6.0'
 
 java {
 	sourceCompatibility = '17'
@@ -21,6 +21,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.jetbrains:annotations:24.0.0'
+
+	// Database
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
 	// Email
 	implementation 'jakarta.mail:jakarta.mail-api'
