@@ -7,15 +7,14 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 public class EmailFolderImpl implements EmailFolder {
-    private static final Logger logger = LoggerFactory.getLogger(EmailFolder.class);
+    private static final Logger logger = LoggerFactory.getLogger(EmailFolderImpl.class);
 
     private final Folder folder;
     private final Session session;
 
     private List<Email> fetchedEmails;
-    private Map<Message, Exception> failedEmails;
 
-    public EmailFolderImpl(Folder folder, Session session) throws EmailException {
+    public EmailFolderImpl(Folder folder, Session session) {
         this.folder = folder;
         this.session = session;
     }
@@ -23,7 +22,7 @@ public class EmailFolderImpl implements EmailFolder {
         try {
             logger.info("Fetching emails");
             fetchedEmails = new ArrayList<>();
-            failedEmails = new HashMap<>();
+            Map<Message, Exception> failedEmails = new HashMap<>();
             for(Message message: folder.getMessages()){
                 try{
                     fetchedEmails.add(new Email(message));
@@ -32,6 +31,11 @@ public class EmailFolderImpl implements EmailFolder {
                 }
             }
             logger.info("Emails fetched");
+            for(Map.Entry<Message, Exception> failedEmail: failedEmails.entrySet()){
+                int messageNumber = failedEmail.getKey().getMessageNumber();
+                Exception exception  = failedEmail.getValue();
+                logger.warn("Exception thrown for message #" + messageNumber, exception);
+            }
         } catch (MessagingException e) {
             throw new EmailException("Fehler beim Abrufen der Emails aus " + folder, e);
         }
@@ -43,13 +47,6 @@ public class EmailFolderImpl implements EmailFolder {
             fetchEmails();
         }
         return fetchedEmails;
-    }
-
-    public Map<Message, Exception> getFailedEmails() throws EmailException {
-        if(failedEmails == null){
-            fetchEmails();
-        }
-        return failedEmails;
     }
 
 
