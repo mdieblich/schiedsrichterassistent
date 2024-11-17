@@ -75,29 +75,20 @@ public class MailController {
 
         handleConfigEmails();
 
-        Map<String, SchiriConfiguration> fullyConfiguredSchiris = new HashMap<>();
-        List<String> partlyConfiguredSchiris = new ArrayList<>();
-        for(String knownSchiri:inbox.getKnownSchiris()){
-            try {
-                Optional<SchiriConfiguration> optionalSchiriConfig = schiriRepo.findConfigByEmail(knownSchiri);
-                if (optionalSchiriConfig.isPresent() && optionalSchiriConfig.get().isComplete()) {
-                    fullyConfiguredSchiris.put(knownSchiri, optionalSchiriConfig.get());
-                } else {
-                    partlyConfiguredSchiris.add(knownSchiri);
-                }
-            } catch (SchiriRepo.SchiriRepoException e) {
-                partlyConfiguredSchiris.add(knownSchiri);
-                inbox.addException(knownSchiri, e);
+        SchiriRepo.ConfiguredSchiris configuredSchiris = schiriRepo.fetchSchiris(inbox.getKnownSchiris());
+        for(Map.Entry<String, List<Exception>> exceptions: configuredSchiris.partlyConfiguredSchiris.entrySet()){
+            for(Exception e: exceptions.getValue()){
+                inbox.addException(exceptions.getKey(), e);
             }
         }
 
-        for(Map.Entry<String, SchiriConfiguration> entry: fullyConfiguredSchiris.entrySet()){
+        for(Map.Entry<String, SchiriConfiguration> entry: configuredSchiris.fullyConfiguredSchiris.entrySet()){
             for(Email email:inbox.getAllOtherEmailsForSchiri(entry.getKey())){
                 handleEmailForRegisteredSchiri(email, entry.getValue());
             }
         }
 
-        for(String schiri:partlyConfiguredSchiris){
+        for(String schiri:configuredSchiris.partlyConfiguredSchiris.keySet()){
             askForMissingConfig(schiri);
         }
 
