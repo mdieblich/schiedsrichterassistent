@@ -182,7 +182,6 @@ public class MailController {
         }
     }
 
-    @Nullable
     private SchiriConfiguration findGespannpartner(SchiriConfiguration config, SchiriEinsatz schiriEinsatz) throws SchiriRepo.SchiriRepoException, EmailException {
         String emailSchiriA = config.Benutzerdaten.Email;
         Schiedsrichter otherSchiri = schiriEinsatz.otherSchiri(config.Benutzerdaten.getSchiedsrichter());
