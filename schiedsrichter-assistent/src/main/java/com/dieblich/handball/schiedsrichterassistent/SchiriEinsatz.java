@@ -28,4 +28,8 @@ public record SchiriEinsatz(
         }
         return schiriB;
     }
+
+    public String einsatzKurzform(){
+        return ligaBezeichnungAusEmail+": " + heimMannschaft + " vs. " + gastMannschaft;
+    }
 }

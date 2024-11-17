@@ -16,4 +16,16 @@ public record Schirikosten(
     public double getFahrtKostenBeifahrer() {
         return ligaKosten.kilometerPauschaleBeiFahrer() * distanzBeifahrerInKm;
     }
+
+    public double getSummeA(){
+        return getFahrtKostenFahrer() + getTeilnahmeEntschaedigung();
+    }
+
+    public double getSummeB(){
+        return getFahrtKostenBeifahrer() + getTeilnahmeEntschaedigung();
+    }
+
+    public double getGesamtSumme(){
+        return getSummeA() + getSummeB();
+    }
 }

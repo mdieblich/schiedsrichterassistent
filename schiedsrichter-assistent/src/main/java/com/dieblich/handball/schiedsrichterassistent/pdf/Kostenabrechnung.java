@@ -18,7 +18,7 @@ public class Kostenabrechnung {
     private static final DateTimeFormatter FORMAT_DATE = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private static final DateTimeFormatter FORMAT_TIME = DateTimeFormatter.ofPattern("HH:mm");
 
-    private static final DecimalFormat CURRENCY = new DecimalFormat("0.00 €");
+    public static final DecimalFormat CURRENCY = new DecimalFormat("0.00 €");
     private static final DecimalFormat DISTANCE = new DecimalFormat("# km");
 
     private final SchiriEinsatz einsatz;

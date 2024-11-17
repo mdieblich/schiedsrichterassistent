@@ -142,24 +142,29 @@ public class MailController {
 
 
     private void handleEmailForRegisteredSchiri(Email email, SchiriConfiguration config) {
+        logger.info("Handling email \"{}\" of {}", email.getSubject(), config.Benutzerdaten.getAnzeigeName());
         try{
             if(isAnsetzung(email)){
                 AnsetzungsEmail ansetzungsEmail = new AnsetzungsEmail(email);
-                for(SchiriEinsatz schiriEinsatz:ansetzungsEmail.extractSchiriEinsaetze()) {
+                List<SchiriEinsatz> einsaetze = ansetzungsEmail.extractSchiriEinsaetze();
+                logger.info("{} Einsaetze found", einsaetze.size());
+                for(SchiriEinsatz schiriEinsatz:einsaetze) {
                     if (schiriEinsatz.mitGespannspartner()) {
                         SchiriConfiguration schiriConfigB = findGespannpartner(config, schiriEinsatz);
-                        if (schiriConfigB != null) {
-                            sendCalendarEventForTwoSchiedsrichter(schiriEinsatz, config, schiriConfigB);
-                        }
+                        logger.info("Einsatz {} together with Schiri {}", schiriEinsatz.einsatzKurzform(), schiriConfigB.Benutzerdaten.getAnzeigeName());
+                        sendCalendarEventForTwoSchiedsrichter(schiriEinsatz, config, schiriConfigB);
                     } else {
+                        logger.info("Einsatz {} alone", schiriEinsatz.einsatzKurzform());
                         sendCalendarEventForOneSchiedsrichter(schiriEinsatz, config);
                     }
                 }
             } else {
+                logger.info("Don't know what to do with that Email. Will Send DontKnowWhatToDoEmail.");
                 DontKnowWhatToDoEmail response = new DontKnowWhatToDoEmail(botEmailaddress, config.Benutzerdaten.Email, email);
                 stratoSend.send(response);
             }
         } catch(Exception e){
+            logger.warn("Exception occurred for email \"{}\" of {}", email.getSubject(), config.Benutzerdaten.getAnzeigeName());
             inbox.addException(config.Benutzerdaten.Email, e);
         }
     }
@@ -202,11 +207,20 @@ public class MailController {
     private void sendCalendarEventForOneSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration schiriConfig) throws GeoException, ConfigException, IOException, EmailException {
         SpielTerminEinzelschiri spielTermin = new SpielTerminEinzelschiri(schiriEinsatz, schiriConfig, technischeBesprechungConfiguration, geoService);
         Kostenabrechnung abrechnung = new Kostenabrechnung(schiriEinsatz, spielTermin.getSpielAblauf(), kostenConfig, schiriConfig);
+        logger.info("Termin für Einzelschiri von {} bis {}",spielTermin.getSpielAblauf().getAbfahrt(), spielTermin.getSpielAblauf().getHeimkehr());
+        logger.info("Abrechnung: {} ",Kostenabrechnung.CURRENCY.format(abrechnung.getSchirikosten().getGesamtSumme()));
         sendTermin(spielTermin, abrechnung, schiriConfig.Benutzerdaten.Email);
     }
     private void sendCalendarEventForTwoSchiedsrichter(SchiriEinsatz schiriEinsatz, SchiriConfiguration fahrerConfig, SchiriConfiguration beifahrerConfig) throws GeoException, ConfigException, IOException, EmailException {
         SpielTerminFahrer spielTerminFahrer = new SpielTerminFahrer(schiriEinsatz, fahrerConfig, beifahrerConfig, technischeBesprechungConfiguration, geoService);
         Kostenabrechnung abrechnung = new Kostenabrechnung(schiriEinsatz, spielTerminFahrer.getSpielAblauf(), kostenConfig, fahrerConfig, beifahrerConfig);
+        logger.info("Termin für Fahrer von {} bis {}",spielTerminFahrer.getSpielAblauf().getAbfahrt(), spielTerminFahrer.getSpielAblauf().getHeimkehr());
+        logger.info("Termin für Beifahrer von {} bis {}",spielTerminFahrer.getSpielAblauf().getPartnerAbholen(), spielTerminFahrer.getSpielAblauf().getZurueckbringenPartner());
+        logger.info("Abrechnung: {} + {} = {}",
+                Kostenabrechnung.CURRENCY.format(abrechnung.getSchirikosten().getSummeA()),
+                Kostenabrechnung.CURRENCY.format(abrechnung.getSchirikosten().getSummeB()),
+                Kostenabrechnung.CURRENCY.format(abrechnung.getSchirikosten().getGesamtSumme())
+        );
         sendTermin(spielTerminFahrer, abrechnung, fahrerConfig.Benutzerdaten.Email);
         SpielTerminBeifahrer spielTerminBeifahrer = spielTerminFahrer.createBeifahrerTermin();
         sendTermin(spielTerminBeifahrer, abrechnung, beifahrerConfig.Benutzerdaten.Email);
