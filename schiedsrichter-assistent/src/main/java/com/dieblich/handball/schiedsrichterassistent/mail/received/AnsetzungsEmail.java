@@ -32,6 +32,7 @@ public class AnsetzungsEmail {
         String[] allLines = emailContent.split("\\r?\\n|\\r");
         for(int i=0; i<allLines.length; i++){
             String line = allLines[i].trim();
+            line = removeIntentions(line);
             if(line.startsWith("Liga:")){
                 builder.liga = line.substring("Liga:".length()).trim();
             } else if (line.startsWith("Ort:")){
@@ -47,6 +48,7 @@ public class AnsetzungsEmail {
                 // Die Spiel-Angaben stehen in der nächsten Zeile
                 if(i<allLines.length-1){
                     String nextLine = allLines[++i].trim();
+                    nextLine = removeIntentions(nextLine);
                     String anwurfString = nextLine.substring(0,16);
                     builder.anwurf = LocalDateTime.parse(anwurfString, FORMATTER);
                     String begegnung = nextLine.substring(16);
@@ -75,6 +77,13 @@ public class AnsetzungsEmail {
         }
 
         return einsaetze;
+    }
+
+    private static String removeIntentions(String line){
+        while(line.startsWith(" ") || line.startsWith(">")){
+            line = line.substring(1);
+        }
+        return line;
     }
 
     private static class SchiriEinsatzBuilder{

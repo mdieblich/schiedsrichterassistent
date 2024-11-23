@@ -178,4 +178,113 @@ class AnsetzungsEmailTest {
         assertEquals(List.of(expectedA, expectedB), actual);
     }
 
+
+    @Test
+    public void checkForwardedWithIntendedAnsetzung(){
+        String emailContent = """
+            Von meinem Nokia6210
+            
+            Anfang der weitergeleiteten Nachricht:
+            
+            > Von: nuLiga Handball <no-reply@liga.nu>
+            > Datum: 23. November 2024 um 10:38:34 MEZ
+            > An: martin@witze.de
+            > Betreff: Info-Mail: Spielansetzung Schiedsrichter bzw. Beobachter
+            > Antwort an: "karies@icloud.com" <karies@icloud.com>
+            >\s
+            > ﻿
+            > Sehr geehrte Damen und Herren,
+            >\s
+            > für die folgenden Begegnungen sind Schiedsrichter bzw. Beobachter eingeteilt worden:
+            >\s
+            > Achim Zweiter: a@zweiter.de
+            > Änderung: Gespann // a@zweiter.de
+            > Liga: Verbandsliga Männer
+            > Staffel:
+            > Verbandsliga Männer Gr. 5
+            > Spiel-Nr: 123456
+            > 23.11.2024 17:00 Pfadfinder Oeventrop II - Handball Opfer
+            > Ort: 03044 Sporthalle Pfadfinder, Höhenring 101, 44358 Oeventrop
+            > SR-Gespann: Witz Martin
+            > SR-Gespann alt: Witz Martin / Kohlenfuss Andre
+            >\s
+            >\s
+            """;
+        List<SchiriEinsatz> einsaetze = AnsetzungsEmail.extractSchiriEinsaetze(emailContent);
+        assertFalse(einsaetze.isEmpty(), "Nothing found");
+        SchiriEinsatz actual = einsaetze.get(0);
+        SchiriEinsatz expected = new SchiriEinsatz(
+                "123456",
+                LocalDateTime.of(2024, 11, 23, 17, 0),
+                "03044 Sporthalle Pfadfinder",
+                "Höhenring 101",
+                "44358 Oeventrop",
+                "Verbandsliga Männer",
+                "Pfadfinder Oeventrop II",
+                "Handball Opfer",
+                new Schiedsrichter("Martin", "Witz"),
+                null
+        );
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void checkForwardedWithMultipleTimesIntendedAnsetzung(){
+        String emailContent = """
+            Von meinem Nokia6210
+            
+            Anfang der weitergeleiteten Nachricht:
+            
+            > Von: Martin Witz <martin@witze.de>
+            > Datum: 23. November 2024 um 11:26:09 MEZ
+            > An: schiribot@witze.de
+            > Betreff: Wtr: Info-Mail: Spielansetzung Schiedsrichter bzw. Beobachter
+            >\s
+            > ﻿
+            > Von meinem Nokia6210
+            >\s
+            > Anfang der weitergeleiteten Nachricht:
+            >\s
+            >> Von: nuLiga Handball <no-reply@liga.nu>
+            >> Datum: 23. November 2024 um 10:38:34 MEZ
+            >> An: martin@witze.de
+            >> Betreff: Info-Mail: Spielansetzung Schiedsrichter bzw. Beobachter
+            >> Antwort an: "karies@icloud.com" <karies@icloud.com>
+            >>\s
+            >> ﻿
+            >> Sehr geehrte Damen und Herren,
+            >>\s
+            >> für die folgenden Begegnungen sind Schiedsrichter bzw. Beobachter eingeteilt worden:
+            >>\s
+            >> Achim Zweiter: a@zweiter.de
+            >> Änderung: Gespann // a@zweiter.de
+            >> Liga: Verbandsliga Männer
+            >> Staffel:
+            >> Verbandsliga Männer Gr. 5
+            >> Spiel-Nr: 123456
+            >> 23.11.2024 17:00 Pfadfinder Oeventrop II - Handball Opfer
+            >> Ort: 03044 Sporthalle Pfadfinder, Höhenring 101, 44358 Oeventrop
+            >> SR-Gespann: Witz Martin
+            >> SR-Gespann alt: Witz Martin / Kohlenfuss Andre
+            >>\s
+            >>\s
+            """;
+        List<SchiriEinsatz> einsaetze = AnsetzungsEmail.extractSchiriEinsaetze(emailContent);
+        assertFalse(einsaetze.isEmpty(), "Nothing found");
+        SchiriEinsatz actual = einsaetze.get(0);
+        SchiriEinsatz expected = new SchiriEinsatz(
+                "123456",
+                LocalDateTime.of(2024, 11, 23, 17, 0),
+                "03044 Sporthalle Pfadfinder",
+                "Höhenring 101",
+                "44358 Oeventrop",
+                "Verbandsliga Männer",
+                "Pfadfinder Oeventrop II",
+                "Handball Opfer",
+                new Schiedsrichter("Martin", "Witz"),
+                null
+        );
+        assertEquals(expected, actual);
+    }
+
 }
